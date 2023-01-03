@@ -15,6 +15,6 @@ public class UserService {
     /* 회원가입 */
     @Transactional
     public void signup(UserSignupRequest userSignupRequest) {
-        this.userRepository.save(userSignupRequest.toSignup());
+        this.userRepository.save(userSignupRequest.toUser());
     }
 }
