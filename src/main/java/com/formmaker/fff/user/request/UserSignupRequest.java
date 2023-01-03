@@ -20,7 +20,7 @@ public class UserSignupRequest {
     private String email;
 
 
-    public User toSignup() {
+    public User toUser() {
         return new User(
                 this.getLoginId(),
                 this.getUsername(),
