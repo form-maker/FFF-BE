@@ -10,7 +10,7 @@ on:
 # 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: form-maker-fff
+  S3_BUCKET_NAME: form-maker-fff-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME: form-maker-FFF
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: form-maker-FFF-deployment-group
 
@@ -33,7 +33,7 @@ jobs:
         uses: action/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
 
       # (3) Gradle build
       - name: Build with Gradle
