@@ -1,4 +1,4 @@
-package com.formmaker.fff.survey;
+package com.formmaker.fff.question;
 
 import com.formmaker.fff.question.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
