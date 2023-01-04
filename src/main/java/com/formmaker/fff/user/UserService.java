@@ -33,5 +33,14 @@ public class UserService {
             throw new CustomException(ErrorCode.DUPLICATE_ID);
         }
     }
+    private boolean isDuplicateUsername(String username){
+        Optional<User> usernameOptional = userRepository.findByUsername(username);
+        return usernameOptional.isPresent();
+    }
+    public void duplicateUsername(UserSignupRequest userSignupRequest){
+        if( isDuplicateUsername(userSignupRequest.getUsername())){
+            throw new CustomException(ErrorCode.DUPLICATE_USERNAME);
+        }
+    }
 }
 
