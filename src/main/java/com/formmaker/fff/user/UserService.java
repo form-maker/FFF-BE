@@ -30,6 +30,7 @@ public class UserService {
     }
     public void duplicateLoginId(UserSignupRequest userSignupRequest){
         if (isDuplicateLoginId(userSignupRequest.getLoginId())) {
+
             throw new CustomException(DUPLICATE_ID);
         }
     }
@@ -40,6 +41,7 @@ public class UserService {
     public void duplicateUsername(UserSignupRequest userSignupRequest){
         if( isDuplicateUsername(userSignupRequest.getUsername())){
             throw new CustomException(DUPLICATE_USERNAME);
+
         }
     }
 }
