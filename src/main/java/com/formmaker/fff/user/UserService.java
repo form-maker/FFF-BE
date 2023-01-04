@@ -30,7 +30,8 @@ public class UserService {
     }
     public void duplicateLoginId(UserSignupRequest userSignupRequest){
         if (isDuplicateLoginId(userSignupRequest.getLoginId())) {
-            throw new CustomException(ErrorCode.DUPLICATE_ID);
+
+            throw new CustomException(DUPLICATE_ID);
         }
     }
     private boolean isDuplicateUsername(String username){
@@ -39,7 +40,8 @@ public class UserService {
     }
     public void duplicateUsername(UserSignupRequest userSignupRequest){
         if( isDuplicateUsername(userSignupRequest.getUsername())){
-            throw new CustomException(ErrorCode.DUPLICATE_USERNAME);
+            throw new CustomException(DUPLICATE_USERNAME);
+
         }
     }
 }

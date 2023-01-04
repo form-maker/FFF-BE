@@ -29,9 +29,11 @@ public class UserController {
         userService.duplicateLoginId(userSignupRequest);
         return new ResponseEntity<>(new ResponseMessage<>("사용가능한 아이디입니다.",200,null), HttpStatus.OK);
     }
+
     @PostMapping("/signup/username")
     public ResponseEntity<ResponseMessage> duplicateUsername(@RequestBody UserSignupRequest userSignupRequest){
         userService.duplicateUsername(userSignupRequest);
         return new ResponseEntity<>(new ResponseMessage("사용가능한 닉네임 입니다.",200,null), HttpStatus.OK);
     }
+
 }
