@@ -10,8 +10,8 @@ public enum ErrorCode {
     INVALID_PARAMETER("파라미터 값을 확인해주세요.", 400),
 
     DUPLICATE_ID("중복된 아이디 입니다.",400),
-    DUPLICATE_USERNAME("중복된 닉네임 입니다.",400);
-
+    DUPLICATE_USERNAME("중복된 닉네임 입니다.",400),
+    NOT_FOUND_ID("아이디 또는 비밀번호가 일치하지 않습니다.",400);
 
 
 

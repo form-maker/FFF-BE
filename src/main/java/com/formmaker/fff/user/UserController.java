@@ -2,6 +2,7 @@ package com.formmaker.fff.user;
 
 
 import com.formmaker.fff.common.response.ResponseMessage;
+import com.formmaker.fff.user.request.UserLoginRequest;
 import com.formmaker.fff.user.request.UserSignupRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -11,7 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/user")
@@ -34,6 +38,13 @@ public class UserController {
     public ResponseEntity<ResponseMessage> duplicateUsername(@RequestBody UserSignupRequest userSignupRequest){
         userService.duplicateUsername(userSignupRequest);
         return new ResponseEntity<>(new ResponseMessage("사용가능한 닉네임 입니다.",200,null), HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @PostMapping("/login")
+    public ResponseEntity<ResponseMessage> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
+        userService.login(userLoginRequest, response);
+        return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null), HttpStatus.OK);
     }
 
 }
