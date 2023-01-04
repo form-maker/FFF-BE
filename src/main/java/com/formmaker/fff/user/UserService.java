@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_ID;
+import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_USERNAME;
 
 @RequiredArgsConstructor
 @Service
