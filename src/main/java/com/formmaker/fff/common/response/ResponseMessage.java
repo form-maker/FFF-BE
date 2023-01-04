@@ -16,4 +16,10 @@ public class ResponseMessage<T>{
         this.statusCode = statusCode;
         this.data = data;
     }
+
+    public ResponseMessage(String msg, int statusCode) {
+        this.msg = msg;
+        this.statusCode = statusCode;
+        this.data = null;
+    }
 }
