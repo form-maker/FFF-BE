@@ -3,6 +3,7 @@ package com.formmaker.fff.survey;
 
 import com.formmaker.fff.answer.Answer;
 import com.formmaker.fff.answer.AnswerRepository;
+import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.Question;
 import com.formmaker.fff.question.QuestionRepository;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 @RequiredArgsConstructor
@@ -45,10 +47,10 @@ public class SurveyService {
                                 .data(answerDto.getData()).build()).toList())).build()).toList())).build());
     }
 
-    public Page<SurveyMainResponse> getSurveyList(String sortBy, boolean isAsc, int page) {
+    public Page<SurveyMainResponse> getSurveyList(@RequestParam SortTypeEnum sortBy, boolean isAsc, int page, int size) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, 3, sort);
+        Sort sort = Sort.by(direction, sortBy.getColumn());
+        Pageable pageable = PageRequest.of(page, size, sort);
         Page<Survey> surveyPage = surveyRepository.findAll(pageable);
         Page<SurveyMainResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getCreatedAt()));
 

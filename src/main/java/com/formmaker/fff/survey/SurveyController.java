@@ -3,6 +3,7 @@ package com.formmaker.fff.survey;
 
 import com.formmaker.fff.common.response.DataPageResponse;
 import com.formmaker.fff.common.response.ResponseMessage;
+import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,8 @@ public class SurveyController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseMessage> getSurvey(String sortBy, boolean isAsc, int page){
-        Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, isAsc, page-1);
+    public ResponseEntity<ResponseMessage> getSurvey(SortTypeEnum sortBy, boolean isAsc, int page, int size){
+        Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, isAsc, page-1, size);
         DataPageResponse<SurveyMainResponse> response = new DataPageResponse<>(surveyResponseList);
         ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
