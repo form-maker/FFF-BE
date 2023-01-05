@@ -18,9 +18,12 @@ public enum ErrorCode {
     INVALID_TOKEN("토큰이 유효하지 않습니다.",400),
     UNSUPPORTED_TOKEN("지원하지 않는 토큰입니다.",400),
     EMPTY_TOKEN("토큰이 비어있습니다.",400),
-    NOT_FOUND_TOKEN("토큰이 존재하지 않습니다.",400);
+    NOT_FOUND_TOKEN("토큰이 존재하지 않습니다.",400),
 
-
+    /*설문 에러*/
+    NOT_FOUND_SURVEY("존재하지 않는 설문입니다.",400),
+    NOT_MATCH_USER("권한이 없는 설문입니다.",400),
+    NOT_FOUND_QUESTION("질문지가 존재하지 않습니다.",400);
 
 
     private final String msg;
