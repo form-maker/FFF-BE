@@ -7,6 +7,7 @@ import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
 import com.formmaker.fff.common.security.UserDetailsImpl;
+import com.formmaker.fff.survey.response.SurveySpecificResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -41,8 +42,8 @@ public class SurveyController {
 
     @GetMapping
     public ResponseEntity<ResponseMessage> getSpecificSurvey(@RequestParam(value = "surveyId") Long surveyId) {
-        surveyService.getSpecificSurvey(surveyId);
-        ResponseMessage responseMessage = new ResponseMessage<>("설문 조회 성공", 200);
+        SurveySpecificResponse surveySpecificResponse = surveyService.getSpecificSurvey(surveyId);
+        ResponseMessage responseMessage = new ResponseMessage<>("설문 조회 성공", 200, surveySpecificResponse);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
 }
