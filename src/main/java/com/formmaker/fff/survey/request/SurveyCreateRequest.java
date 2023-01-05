@@ -1,8 +1,6 @@
 package com.formmaker.fff.survey;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.formmaker.fff.question.QuestionCreateRequestDto;
+import com.formmaker.fff.question.QuestionCreateRequest;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,5 +13,5 @@ public class SurveyCreateRequest {
 
     private Integer achievement;
     private String summary;
-    private List<QuestionCreateRequestDto> questionList;
+    private List<QuestionCreateRequest> questionList;
 }
