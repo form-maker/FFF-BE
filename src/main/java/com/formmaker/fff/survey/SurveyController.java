@@ -13,11 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/survey")
@@ -40,6 +36,13 @@ public class SurveyController {
         Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, isAsc, page-1, size);
         DataPageResponse<SurveyMainResponse> response = new DataPageResponse<>(surveyResponseList);
         ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
+        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseMessage> getSpecificSurvey(@RequestParam(value = "surveyId") Long surveyId) {
+        surveyService.getSpecificSurvey(surveyId);
+        ResponseMessage responseMessage = new ResponseMessage<>("설문 조회 성공", 200);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
 }
