@@ -1,14 +1,15 @@
 package com.formmaker.fff.survey;
 
 
+import com.formmaker.fff.common.response.DataPageResponse;
 import com.formmaker.fff.common.response.ResponseMessage;
+import com.formmaker.fff.survey.request.SurveyCreateRequest;
+import com.formmaker.fff.survey.response.SurveyMainResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/survey")
@@ -27,4 +28,11 @@ public class SurveyController {
 
     }
 
+    @GetMapping
+    public ResponseEntity<ResponseMessage> getSurvey(String sortBy, boolean isAsc, int page){
+        Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, isAsc, page-1);
+        DataPageResponse<SurveyMainResponse> response = new DataPageResponse<>(surveyResponseList);
+        ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
+        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
+    }
 }

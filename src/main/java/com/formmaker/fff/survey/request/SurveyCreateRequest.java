@@ -1,5 +1,5 @@
-package com.formmaker.fff.survey;
-import com.formmaker.fff.question.QuestionCreateRequest;
+package com.formmaker.fff.survey.request;
+import com.formmaker.fff.question.request.QuestionCreateRequest;
 import lombok.Getter;
 
 import java.time.LocalDate;

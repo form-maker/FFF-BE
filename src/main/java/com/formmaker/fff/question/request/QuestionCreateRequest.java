@@ -1,6 +1,6 @@
-package com.formmaker.fff.question;
+package com.formmaker.fff.question.request;
 
-import com.formmaker.fff.answer.AnswerCreateRequest;
+import com.formmaker.fff.answer.request.AnswerCreateRequest;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import lombok.Getter;
 
