@@ -5,7 +5,7 @@ import com.formmaker.fff.common.response.DataPageResponse;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
-import com.formmaker.fff.survey.response.SurveyMainResponse
+import com.formmaker.fff.survey.response.SurveyMainResponse;
 import com.formmaker.fff.common.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public class SurveyController {
 
     }
 
-    @GetMapping
+    @GetMapping("/main")
     public ResponseEntity<ResponseMessage> getSurvey(SortTypeEnum sortBy, boolean isAsc, int page, int size){
         Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, isAsc, page-1, size);
         DataPageResponse<SurveyMainResponse> response = new DataPageResponse<>(surveyResponseList);
