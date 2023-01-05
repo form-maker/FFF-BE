@@ -1,4 +1,4 @@
-name: FFF CI/CD
+name: Deploy to Amazon EC2
 
 on:
   push:
@@ -11,8 +11,8 @@ on:
 env:
   AWS_REGION: ap-northeast-2
   S3_BUCKET_NAME: form-maker-fff-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: form-maker-FFF
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: form-maker-FFF-deployment-group
+  CODE_DEPLOY_APPLICATION_NAME: form-maker-fff-codedeploy-app
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: form-maker-fff-deployment-group
 
 permissions:
   contents: read
