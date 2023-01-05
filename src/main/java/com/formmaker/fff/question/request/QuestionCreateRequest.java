@@ -1,18 +1,18 @@
-package com.formmaker.fff.question;
+package com.formmaker.fff.question.request;
 
-import com.formmaker.fff.answer.AnswerCreateRequestDto;
+import com.formmaker.fff.answer.request.AnswerCreateRequest;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-public class QuestionCreateRequestDto {
+public class QuestionCreateRequest {
     private QuestionTypeEnum questionType;
     private Integer questionNum;
     private Integer minValue;
     private Integer maxValue;
     private String questionTitle;
-    private List<AnswerCreateRequestDto> answerList;
+    private List<AnswerCreateRequest> answerList;
 
 }
