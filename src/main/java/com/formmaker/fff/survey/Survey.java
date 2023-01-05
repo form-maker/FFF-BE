@@ -1,5 +1,6 @@
 package com.formmaker.fff.survey;
 
+import com.formmaker.fff.common.TimeStamped;
 import com.formmaker.fff.question.Question;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Survey {
+public class Survey extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,4 +49,5 @@ public class Survey {
         this.userId = userId;
         this.questionList = questionList;
     }
+
 }
