@@ -6,6 +6,7 @@ import com.formmaker.fff.common.jwt.JwtUtil;
 import com.formmaker.fff.user.request.UserLoginRequest;
 import com.formmaker.fff.user.request.UserSignupRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,11 +23,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
     /* 회원가입 */
     @Transactional
     public void signup(UserSignupRequest userSignupRequest) {
-        this.userRepository.save(userSignupRequest.toUser());
+        String loginId = userSignupRequest.getLoginId();
+        String userName = userSignupRequest.getUsername();
+        String password = passwordEncoder.encode(userSignupRequest.getPassword());
+        String email = userSignupRequest.getEmail();
+        User user = new User(loginId , userName , password , email);
+        this.userRepository.save(user);
     }
     /* 아이디,이메일,유저네임 중복확인 */
     private boolean isDuplicateLoginId(String loginId) {
@@ -60,7 +67,7 @@ public class UserService {
                 () -> new CustomException(NOT_FOUND_ID)
         );
         /* 비밀번호가 일치하지 않을 때 예외 반환 */
-        if(!user.getPassword().equals(password)){
+        if(!passwordEncoder.matches(password, user.getPassword())){
             throw new CustomException(NOT_FOUND_ID);
         }
 
