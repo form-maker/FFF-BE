@@ -41,7 +41,7 @@ public class SurveyController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseMessage> getSpecificSurvey(@RequestParam(value = "surveyId") Long surveyId) {
+    public ResponseEntity<ResponseMessage> getSpecificSurvey(@RequestParam Long surveyId) {
         SurveySpecificResponse surveySpecificResponse = surveyService.getSpecificSurvey(surveyId);
         ResponseMessage responseMessage = new ResponseMessage<>("설문 조회 성공", 200, surveySpecificResponse);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));

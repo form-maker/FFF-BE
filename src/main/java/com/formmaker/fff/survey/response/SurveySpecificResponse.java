@@ -1,5 +1,6 @@
 package com.formmaker.fff.survey.response;
 
+import com.formmaker.fff.question.Question;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

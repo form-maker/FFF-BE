@@ -70,13 +70,12 @@ public class SurveyService {
                 () -> new CustomException(NOT_FOUNT_SURVEY)
         );
 
-        List<Question> questions = questionRepository.findAllBySurveyId(surveyId);
-
         List<Long> questionResponses = new ArrayList<>();
-        for (Question question : questions) {
+        for (Question question : survey.getQuestionList()) {
             questionResponses.add(question.getId());
         }
 
+        // isDone 은 추후에 유동적인 값이 될 수 있도록 수정이 될 것이다.
         return new SurveySpecificResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getCreatedAt(), survey.getAchievement(), false, questionResponses);
     }
 }
