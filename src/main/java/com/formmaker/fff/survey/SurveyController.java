@@ -25,16 +25,17 @@ public class SurveyController {
 
 
     @PostMapping
-    public ResponseEntity<ResponseMessage> createSurvey(@RequestBody SurveyCreateRequest requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<ResponseMessage> createSurvey(@RequestBody SurveyCreateRequest requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails.getUserId();
         surveyService.createSurvey(requestDto, userId);
         ResponseMessage responseMessage = new ResponseMessage<>("설문 생성 성공", 200);
-        return new ResponseEntity<ResponseMessage> (responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
+        return new ResponseEntity<ResponseMessage>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
 
     }
+
     @GetMapping("/main")
-    public ResponseEntity<ResponseMessage> getSurvey(SortTypeEnum sortBy, boolean isAsc, int page, int size){
-        Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, isAsc, page-1, size);
+    public ResponseEntity<ResponseMessage> getSurvey(SortTypeEnum sortBy, boolean isAsc, int page, int size) {
+        Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, isAsc, page - 1, size);
         DataPageResponse<SurveyMainResponse> response = new DataPageResponse<>(surveyResponseList);
         ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
@@ -47,11 +48,19 @@ public class SurveyController {
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
 
+    @GetMapping
+    public ResponseEntity<ResponseMessage> getSpecificQuestion(@RequestParam Long surveyId, @RequestParam Long questionId) {
+        SpecificQuestion specificQuestion = surveyService.getSpecificQuestion(surveyId, questionId);
+        ResponseMessage responseMessage = new ResponseMessage<>("문항 조회 성공", 200, null);
+        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
+    }
+
     /*설문삭제*/
     @DeleteMapping("/{surveyId}")
-    public ResponseEntity<ResponseMessage> deleteSurvey(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long surveyId){
+
+    public ResponseEntity<ResponseMessage> deleteSurvey(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long surveyId) {
         Long loginId = userDetails.getUserId();
-        surveyService.deleteSurvey(surveyId,loginId);
-        return new ResponseEntity<>(new ResponseMessage<>("설문삭제 성공",200,null),HttpStatus.OK);
+        surveyService.deleteSurvey(surveyId, loginId);
+        return new ResponseEntity<>(new ResponseMessage<>("설문삭제 성공", 200, null), HttpStatus.OK);
     }
 }
