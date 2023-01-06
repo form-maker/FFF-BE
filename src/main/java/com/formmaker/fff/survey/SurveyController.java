@@ -46,4 +46,12 @@ public class SurveyController {
         ResponseMessage responseMessage = new ResponseMessage<>("설문 조회 성공", 200, surveySpecificResponse);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
+
+    /*설문삭제*/
+    @DeleteMapping("/{surveyId}")
+    public ResponseEntity<ResponseMessage> deleteSurvey(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long surveyId){
+        Long loginId = userDetails.getUserId();
+        surveyService.deleteSurvey(surveyId,loginId);
+        return new ResponseEntity<>(new ResponseMessage<>("설문삭제 성공",200,null),HttpStatus.OK);
+    }
 }

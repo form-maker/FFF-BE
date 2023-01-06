@@ -20,8 +20,11 @@ public enum ErrorCode {
     EMPTY_TOKEN("토큰이 비어있습니다.",400),
     NOT_FOUND_TOKEN("토큰이 존재하지 않습니다.",400),
 
-    /*설문 관련 에러*/
-    NOT_FOUNT_SURVEY("해당 설문이 존재하지 않습니다.", 400);
+    /*설문 에러*/
+    NOT_FOUND_SURVEY("존재하지 않는 설문입니다.",400),
+    NOT_MATCH_USER("권한이 없는 설문입니다.",400),
+    NOT_FOUND_QUESTION("질문지가 존재하지 않습니다.",400);
+
 
     private final String msg;
     private final int statusCode;
