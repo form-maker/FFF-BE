@@ -78,6 +78,7 @@ public class SurveyService {
 
         // isDone 은 추후에 유동적인 값이 될 수 있도록 수정이 될 것이다.
         return new SurveySpecificResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getCreatedAt(), survey.getAchievement(), false, questionResponses);
+    }
 
     @Transactional
     public void deleteSurvey(Long surveyId, Long loginId) {
