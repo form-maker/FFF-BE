@@ -10,6 +10,7 @@ import com.formmaker.fff.question.Question;
 import com.formmaker.fff.question.QuestionRepository;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
+import com.formmaker.fff.survey.response.SurveySpecificResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,9 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.List;
 import java.util.Optional;
+import java.util.ArrayList;
+
+import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
 @Service
 @RequiredArgsConstructor
@@ -33,23 +36,23 @@ public class SurveyService {
     public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
         Survey survey = surveyRepository.save(
                 Survey.builder()
-                .title(requestDto.getTitle())
-                .summary(requestDto.getSummary())
-                .deadLine(requestDto.getDeadLine())
-                .achievement(requestDto.getAchievement())
-                .userId(userId)
-                .questionList(questionRepository.saveAll(
-                        requestDto.getQuestionList().stream().map(questionDto -> Question.builder()
-                        .title(questionDto.getQuestionTitle())
-                        .questionType(questionDto.getQuestionType())
-                        .questionNum(questionDto.getQuestionNum())
-                        .minValue(questionDto.getMinValue())
-                        .maxValue(questionDto.getMaxValue())
-                        .answerList(answerRepository.saveAll(
-                                questionDto.getAnswerList().stream().map(answerDto -> Answer.builder()
-                                .answerNum(answerDto.getAnswerNum())
-                                .answerType(answerDto.getAnswerType())
-                                .data(answerDto.getData()).build()).toList())).build()).toList())).build());
+                        .title(requestDto.getTitle())
+                        .summary(requestDto.getSummary())
+                        .deadLine(requestDto.getDeadLine())
+                        .achievement(requestDto.getAchievement())
+                        .userId(userId)
+                        .questionList(questionRepository.saveAll(
+                                requestDto.getQuestionList().stream().map(questionDto -> Question.builder()
+                                        .title(questionDto.getQuestionTitle())
+                                        .questionType(questionDto.getQuestionType())
+                                        .questionNum(questionDto.getQuestionNum())
+                                        .minValue(questionDto.getMinValue())
+                                        .maxValue(questionDto.getMaxValue())
+                                        .answerList(answerRepository.saveAll(
+                                                questionDto.getAnswerList().stream().map(answerDto -> Answer.builder()
+                                                        .answerNum(answerDto.getAnswerNum())
+                                                        .answerType(answerDto.getAnswerType())
+                                                        .data(answerDto.getData()).build()).toList())).build()).toList())).build());
     }
 
     public Page<SurveyMainResponse> getSurveyList(@RequestParam SortTypeEnum sortBy, boolean isAsc, int page, int size) {
@@ -60,6 +63,21 @@ public class SurveyService {
         Page<SurveyMainResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getCreatedAt()));
 
         return surveyDtoPage;
+    }
+
+    @Transactional(readOnly = true)
+    public SurveySpecificResponse getSpecificSurvey(Long surveyId) {
+        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+                () -> new CustomException(NOT_FOUND_SURVEY)
+        );
+
+        List<Long> questionResponses = new ArrayList<>();
+        for (Question question : survey.getQuestionList()) {
+            questionResponses.add(question.getId());
+        }
+
+        // isDone 은 추후에 유동적인 값이 될 수 있도록 수정이 될 것이다.
+        return new SurveySpecificResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getCreatedAt(), survey.getAchievement(), false, questionResponses);
     }
     @Transactional
     public void deleteSurvey(Long surveyId, Long loginId) {

@@ -1,13 +1,12 @@
 package com.formmaker.fff.question;
 
-import com.formmaker.fff.survey.Survey;
+import com.formmaker.fff.question.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-   
-   void deleteAllBySurveyId(Long surveyId);
-
+    List<Question> findAllBySurveyId(Long surveyId);
+    void deleteAllBySurveyId(Long surveyId);
 }
