@@ -72,14 +72,12 @@ public class SurveyService {
         }
 
 
-        List<Question> questions = questionRepository.findBySurveyId(surveyId);
+        List<Question> questions =  survey.getQuestionList();
         for ( Question q : questions) {
 
-            List<Answer> answers = answerRepository.findAllByQuestionId(q.getId());
-            answerRepository.deleteAll(answers);
+            answerRepository.deleteAllByQuestionId(q.getId());
 
-            List<Question> question = questionRepository.findAllBySurveyId(surveyId);
-            questionRepository.deleteAll(question);
+            questionRepository.deleteAllBySurveyId(surveyId);
 
         }
         surveyRepository.deleteById(surveyId);
