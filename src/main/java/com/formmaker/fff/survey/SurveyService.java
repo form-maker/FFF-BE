@@ -4,6 +4,7 @@ package com.formmaker.fff.survey;
 import com.formmaker.fff.answer.Answer;
 import com.formmaker.fff.answer.AnswerRepository;
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.Question;
 import com.formmaker.fff.question.QuestionRepository;
@@ -18,11 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUNT_SURVEY;
+
 
 @Service
 @RequiredArgsConstructor
@@ -77,5 +78,26 @@ public class SurveyService {
 
         // isDone 은 추후에 유동적인 값이 될 수 있도록 수정이 될 것이다.
         return new SurveySpecificResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getCreatedAt(), survey.getAchievement(), false, questionResponses);
+
+    @Transactional
+    public void deleteSurvey(Long surveyId, Long loginId) {
+
+        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_SURVEY));
+
+        if(!survey.getUserId().equals(loginId)){
+            throw new CustomException((ErrorCode.NOT_MATCH_USER));
+        }
+
+
+        List<Question> questions =  survey.getQuestionList();
+        for ( Question q : questions) {
+
+            answerRepository.deleteAllByQuestionId(q.getId());
+
+            questionRepository.deleteAllBySurveyId(surveyId);
+
+        }
+        surveyRepository.deleteById(surveyId);
     }
 }
