@@ -3,6 +3,8 @@ package com.formmaker.fff.survey;
 
 import com.formmaker.fff.answer.Answer;
 import com.formmaker.fff.answer.AnswerRepository;
+import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.Question;
 import com.formmaker.fff.question.QuestionRepository;
@@ -16,6 +18,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +60,26 @@ public class SurveyService {
         Page<SurveyMainResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getCreatedAt()));
 
         return surveyDtoPage;
+    }
+    @Transactional
+    public void deleteSurvey(Long surveyId, Long loginId) {
+
+        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_SURVEY));
+
+        if(!survey.getUserId().equals(loginId)){
+            throw new CustomException((ErrorCode.NOT_MATCH_USER));
+        }
+
+
+        List<Question> questions =  survey.getQuestionList();
+        for ( Question q : questions) {
+
+            answerRepository.deleteAllByQuestionId(q.getId());
+
+            questionRepository.deleteAllBySurveyId(surveyId);
+
+        }
+        surveyRepository.deleteById(surveyId);
     }
 }
