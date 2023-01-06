@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAllBySurveyId(Long surveyId);
     void deleteAllBySurveyId(Long surveyId);
+
+    Question findAllById(Long questionId);
 }

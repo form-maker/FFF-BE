@@ -3,11 +3,13 @@ package com.formmaker.fff.answer;
 
 import com.formmaker.fff.common.type.AnswerTypeEnum;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class Answer {
     @Id

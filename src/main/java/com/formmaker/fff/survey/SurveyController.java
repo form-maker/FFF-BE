@@ -5,6 +5,7 @@ import com.formmaker.fff.common.response.DataPageResponse;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
+import com.formmaker.fff.survey.response.QuestionSpecificResponse;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
 import com.formmaker.fff.common.security.UserDetailsImpl;
 import com.formmaker.fff.survey.response.SurveySpecificResponse;
@@ -48,10 +49,10 @@ public class SurveyController {
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
 
-    @GetMapping
+    @GetMapping("/question")
     public ResponseEntity<ResponseMessage> getSpecificQuestion(@RequestParam Long surveyId, @RequestParam Long questionId) {
-        SpecificQuestion specificQuestion = surveyService.getSpecificQuestion(surveyId, questionId);
-        ResponseMessage responseMessage = new ResponseMessage<>("문항 조회 성공", 200, null);
+        QuestionSpecificResponse questionSpecificResponse = surveyService.getSpecificQuestion(surveyId, questionId);
+        ResponseMessage responseMessage = new ResponseMessage<>("문항 조회 성공", 200, questionSpecificResponse);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
 
