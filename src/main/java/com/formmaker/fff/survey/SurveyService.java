@@ -84,7 +84,7 @@ public class SurveyService {
 
     @Transactional(readOnly = true)
     public QuestionSpecificResponse getSpecificQuestion(Long surveyId, Long questionId) {
-        Question question = questionRepository.findAllById(questionId);
+        Question question = questionRepository.findById(questionId);
         List<Answer> answers = question.getAnswerList();
         List<AnswerResponse> answerResponses = new ArrayList<>();
         for (Answer answer : answers) {
