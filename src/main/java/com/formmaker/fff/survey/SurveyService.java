@@ -23,9 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
-
-import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
 @Service
 @RequiredArgsConstructor

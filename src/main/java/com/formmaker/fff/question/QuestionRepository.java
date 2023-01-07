@@ -1,6 +1,6 @@
 package com.formmaker.fff.question;
 
-import com.formmaker.fff.question.Question;
+import com.formmaker.fff.survey.Survey;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
