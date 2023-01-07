@@ -5,14 +5,20 @@ import com.formmaker.fff.answer.Answer;
 import com.formmaker.fff.answer.AnswerRepository;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
+import com.formmaker.fff.common.security.UserDetailsImpl;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.Question;
 import com.formmaker.fff.question.QuestionRepository;
+import com.formmaker.fff.reply.Reply;
+import com.formmaker.fff.reply.ReplyRepository;
+import com.formmaker.fff.survey.dto.SurveyDto;
+import com.formmaker.fff.survey.request.ReplyRequest;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.response.AnswerResponse;
 import com.formmaker.fff.survey.response.QuestionSpecificResponse;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
 import com.formmaker.fff.survey.response.SurveySpecificResponse;
+import com.formmaker.fff.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +39,7 @@ public class SurveyService {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final ReplyRepository replyRepository;
 
     @Transactional
     public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
@@ -92,6 +99,11 @@ public class SurveyService {
         }
 
         return new QuestionSpecificResponse(question.getId(), question.getQuestionType(), question.getQuestionNum(), question.getMaxValue(), question.getMinValue(), question.getTitle(), answerResponses);
+    }
+
+    public void postReply(Long surveyId, ReplyRequest replyRequest, UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        Reply reply = replyRepository.save(new Reply(replyRequest, user));
     }
 
     @Transactional
