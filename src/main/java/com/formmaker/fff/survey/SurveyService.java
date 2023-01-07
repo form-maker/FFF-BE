@@ -9,6 +9,8 @@ import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.Question;
 import com.formmaker.fff.question.QuestionRepository;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
+import com.formmaker.fff.survey.response.AnswerResponse;
+import com.formmaker.fff.survey.response.QuestionSpecificResponse;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
 import com.formmaker.fff.survey.response.SurveySpecificResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
@@ -79,6 +81,19 @@ public class SurveyService {
         // isDone 은 추후에 유동적인 값이 될 수 있도록 수정이 될 것이다.
         return new SurveySpecificResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getCreatedAt(), survey.getAchievement(), false, questionResponses);
     }
+
+    @Transactional(readOnly = true)
+    public QuestionSpecificResponse getSpecificQuestion(Long surveyId, Long questionId) {
+        Question question = questionRepository.findAllById(questionId);
+        List<Answer> answers = question.getAnswerList();
+        List<AnswerResponse> answerResponses = new ArrayList<>();
+        for (Answer answer : answers) {
+            answerResponses.add(new AnswerResponse(answer.getAnswerNum(), answer.getAnswerType(), answer.getData()));
+        }
+
+        return new QuestionSpecificResponse(question.getId(), question.getQuestionType(), question.getQuestionNum(), question.getMaxValue(), question.getMinValue(), question.getTitle(), answerResponses);
+    }
+
     @Transactional
     public void deleteSurvey(Long surveyId, Long loginId) {
 
