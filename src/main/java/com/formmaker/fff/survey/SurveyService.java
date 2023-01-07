@@ -10,6 +10,7 @@ import com.formmaker.fff.question.Question;
 import com.formmaker.fff.question.QuestionRepository;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
+import com.formmaker.fff.survey.response.SurveyMyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -72,16 +74,25 @@ public class SurveyService {
         }
 
 
-        List<Question> questions = questionRepository.findBySurveyId(surveyId);
+        List<Question> questions =  survey.getQuestionList();
         for ( Question q : questions) {
 
-            List<Answer> answers = answerRepository.findAllByQuestionId(q.getId());
-            answerRepository.deleteAll(answers);
+            answerRepository.deleteAllByQuestionId(q.getId());
 
-            List<Question> question = questionRepository.findAllBySurveyId(surveyId);
-            questionRepository.deleteAll(question);
+            questionRepository.deleteAllBySurveyId(surveyId);
 
         }
         surveyRepository.deleteById(surveyId);
+    }
+
+    public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, boolean isAsc, int myPage, int size) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy.getColumn());
+        Pageable pageable = PageRequest.of(myPage, size, sort);
+        Page<Survey> surveyPage = surveyRepository.findByUserId(userId,pageable);
+        Page<SurveyMyResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getCreatedAt()));
+
+        return surveyDtoPage;
+
     }
 }
