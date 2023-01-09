@@ -8,6 +8,7 @@ import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.Question;
 import com.formmaker.fff.question.QuestionRepository;
+import com.formmaker.fff.reply.ReplyRepository;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.response.AnswerResponse;
 import com.formmaker.fff.survey.response.QuestionSpecificResponse;
@@ -22,9 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
@@ -34,6 +35,7 @@ public class SurveyService {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final ReplyRepository replyRepository;
 
     @Transactional
     public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
