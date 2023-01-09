@@ -10,6 +10,8 @@ import com.formmaker.fff.survey.request.ReplyRequest;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.response.QuestionSpecificResponse;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
+import com.formmaker.fff.common.security.UserDetailsImpl;
+import com.formmaker.fff.survey.response.SurveyMyResponse;
 import com.formmaker.fff.survey.response.SurveySpecificResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -66,9 +68,19 @@ public class SurveyController {
 
     /*설문삭제*/
     @DeleteMapping("/{surveyId}")
-    public ResponseEntity<ResponseMessage> deleteSurvey(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long surveyId){
+    public ResponseEntity<ResponseMessage> deleteSurvey(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long surveyId) {
         Long loginId = userDetails.getUserId();
-        surveyService.deleteSurvey(surveyId,loginId);
-        return new ResponseEntity<>(new ResponseMessage<>("설문삭제 성공",200,null),HttpStatus.OK);
+        surveyService.deleteSurvey(surveyId, loginId);
+        return new ResponseEntity<>(new ResponseMessage<>("설문삭제 성공", 200, null), HttpStatus.OK);
+    }
+
+    /*마이페이지 설문 불러오기*/
+    @GetMapping("/mypage")
+    public ResponseEntity<ResponseMessage> getMySurvey(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam SortTypeEnum sortBy, @RequestParam boolean isAsc, @RequestParam int page, @RequestParam int size) {
+        Long userId = userDetails.getUserId();
+        Page<SurveyMyResponse> surveyMyResponseList = surveyService.getMySurveyList(userId, sortBy, isAsc, page - 1, size);
+        DataPageResponse<SurveyMyResponse> response = new DataPageResponse<>(surveyMyResponseList);
+        ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
+        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
 }

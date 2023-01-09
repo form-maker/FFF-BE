@@ -8,12 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    private final OauthService oauthService;
 
     @PostMapping("/signup")
     public ResponseEntity<ResponseMessage> signup(@RequestBody UserSignupRequest userSignupRequest){
@@ -45,6 +42,14 @@ public class UserController {
     public ResponseEntity<ResponseMessage> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
         userService.login(userLoginRequest, response);
         return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/oauth/kakao")
+    public ResponseEntity<ResponseMessage> kakaoLogin(@RequestParam String code, HttpServletResponse response){
+        String jwtToken = oauthService.kakaoLogin(code);
+        response.addHeader("Authorization", jwtToken);
+        return new ResponseEntity<>(new ResponseMessage("로그인 되었습니다.", 200, null), HttpStatus.OK);
     }
 
 }

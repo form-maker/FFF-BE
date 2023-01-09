@@ -23,7 +23,8 @@ public enum ErrorCode {
     /*설문 에러*/
     NOT_FOUND_SURVEY("존재하지 않는 설문입니다.",400),
     NOT_MATCH_USER("권한이 없는 설문입니다.",400),
-    NOT_FOUND_QUESTION("질문지가 존재하지 않습니다.",400);
+    NOT_FOUND_QUESTION("질문지가 존재하지 않습니다.",400),
+    SERVER_ERROR("서버에러입니다. 서버관리자에게 문의주세요", 500);
 
 
     private final String msg;

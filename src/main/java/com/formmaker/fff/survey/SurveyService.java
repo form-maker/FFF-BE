@@ -13,6 +13,7 @@ import com.formmaker.fff.survey.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.response.AnswerResponse;
 import com.formmaker.fff.survey.response.QuestionSpecificResponse;
 import com.formmaker.fff.survey.response.SurveyMainResponse;
+import com.formmaker.fff.survey.response.SurveyMyResponse;
 import com.formmaker.fff.survey.response.SurveySpecificResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -116,5 +117,16 @@ public class SurveyService {
 
         }
         surveyRepository.deleteById(surveyId);
+    }
+
+    public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, boolean isAsc, int myPage, int size) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy.getColumn());
+        Pageable pageable = PageRequest.of(myPage, size, sort);
+        Page<Survey> surveyPage = surveyRepository.findByUserId(userId,pageable);
+        Page<SurveyMyResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getCreatedAt()));
+
+        return surveyDtoPage;
+
     }
 }
