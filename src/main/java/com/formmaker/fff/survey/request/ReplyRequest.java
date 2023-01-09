@@ -1,7 +1,6 @@
 package com.formmaker.fff.survey.request;
 
 import com.formmaker.fff.common.type.QuestionTypeEnum;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public class ReplyRequest {
     private QuestionTypeEnum questionType;
     private Integer questionNum;
     private Integer choice;
-    private Integer value;
+    private Integer selectValue;
     private String descriptive;
     private List<Integer> rank;
 }

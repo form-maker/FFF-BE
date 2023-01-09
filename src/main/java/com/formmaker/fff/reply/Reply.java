@@ -1,7 +1,6 @@
 package com.formmaker.fff.reply;
 
 import com.formmaker.fff.common.type.QuestionTypeEnum;
-import com.formmaker.fff.survey.request.ReplyRequest;
 import com.formmaker.fff.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,16 +36,16 @@ public class Reply {
     @JoinColumn(name = "usersId")
     private User user;
 
-    public Reply(ReplyRequest replyRequest, User user) {
-        this.questionType = replyRequest.getQuestionType();
-        this.choice = replyRequest.getChoice();
-        this.selectValue = replyRequest.getValue();
-        this.descriptive = replyRequest.getDescriptive();
-        this.rank = toJsonForm(replyRequest.getRank());
+    public Reply(QuestionTypeEnum questionType, Integer choice, Integer selectValue, String descriptive, List<Integer> rank, Long questionId, Integer questionNum, User user) {
+        this.questionType = questionType;
+        this.choice = choice;
+        this.selectValue = selectValue;
+        this.descriptive = descriptive;
+        this.rank = toJsonForm(rank);
         // isDone 의 역할로 보고, 끝나지 않은 설문이다 라는 의미로 false 를 줌
         this.status = false;
-        this.questionId = replyRequest.getQuestionId();
-        this.questionNum = replyRequest.getQuestionNum();
+        this.questionId = questionId;
+        this.questionNum = questionNum;
         this.user = user;
     }
 
