@@ -4,5 +4,4 @@ public enum StatusTypeEnum {
     NOT_START,
     IN_PROCEED,
     DONE
-
 }
