@@ -1,8 +1,7 @@
 package com.formmaker.fff.user.request;
 
 
-import com.formmaker.fff.user.User;
-import lombok.Builder;
+import com.formmaker.fff.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

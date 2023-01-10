@@ -12,6 +12,7 @@ public class SurveyCreateRequest {
     private LocalDate deadLine;
 
     private Integer achievement;
+    private Integer participant;
     private String summary;
     private List<QuestionCreateRequest> questionList;
 }

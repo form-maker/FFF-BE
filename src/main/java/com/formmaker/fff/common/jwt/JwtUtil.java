@@ -1,7 +1,7 @@
 package com.formmaker.fff.common.jwt;
 
 import com.formmaker.fff.common.jwt.exception.CustomSecurityException;
-import com.formmaker.fff.common.security.UserDetailsServiceImpl;
+import com.formmaker.fff.common.response.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

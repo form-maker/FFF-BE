@@ -1,22 +1,22 @@
 package com.formmaker.fff.survey.response;
 
-
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class SurveyMyResponse {
-
+public class SurveyReadResponse {
     private Long surveyId;
     private String title;
+    private String summary;
     private LocalDate deadLine;
-    private Integer dDay;
-    private Integer participant;
     private LocalDateTime createAt;
+    private Integer achievement;
+    private boolean isDone;
+    private List<Long> questions = new ArrayList<>();
 }
-

@@ -1,11 +1,9 @@
 package com.formmaker.fff.survey.dto;
 
-import com.formmaker.fff.question.Question;
-import com.formmaker.fff.survey.Survey;
-import com.formmaker.fff.survey.SurveyRepository;
+import com.formmaker.fff.question.entity.Question;
+import com.formmaker.fff.survey.entity.Survey;
 import lombok.Getter;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +15,8 @@ public class SurveyDto {
     private String summary;
     private LocalDate deadLine;
     private Integer achievement;
+
+    private Integer participant;
     private boolean isDone;
     private Long userId;
     private List<Question> questionList = new ArrayList<>();
