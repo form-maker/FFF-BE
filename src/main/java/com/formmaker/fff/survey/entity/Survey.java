@@ -1,6 +1,7 @@
 package com.formmaker.fff.survey.entity;
 
 import com.formmaker.fff.common.TimeStamped;
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.question.entity.Question;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +34,9 @@ public class Survey extends TimeStamped {
     @Column(nullable = false)
     private Integer achievement;
 
-    private boolean isDone;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private StatusTypeEnum status;
 
 
     @Column(nullable = false)
@@ -55,6 +58,7 @@ public class Survey extends TimeStamped {
         this.title = title;
         this.summary = summary;
         this.deadLine = deadLine;
+        this.status = StatusTypeEnum.NOT_START;
         this.achievement = achievement;
         this.userId = userId;
         this.questionList = questionList;

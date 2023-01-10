@@ -1,5 +1,6 @@
 package com.formmaker.fff.survey.response;
 
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,6 +18,6 @@ public class SurveyReadResponse {
     private LocalDate deadLine;
     private LocalDateTime createAt;
     private Integer achievement;
-    private boolean isDone;
+    private StatusTypeEnum status;
     private List<Long> questions = new ArrayList<>();
 }

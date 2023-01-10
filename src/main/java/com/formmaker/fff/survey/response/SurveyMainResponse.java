@@ -12,6 +12,9 @@ public class SurveyMainResponse {
 
     private Long surveyId;
     private String title;
+    private String summery;
     private LocalDate deadLine;
-    private LocalDateTime createAt;
+    private Integer dDay;
+    private Integer participant;
+    private LocalDateTime createdAt;
 }

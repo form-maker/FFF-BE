@@ -8,9 +8,7 @@ import java.util.List;
 @Getter
 public class SurveyCreateRequest {
     private String title;
-
     private LocalDate deadLine;
-
     private Integer achievement;
     private Integer participant;
     private String summary;

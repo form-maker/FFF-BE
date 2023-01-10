@@ -2,6 +2,7 @@ package com.formmaker.fff.survey.response;
 
 
 
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,9 +15,14 @@ public class SurveyMyResponse {
 
     private Long surveyId;
     private String title;
+    private String summary;
     private LocalDate deadLine;
     private Integer dDay;
+
+    private Integer achievement;
     private Integer participant;
-    private LocalDateTime createAt;
+    private StatusTypeEnum status;
+    private LocalDateTime createdAt;
+
 }
 
