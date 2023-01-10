@@ -15,10 +15,13 @@ public class SurveyMyResponse {
 
     private Long surveyId;
     private String title;
+    private String summary;
     private LocalDate deadLine;
     private Integer dDay;
+    private LocalDateTime createdAt;
+    private Integer achievement;
     private Integer participant;
     private StatusTypeEnum status;
-    private LocalDateTime createAt;
+
 }
 
