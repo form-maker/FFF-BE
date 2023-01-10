@@ -1,8 +1,8 @@
 package com.formmaker.fff.common.type;
 
 public enum AnswerTypeEnum {
-    Text("Text"),
-    Image("Image");
+    TEXT("Text"),
+    IMAGE("Image");
 
     private final String type;
 
