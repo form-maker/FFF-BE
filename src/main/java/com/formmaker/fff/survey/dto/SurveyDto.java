@@ -1,5 +1,6 @@
 package com.formmaker.fff.survey.dto;
 
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.survey.entity.Survey;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class SurveyDto {
     private Integer achievement;
 
     private Integer participant;
-    private boolean isDone;
+    private StatusTypeEnum status;
     private Long userId;
     private List<Question> questionList = new ArrayList<>();
 
@@ -27,7 +28,7 @@ public class SurveyDto {
         this.summary = survey.getSummary();
         this.deadLine = survey.getDeadLine();
         this.achievement = survey.getAchievement();
-        this.isDone = survey.isDone();
+        this.status = survey.getStatus();
         this.userId = survey.getUserId();
         this.questionList = survey.getQuestionList();
     }

@@ -35,7 +35,6 @@ public class SurveyService {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
-    private final ReplyRepository replyRepository;
 
     @Transactional
     public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
@@ -50,7 +49,6 @@ public class SurveyService {
                         .questionList(questionRepository.saveAll(
                                 requestDto.getQuestionList().stream().map(questionDto -> Question.builder()
                                         .title(questionDto.getQuestionTitle())
-
                                         .questionType(questionDto.getQuestionType())
                                         .questionNum(questionDto.getQuestionNum())
                                         .minValue(questionDto.getMinValue())
@@ -84,7 +82,7 @@ public class SurveyService {
         }
 
 
-        return new SurveyReadResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getCreatedAt(), survey.getAchievement(), survey.isDone(), questionResponses);
+        return new SurveyReadResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getCreatedAt(), survey.getAchievement(), survey.getStatus(), questionResponses);
     }
 
 
@@ -113,7 +111,7 @@ public class SurveyService {
         Sort sort = Sort.by(direction, sortBy.getColumn());
         Pageable pageable = PageRequest.of(myPage, size, sort);
         Page<Survey> surveyPage = surveyRepository.findByUserId(userId,pageable);
-        Page<SurveyMyResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getDDay(), survey.getParticipant(), survey.getCreatedAt()));
+        Page<SurveyMyResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getDDay(), survey.getParticipant(), survey.getStatus(), survey.getCreatedAt()));
 
         return surveyDtoPage;
 
