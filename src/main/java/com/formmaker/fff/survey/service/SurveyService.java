@@ -65,7 +65,7 @@ public class SurveyService {
         Sort sort = Sort.by(direction, sortBy.getColumn());
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Survey> surveyPage = surveyRepository.findAll(pageable);
-        Page<SurveyMainResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getDDay(), survey.getCreatedAt()));
+        Page<SurveyMainResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getDDay(), survey.getParticipant(), survey.getCreatedAt()));
 
         return surveyDtoPage;
     }
@@ -111,7 +111,7 @@ public class SurveyService {
         Sort sort = Sort.by(direction, sortBy.getColumn());
         Pageable pageable = PageRequest.of(myPage, size, sort);
         Page<Survey> surveyPage = surveyRepository.findByUserId(userId,pageable);
-        Page<SurveyMyResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getDeadLine(), survey.getDDay(), survey.getParticipant(), survey.getStatus(), survey.getCreatedAt()));
+        Page<SurveyMyResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getDDay(), survey.getParticipant(), survey.getAchievement(), survey.getStatus(), survey.getCreatedAt()));
 
         return surveyDtoPage;
 
