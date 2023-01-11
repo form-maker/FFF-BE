@@ -1,6 +1,7 @@
 package com.formmaker.fff.user.controller;
 
 
+import com.formmaker.fff.common.jwt.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.user.service.GoogleService;
@@ -23,6 +24,7 @@ public class UserController {
     private final UserService userService;
     private final GoogleService googleService;
     private final KakaoService kakaoService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<ResponseMessage> signup(@RequestBody UserSignupRequest userSignupRequest){
@@ -46,6 +48,12 @@ public class UserController {
     public ResponseEntity<ResponseMessage> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
         userService.login(userLoginRequest, response);
         return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseMessage> checkLogin(HttpServletRequest request){
+        String token = jwtUtil.resolveToken(request, "Authorization");
+        return new ResponseEntity<>(new ResponseMessage("로그인 정보 반환", 200, jwtUtil.validateToken(token)), HttpStatus.OK);
     }
 
 

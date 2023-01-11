@@ -1,6 +1,5 @@
 package com.formmaker.fff.common.jwt;
 
-import com.formmaker.fff.common.jwt.exception.CustomSecurityException;
 import com.formmaker.fff.common.response.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -9,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,38 +75,27 @@ public class JwtUtil {
     }
 
     /* Access 토큰 검증 */
-    public void validateToken(String accessToken, HttpServletRequest request, HttpServletResponse response) {
+    public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
-        } catch (SecurityException | MalformedJwtException e) {      /* 유효하지 않는 Access JWT 서명 */
-            throw new CustomSecurityException(INVALID_TOKEN);
-        } catch (ExpiredJwtException e) {      /* Access JWT 만료 */
-            throw new CustomSecurityException(EXPIRED_TOKEN);
-        } catch (UnsupportedJwtException e) {      /* 지원되지 않는 Access JWT */
-            throw new CustomSecurityException(UNSUPPORTED_TOKEN);
-        } catch (IllegalArgumentException e) {      /* Access JWT claims가 비어 있을 경우 */
-            throw new CustomSecurityException(EMPTY_TOKEN);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (SecurityException | MalformedJwtException e) {
+            log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT token, 만료된 JWT token 입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+        } catch (SignatureException e) {
+            log.info("신뢰할 수 없는 JWT 토큰입니다.");
         }
+        return false;
     }
 
     /* 토큰에서 사용자 정보 가져오기 */
-    public Claims getUserInfoFromHttpServletRequest(HttpServletRequest request) throws CustomSecurityException {
-        /* Request에서 Token 가져오기 */
-        String token = resolveToken(request, AUTHORIZATION_HEADER);
-
-        /* Token이 있는지 확인 */
-        if (token == null) {
-            // Handler 대신에 Handler Filter를 사용하므로, CustomException 재정의
-            throw new CustomSecurityException(NOT_FOUND_TOKEN);
-        }
-
-        try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        }
-        catch(ExpiredJwtException ex){
-            /* JWT 만료로 인한 Exception 발생 시 Exception에서 Claim 그냥 빼옴 */
-            return ex.getClaims();
-        }
+    public Claims getUserInfo(String token){
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
     /* 인증 객체 생성 */
     public Authentication createAuthentication(String memberName) {
