@@ -1,7 +1,9 @@
 package com.formmaker.fff.user.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.formmaker.fff.common.response.ResponseMessage;
+import com.formmaker.fff.user.service.GoogleService;
 import com.formmaker.fff.user.service.UserService;
 import com.formmaker.fff.user.request.UserLoginRequest;
 import com.formmaker.fff.user.request.UserSignupRequest;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -18,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
+    private final GoogleService googleService;
     private final KakaoService kakaoService;
 
     @PostMapping("/signup")
@@ -51,6 +54,18 @@ public class UserController {
         String jwtToken = kakaoService.kakaoLogin(code);
         response.addHeader("Authorization", jwtToken);
         return new ResponseEntity<>(new ResponseMessage("로그인 되었습니다.", 200, null), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/oauth/getGoogleURI")
+    public @ResponseBody String getGoogleUrl(HttpServletRequest request) throws Exception{
+        return googleService.getGoogleUrl();
+    }
+
+    @GetMapping("/oauth/google")
+    public ResponseEntity<ResponseMessage> googleLogin(@RequestParam String code, HttpServletResponse response)
+            throws JsonProcessingException {
+
+        return googleService.googleLogin(code, response);
     }
 
 }

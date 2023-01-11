@@ -2,6 +2,7 @@ package com.formmaker.fff.user.entity;
 
 
 import com.formmaker.fff.common.type.SocialTypeEnum;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,11 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Entity
 @Table(name = "users")
+@Builder
 public class User {
 
     @Id
@@ -44,8 +47,9 @@ public class User {
         this.email = email;
     }
 
-    public void socialUpdate(SocialTypeEnum type){
+    public User socialUpdate(SocialTypeEnum type){
         this.socialType = type;
+        return this;
     }
 
     public User(String loginId, String username, String email, SocialTypeEnum socialType) {

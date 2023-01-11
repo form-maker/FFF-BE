@@ -1,7 +1,9 @@
 package com.formmaker.fff.common.jwt;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.formmaker.fff.common.jwt.exception.CustomSecurityException;
+import com.formmaker.fff.common.response.ResponseMessage;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +53,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.setContext(context);
     }
-
+    public void jwtExceptionHandler(HttpServletResponse response, String msg, int statusCode) {
+        //클라이언트로 반환하는 부분.
+        response.setStatus(statusCode);
+        response.setContentType("application/json");
+        try {
+            String json = new ObjectMapper().writeValueAsString(new ResponseMessage<String>(msg, statusCode, "error"));
+            response.getWriter().write(json);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
 
 
 }
