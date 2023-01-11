@@ -36,8 +36,8 @@ public class SurveyController {
     }
 
     @GetMapping("/main")
-    public ResponseEntity<ResponseMessage> getMainSurveyList(SortTypeEnum sortBy, boolean isAsc, int page, int size) {
-        Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, isAsc, page - 1, size);
+    public ResponseEntity<ResponseMessage> getMainSurveyList(SortTypeEnum sortBy, int page, int size) {
+        Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, page - 1, size);
         DataPageResponse<SurveyMainResponse> response = new DataPageResponse<>(surveyResponseList);
         ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
@@ -61,9 +61,9 @@ public class SurveyController {
 
     /*마이페이지 설문 불러오기*/
     @GetMapping("/my-page")
-    public ResponseEntity<ResponseMessage> getMySurveyList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam SortTypeEnum sortBy, @RequestParam boolean isAsc, @RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<ResponseMessage> getMySurveyList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam SortTypeEnum sortBy, @RequestParam int page, @RequestParam int size) {
         Long userId = userDetails.getUserId();
-        Page<SurveyMyResponse> surveyMyResponseList = surveyService.getMySurveyList(userId, sortBy, isAsc, page - 1, size);
+        Page<SurveyMyResponse> surveyMyResponseList = surveyService.getMySurveyList(userId, sortBy, page - 1, size);
         DataPageResponse<SurveyMyResponse> response = new DataPageResponse<>(surveyMyResponseList);
         ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));

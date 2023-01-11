@@ -60,9 +60,9 @@ public class SurveyService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SurveyMainResponse> getSurveyList(@RequestParam SortTypeEnum sortBy, boolean isAsc, int page, int size) {
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy.getColumn());
+    public Page<SurveyMainResponse> getSurveyList(@RequestParam SortTypeEnum sortBy, int page, int size) {
+
+        Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Survey> surveyPage = surveyRepository.findAll(pageable);
 
@@ -105,9 +105,8 @@ public class SurveyService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, boolean isAsc, int myPage, int size) {
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy.getColumn());
+    public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, int myPage, int size) {
+        Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(myPage, size, sort);
         Page<Survey> surveyPage = surveyRepository.findByUserId(userId, pageable);
 
