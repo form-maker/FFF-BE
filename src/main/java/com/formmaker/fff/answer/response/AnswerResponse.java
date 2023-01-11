@@ -9,5 +9,5 @@ import lombok.Getter;
 public class AnswerResponse {
     private Integer answerNum;
     private AnswerTypeEnum answerType;
-    private String data;
+    private String answerValue;
 }

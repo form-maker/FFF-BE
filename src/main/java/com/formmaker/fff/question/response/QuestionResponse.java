@@ -13,9 +13,9 @@ import java.util.List;
 public class QuestionResponse {
     private Long questionId;
     private QuestionTypeEnum questionType;
+    private String summary;
     private Integer questionNum;
-    private Integer maxValue;
-    private Integer minValue;
+    private Integer volume;
     private String questionTitle;
     private List<AnswerResponse> answerResponses = new ArrayList<>();
 }

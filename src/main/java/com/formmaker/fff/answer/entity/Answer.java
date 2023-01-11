@@ -24,14 +24,14 @@ public class Answer {
     private AnswerTypeEnum answerType;
 
     @Column(nullable = false)
-    private String data;
+    private String answerValue;
 
     private Long questionId;
 
     @Builder
-    public Answer(Integer answerNum, AnswerTypeEnum answerType, String data) {
+    public Answer(Integer answerNum, AnswerTypeEnum answerType, String answerValue) {
         this.answerNum = answerNum;
         this.answerType = answerType;
-        this.data = data;
+        this.answerValue = answerValue;
     }
 }
