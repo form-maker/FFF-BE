@@ -66,7 +66,7 @@ public class SurveyService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Survey> surveyPage = surveyRepository.findAll(pageable);
 
-        return surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getEndedAt(), survey.getDDay(), survey.getParticipant(), survey.getCreatedAt()));
+        return surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getStartedAt(), survey.getEndedAt(), survey.getDDay(), survey.getParticipant(), survey.getCreatedAt()));
     }
 
     @Transactional(readOnly = true)
