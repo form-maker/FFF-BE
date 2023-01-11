@@ -56,11 +56,7 @@ public class UserController {
         return new ResponseEntity<>(new ResponseMessage("로그인 되었습니다.", 200, null), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/oauth/getGoogleURI")
-    public @ResponseBody String getGoogleUrl(HttpServletRequest request) throws Exception{
-        return googleService.getGoogleUrl();
-    }
-
+    
     @GetMapping("/oauth/google")
     public ResponseEntity<ResponseMessage> googleLogin(@RequestParam String code, HttpServletResponse response)
             throws JsonProcessingException {
