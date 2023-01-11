@@ -23,6 +23,8 @@ public class Question {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private QuestionTypeEnum questionType;
+    
+    private String summary;
 
     @Column(nullable = false)
     private String title;
@@ -30,9 +32,7 @@ public class Question {
     @Column(nullable = false)
     private Integer questionNum;
 
-    private Integer minValue;
-
-    private Integer maxValue;
+    private Integer volume;
 
     private Long surveyId;
 
@@ -45,12 +45,12 @@ public class Question {
     private List<Answer> answerList = new ArrayList<>();
 
     @Builder
-    public Question(QuestionTypeEnum questionType, String title, Integer questionNum, Integer minValue, Integer maxValue, List<Answer> answerList) {
+    public Question(QuestionTypeEnum questionType, String summary, String title, Integer questionNum, Integer volume, List<Answer> answerList) {
         this.questionType = questionType;
+        this.summary = summary;
         this.title = title;
         this.questionNum = questionNum;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
+        this.volume = volume;
         this.answerList = answerList;
     }
 }

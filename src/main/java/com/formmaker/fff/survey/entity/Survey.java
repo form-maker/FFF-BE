@@ -11,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,9 +62,10 @@ public class Survey extends TimeStamped {
         this.startedAt = startedAt;
         this.endedAt = endedAt;
         this.status = startedAt.isBefore(LocalDate.now()) ? StatusTypeEnum.NOT_START : StatusTypeEnum.IN_PROCEED;
+        this.participant = 0;
         this.achievement = achievement;
         this.userId = userId;
         this.questionList = questionList;
-        this.dDay = Period.between(LocalDate.now(), endedAt).getDays();
+        this.dDay = (int)ChronoUnit.DAYS.between(LocalDate.now(), endedAt);
     }
 }

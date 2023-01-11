@@ -48,15 +48,15 @@ public class SurveyService {
                         .questionList(questionRepository.saveAll(
                                 requestDto.getQuestionList().stream().map(questionDto -> Question.builder()
                                         .title(questionDto.getQuestionTitle())
+                                        .summary(questionDto.getSummary())
                                         .questionType(questionDto.getQuestionType())
                                         .questionNum(questionDto.getQuestionNum())
-                                        .minValue(questionDto.getMinValue())
-                                        .maxValue(questionDto.getMaxValue())
+                                        .volume(questionDto.getVolume())
                                         .answerList(answerRepository.saveAll(
                                                 questionDto.getAnswerList().stream().map(answerDto -> Answer.builder()
                                                         .answerNum(answerDto.getAnswerNum())
                                                         .answerType(answerDto.getAnswerType())
-                                                        .data(answerDto.getData()).build()).toList())).build()).toList())).build());
+                                                        .answerValue(answerDto.getAnswerValue()).build()).toList())).build()).toList())).build());
     }
 
     @Transactional(readOnly = true)
