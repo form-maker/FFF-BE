@@ -4,8 +4,8 @@ import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.jwt.JwtUtil;
 import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
-import com.formmaker.fff.user.request.UserLoginRequest;
-import com.formmaker.fff.user.request.UserSignupRequest;
+import com.formmaker.fff.user.dto.request.UserLoginRequest;
+import com.formmaker.fff.user.dto.request.UserSignupRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,6 @@ public class UserService {
     /* 아이디,이메일,유저네임 중복확인 */
 
     public void checkLoginId(String loginId){
-
         User user = userRepository.findByLoginId(loginId).orElse(null);
         if(user != null){
             throw new CustomException(DUPLICATE_ID);

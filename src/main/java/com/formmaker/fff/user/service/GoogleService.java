@@ -8,7 +8,7 @@ import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.type.SocialTypeEnum;
 import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
-import com.formmaker.fff.user.request.SocialUserInfoDto;
+import com.formmaker.fff.user.dto.request.SocialUserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

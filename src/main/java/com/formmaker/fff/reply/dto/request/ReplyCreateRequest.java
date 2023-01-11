@@ -1,4 +1,4 @@
-package com.formmaker.fff.reply.request;
+package com.formmaker.fff.reply.dto.request;
 
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import lombok.Getter;

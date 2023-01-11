@@ -6,14 +6,16 @@ import com.formmaker.fff.answer.repositoy.AnswerRepository;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.SortTypeEnum;
+import com.formmaker.fff.question.dto.QuestionDto;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
+import com.formmaker.fff.survey.dto.SurveyDto;
+import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
+import com.formmaker.fff.survey.dto.response.SurveyMainResponse;
+import com.formmaker.fff.survey.dto.response.SurveyMyResponse;
+import com.formmaker.fff.survey.dto.response.SurveyReadResponse;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
-import com.formmaker.fff.survey.request.SurveyCreateRequest;
-import com.formmaker.fff.survey.response.SurveyMainResponse;
-import com.formmaker.fff.survey.response.SurveyMyResponse;
-import com.formmaker.fff.survey.response.SurveyReadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -71,36 +73,47 @@ public class SurveyService {
 
     @Transactional(readOnly = true)
     public SurveyReadResponse getSurvey(Long surveyId) {
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
-                () -> new CustomException(NOT_FOUND_SURVEY)
+        SurveyDto surveyDto = new SurveyDto(
+                surveyRepository.findById(surveyId).orElseThrow(
+                        () -> new CustomException(NOT_FOUND_SURVEY))
         );
 
         List<Long> questionResponses = new ArrayList<>();
-        for (Question question : survey.getQuestionList()) {
-            questionResponses.add(question.getId());
+        for (QuestionDto questionDto : surveyDto.getQuestionList()) {
+            questionResponses.add(questionDto.getId());
         }
 
-        return new SurveyReadResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getEndedAt(), survey.getCreatedAt(), survey.getAchievement(), survey.getStatus(), questionResponses);
+        return SurveyReadResponse.builder()
+                .surveyId(surveyDto.getId())
+                .title(surveyDto.getTitle())
+                .summary(surveyDto.getSummary())
+                .startedAt(surveyDto.getStartedAt())
+                .endedAt(surveyDto.getEndedAt())
+                .createAt(surveyDto.getCreatedAt())
+                .achievement(surveyDto.getAchievement())
+                .status(surveyDto.getStatus())
+                .questions(questionResponses)
+                .build();
     }
-
 
     @Transactional
     public void deleteSurvey(Long surveyId, Long loginId) {
+        SurveyDto surveyDto = new SurveyDto(
+                surveyRepository.findById(surveyId).orElseThrow(
+                        () -> new CustomException(NOT_FOUND_SURVEY))
+        );
 
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_SURVEY));
-
-        if (!survey.getUserId().equals(loginId)) {
+        if (!surveyDto.getUserId().equals(loginId)) {
             throw new CustomException((ErrorCode.NOT_MATCH_USER));
         }
-        List<Question> questions = survey.getQuestionList();
-        for (Question q : questions) {
 
-            answerRepository.deleteAllByQuestionId(q.getId());
+        List<QuestionDto> questionDtoList = surveyDto.getQuestionList();
 
+        for (QuestionDto questionDto : questionDtoList) {
+            answerRepository.deleteAllByQuestionId(questionDto.getId());
             questionRepository.deleteAllBySurveyId(surveyId);
-
         }
+
         surveyRepository.deleteById(surveyId);
     }
 
@@ -108,7 +121,7 @@ public class SurveyService {
     public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, int myPage, int size) {
         Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(myPage, size, sort);
-        Page<Survey> surveyPage = surveyRepository.findByUserId(userId, pageable);
+        Page<SurveyDto> surveyPage = surveyRepository.findByUserId(userId, pageable);
 
         return surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getEndedAt(), survey.getDDay(), survey.getParticipant(), survey.getAchievement(), survey.getStatus(), survey.getCreatedAt()));
     }
