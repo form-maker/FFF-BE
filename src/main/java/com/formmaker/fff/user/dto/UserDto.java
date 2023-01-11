@@ -2,7 +2,9 @@ package com.formmaker.fff.user.dto;
 
 import com.formmaker.fff.common.type.SocialTypeEnum;
 import com.formmaker.fff.user.entity.User;
+import lombok.Getter;
 
+@Getter
 public class UserDto {
     private Long id;
     private String loginId;

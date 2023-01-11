@@ -1,12 +1,11 @@
 package com.formmaker.fff.survey.repository;
 
 
-import com.formmaker.fff.survey.dto.SurveyDto;
 import com.formmaker.fff.survey.entity.Survey;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
-    Page<SurveyDto> findByUserId(Long userId, Pageable pageable);
+    Page<Survey> findByUserId(Long userId, Pageable pageable);
 }

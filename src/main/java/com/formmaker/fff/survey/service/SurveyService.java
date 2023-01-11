@@ -121,7 +121,7 @@ public class SurveyService {
     public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, int myPage, int size) {
         Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(myPage, size, sort);
-        Page<SurveyDto> surveyPage = surveyRepository.findByUserId(userId, pageable);
+        Page<Survey> surveyPage = surveyRepository.findByUserId(userId, pageable);
 
         return surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getEndedAt(), survey.getDDay(), survey.getParticipant(), survey.getAchievement(), survey.getStatus(), survey.getCreatedAt()));
     }
