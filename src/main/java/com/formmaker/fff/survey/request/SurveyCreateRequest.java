@@ -1,4 +1,5 @@
 package com.formmaker.fff.survey.request;
+
 import com.formmaker.fff.question.request.QuestionCreateRequest;
 import lombok.Getter;
 
@@ -8,9 +9,9 @@ import java.util.List;
 @Getter
 public class SurveyCreateRequest {
     private String title;
-    private LocalDate deadLine;
+    private LocalDate startedAt;
+    private LocalDate endedAt;
     private Integer achievement;
-    private Integer participant;
     private String summary;
     private List<QuestionCreateRequest> questionList;
 }

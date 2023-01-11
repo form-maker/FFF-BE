@@ -7,5 +7,5 @@ import lombok.Getter;
 public class AnswerCreateRequest {
     private Integer answerNum;
     private AnswerTypeEnum answerType;
-    private String data;
+    private String answerValue;
 }

@@ -31,7 +31,7 @@ public class SurveyController {
         Long userId = userDetails.getUserId();
         surveyService.createSurvey(requestDto, userId);
         ResponseMessage responseMessage = new ResponseMessage<>("설문 생성 성공", 200);
-        return new ResponseEntity<ResponseMessage>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
+        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
 
     }
 

@@ -5,7 +5,6 @@ import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.answer.response.AnswerResponse;
 import com.formmaker.fff.common.exception.CustomException;
 
-import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.question.response.QuestionResponse;
@@ -26,17 +25,17 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
 
     @Transactional(readOnly = true)
-    public QuestionResponse getQuestion(Long surveyId, Long questionId) {
+    public QuestionResponse getQuestion(Long questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(
                 ()-> new CustomException(NOT_FOUND_QUESTION)
         );
         List<Answer> answers = question.getAnswerList();
         List<AnswerResponse> answerResponses = new ArrayList<>();
         for (Answer answer : answers) {
-            answerResponses.add(new AnswerResponse(answer.getAnswerNum(), answer.getAnswerType(), answer.getData()));
+            answerResponses.add(new AnswerResponse(answer.getAnswerNum(), answer.getAnswerType(), answer.getAnswerValue()));
         }
 
-        return new QuestionResponse(question.getId(), question.getQuestionType(), question.getQuestionNum(), question.getMaxValue(), question.getMinValue(), question.getTitle(), answerResponses);
+        return new QuestionResponse(question.getId(), question.getQuestionType(), question.getSummary(), question.getQuestionNum(), question.getVolume(), question.getTitle(), answerResponses);
     }
 
 }

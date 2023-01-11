@@ -19,8 +19,8 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @GetMapping
-    public ResponseEntity<ResponseMessage> getQuestion(@RequestParam Long surveyId, @RequestParam Long questionId) {
-        QuestionResponse questionSpecificResponse = questionService.getQuestion(surveyId, questionId);
+    public ResponseEntity<ResponseMessage> getQuestion(@RequestParam Long questionId) {
+        QuestionResponse questionSpecificResponse = questionService.getQuestion(questionId);
         ResponseMessage responseMessage = new ResponseMessage<>("문항 조회 성공", 200, questionSpecificResponse);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }

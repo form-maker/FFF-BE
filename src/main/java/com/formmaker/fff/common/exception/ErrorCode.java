@@ -24,7 +24,11 @@ public enum ErrorCode {
     NOT_FOUND_SURVEY("존재하지 않는 설문입니다.",400),
     NOT_MATCH_USER("권한이 없는 설문입니다.",400),
     NOT_FOUND_QUESTION("질문지가 존재하지 않습니다.",400),
-    SERVER_ERROR("서버에러입니다. 서버관리자에게 문의주세요", 500);
+    SERVER_ERROR("서버에러입니다. 서버관리자에게 문의주세요", 500),
+
+    /*응답 에러*/
+    INVALID_QUESTION_TYPE("질문 타입과 일치하지 않는 응답입니다.", 400),
+    INVALID_QUESTION_NUM("질문 번호와 일치하지 않는 응답입니다.", 400);
 
 
     private final String msg;

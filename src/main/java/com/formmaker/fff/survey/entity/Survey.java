@@ -11,6 +11,7 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,22 +30,23 @@ public class Survey extends TimeStamped {
     private String summary;
 
     @Column(nullable = false)
-    private LocalDate deadLine;
+    private LocalDate startedAt;
+
+    @Column(nullable = false)
+    private LocalDate endedAt;
 
     @Column(nullable = false)
     private Integer achievement;
+
+    @ColumnDefault("0")
+    private Integer participant;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private StatusTypeEnum status;
 
-
     @Column(nullable = false)
     private Long userId;
-
-    @Column(nullable = false)
-    @ColumnDefault("0")
-    private Integer participant;
 
     @Column(nullable = false)
     private Integer dDay;
@@ -54,16 +56,16 @@ public class Survey extends TimeStamped {
     private List<Question> questionList = new ArrayList<>();
 
     @Builder
-    public Survey(String title, String summary, LocalDate deadLine, Integer achievement, Long userId, List<Question> questionList, Integer participant) {
+    public Survey(String title, String summary, LocalDate startedAt, LocalDate endedAt, Integer achievement, Long userId, List<Question> questionList) {
         this.title = title;
         this.summary = summary;
-        this.deadLine = deadLine;
-        this.status = StatusTypeEnum.NOT_START;
+        this.startedAt = startedAt;
+        this.endedAt = endedAt;
+        this.status = startedAt.isBefore(LocalDate.now()) ? StatusTypeEnum.NOT_START : StatusTypeEnum.IN_PROCEED;
+        this.participant = 0;
         this.achievement = achievement;
         this.userId = userId;
         this.questionList = questionList;
-        this.dDay = Period.between(LocalDate.now(), deadLine).getDays();
-        this.participant = participant;
+        this.dDay = (int)ChronoUnit.DAYS.between(LocalDate.now(), endedAt);
     }
-
 }

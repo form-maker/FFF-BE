@@ -52,6 +52,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(context);
     }
 
+
     public void jwtExceptionHandler(HttpServletResponse response, String msg, int statusCode) throws IOException {
         //클라이언트로 반환하는 부분.
         response.setStatus(statusCode);
