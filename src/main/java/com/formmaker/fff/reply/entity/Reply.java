@@ -16,11 +16,17 @@ public class Reply {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Long questionId;
+
+    @Column(nullable = false)
+    private Integer questionNum;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private QuestionTypeEnum questionType;
 
-    private Integer choice;
-
-    private Integer selectValue; /* 1.7 추가한 컬럼 확인 부탁드립니다. */
+    private Integer selectValue;
 
     private String descriptive;
 
@@ -28,17 +34,12 @@ public class Reply {
 
     private Boolean status;
 
-    private Long questionId;
-
-    private Integer questionNum;
-
     @ManyToOne
     @JoinColumn(name = "usersId")
     private User user;
 
-    public Reply(QuestionTypeEnum questionType, Integer choice, Integer selectValue, String descriptive, List<Integer> rank, Long questionId, Integer questionNum, User user) {
+    public Reply(QuestionTypeEnum questionType, Integer selectValue, String descriptive, List<Integer> rank, Long questionId, Integer questionNum, User user) {
         this.questionType = questionType;
-        this.choice = choice;
         this.selectValue = selectValue;
         this.descriptive = descriptive;
         this.rank = toJsonForm(rank);
@@ -50,9 +51,14 @@ public class Reply {
     }
 
     private String toJsonForm(List<Integer> rank) {
+
         StringBuilder sb = new StringBuilder();
         for (Integer integer : rank) {
             sb.append(integer);
+        }
+
+        if (String.valueOf(sb).isBlank()) {
+            return null;
         }
 
         return String.valueOf(sb);

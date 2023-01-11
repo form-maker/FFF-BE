@@ -9,9 +9,9 @@ import java.util.List;
 @Getter
 public class QuestionCreateRequest {
     private QuestionTypeEnum questionType;
+    private String summary;
+    private Integer volume;
     private Integer questionNum;
-    private Integer minValue;
-    private Integer maxValue;
     private String questionTitle;
     private List<AnswerCreateRequest> answerList;
 

@@ -2,7 +2,6 @@ package com.formmaker.fff.common.config;
 
 import com.formmaker.fff.common.jwt.JwtAuthFilter;
 import com.formmaker.fff.common.jwt.JwtUtil;
-import com.formmaker.fff.common.jwt.exception.JwtExceptionHandlerFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -19,8 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함
@@ -50,16 +47,12 @@ public class WebSecurityConfig {
 
         /* 3. Request에 대한 인증/인가 */
         http.authorizeRequests().
-                antMatchers("/api/user").permitAll().
-                antMatchers(HttpMethod.GET, "/api/survey").permitAll().
+                antMatchers("/api/user/**").permitAll().
                 antMatchers(HttpMethod.GET, "/api/survey/**").permitAll().
                 /* 3-1. Authentication 예외 처리 */
-                anyRequest().permitAll();
+                anyRequest().authenticated();
 
-        /* 4. Filter 등록 */
-        /* 4-1. JWT Filter 등록 */
         http.addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new JwtExceptionHandlerFilter(), JwtAuthFilter.class);
 
         return http.build();
     }

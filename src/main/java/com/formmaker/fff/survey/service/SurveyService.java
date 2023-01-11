@@ -8,7 +8,6 @@ import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
-import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
@@ -38,36 +37,36 @@ public class SurveyService {
 
     @Transactional
     public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
-        Survey survey = surveyRepository.save(
+        surveyRepository.save(
                 Survey.builder()
                         .title(requestDto.getTitle())
                         .summary(requestDto.getSummary())
-                        .participant(requestDto.getParticipant())
-                        .deadLine(requestDto.getDeadLine())
+                        .startedAt(requestDto.getStartedAt())
+                        .endedAt(requestDto.getEndedAt())
                         .achievement(requestDto.getAchievement())
                         .userId(userId)
                         .questionList(questionRepository.saveAll(
                                 requestDto.getQuestionList().stream().map(questionDto -> Question.builder()
                                         .title(questionDto.getQuestionTitle())
+                                        .summary(questionDto.getSummary())
                                         .questionType(questionDto.getQuestionType())
                                         .questionNum(questionDto.getQuestionNum())
-                                        .minValue(questionDto.getMinValue())
-                                        .maxValue(questionDto.getMaxValue())
+                                        .volume(questionDto.getVolume())
                                         .answerList(answerRepository.saveAll(
                                                 questionDto.getAnswerList().stream().map(answerDto -> Answer.builder()
                                                         .answerNum(answerDto.getAnswerNum())
                                                         .answerType(answerDto.getAnswerType())
-                                                        .data(answerDto.getData()).build()).toList())).build()).toList())).build());
+                                                        .answerValue(answerDto.getAnswerValue()).build()).toList())).build()).toList())).build());
     }
 
-    public Page<SurveyMainResponse> getSurveyList(@RequestParam SortTypeEnum sortBy, boolean isAsc, int page, int size) {
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy.getColumn());
+    @Transactional(readOnly = true)
+    public Page<SurveyMainResponse> getSurveyList(@RequestParam SortTypeEnum sortBy, int page, int size) {
+
+        Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Survey> surveyPage = surveyRepository.findAll(pageable);
-        Page<SurveyMainResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getDDay(), survey.getParticipant(), survey.getCreatedAt()));
 
-        return surveyDtoPage;
+        return surveyPage.map(survey -> new SurveyMainResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getStartedAt(), survey.getEndedAt(), survey.getDDay(), survey.getParticipant(), survey.getCreatedAt()));
     }
 
     @Transactional(readOnly = true)
@@ -81,8 +80,7 @@ public class SurveyService {
             questionResponses.add(question.getId());
         }
 
-
-        return new SurveyReadResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getCreatedAt(), survey.getAchievement(), survey.getStatus(), questionResponses);
+        return new SurveyReadResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getEndedAt(), survey.getCreatedAt(), survey.getAchievement(), survey.getStatus(), questionResponses);
     }
 
 
@@ -92,11 +90,11 @@ public class SurveyService {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_SURVEY));
 
-        if(!survey.getUserId().equals(loginId)){
+        if (!survey.getUserId().equals(loginId)) {
             throw new CustomException((ErrorCode.NOT_MATCH_USER));
         }
-        List<Question> questions =  survey.getQuestionList();
-        for ( Question q : questions) {
+        List<Question> questions = survey.getQuestionList();
+        for (Question q : questions) {
 
             answerRepository.deleteAllByQuestionId(q.getId());
 
@@ -106,14 +104,12 @@ public class SurveyService {
         surveyRepository.deleteById(surveyId);
     }
 
-    public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, boolean isAsc, int myPage, int size) {
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy.getColumn());
+    @Transactional(readOnly = true)
+    public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, int myPage, int size) {
+        Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(myPage, size, sort);
-        Page<Survey> surveyPage = surveyRepository.findByUserId(userId,pageable);
-        Page<SurveyMyResponse> surveyDtoPage= surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getDeadLine(), survey.getDDay(), survey.getParticipant(), survey.getAchievement(), survey.getStatus(), survey.getCreatedAt()));
+        Page<Survey> surveyPage = surveyRepository.findByUserId(userId, pageable);
 
-        return surveyDtoPage;
-
+        return surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getEndedAt(), survey.getDDay(), survey.getParticipant(), survey.getAchievement(), survey.getStatus(), survey.getCreatedAt()));
     }
 }

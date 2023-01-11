@@ -39,11 +39,7 @@ public class GoogleService {
     @Value("${app.google.redirect}")
     private String googleRedirectUrl;
 
-    public String getGoogleUrl(){
-        return googleLoginUrl + "/o/oauth2/v2/auth?client_id=" + googleClientId + "&redirect_uri=" + googleRedirectUrl
-                + "&response_type=code&scope=email%20profile%20openid&access_type=offline";
-
-    }
+   
 
     public ResponseEntity<ResponseMessage> googleLogin(String code, HttpServletResponse response) throws JsonProcessingException{
 

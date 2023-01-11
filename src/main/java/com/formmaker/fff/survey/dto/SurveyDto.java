@@ -14,22 +14,27 @@ public class SurveyDto {
     private Long id;
     private String title;
     private String summary;
-    private LocalDate deadLine;
+    private LocalDate startedAt;
+    private LocalDate endedAt;
     private Integer achievement;
-
     private Integer participant;
     private StatusTypeEnum status;
     private Long userId;
+    private Integer dDay;
     private List<Question> questionList = new ArrayList<>();
 
     public SurveyDto(Survey survey) {
         this.id = survey.getId();
         this.title = survey.getTitle();
         this.summary = survey.getSummary();
-        this.deadLine = survey.getDeadLine();
+        this.startedAt = survey.getStartedAt();
+        this.endedAt = survey.getEndedAt();
         this.achievement = survey.getAchievement();
+        this.participant = survey.getParticipant();
         this.status = survey.getStatus();
         this.userId = survey.getUserId();
+        this.dDay = survey.getDDay();
         this.questionList = survey.getQuestionList();
     }
+
 }
