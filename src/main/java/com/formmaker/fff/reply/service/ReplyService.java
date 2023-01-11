@@ -1,7 +1,6 @@
 package com.formmaker.fff.reply.service;
 
 import com.formmaker.fff.common.exception.CustomException;
-import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
@@ -32,12 +31,6 @@ public class ReplyService {
         Question question = questionRepository.findById(replyRequest.getQuestionId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_QUESTION)
         );
-
-        // 응답하려는 질문 번호과 응답 번호가 일치해?
-        boolean equalNum = replyRequest.getQuestionNum().equals(question.getQuestionNum());
-        if (!equalNum) {
-            throw new CustomException(ErrorCode.INVALID_QUESTION_NUM);
-        }
 
         // 응답하려는 질문 타입과 응답 타입이 일치해?
         boolean equalType = replyRequest.getQuestionType() == question.getQuestionType();
