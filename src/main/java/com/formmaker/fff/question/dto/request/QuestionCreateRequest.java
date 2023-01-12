@@ -13,6 +13,5 @@ public class QuestionCreateRequest {
     private Integer volume;
     private Integer questionNum;
     private String questionTitle;
-    private List<AnswerCreateRequest> answerList;
-
+    private List<String> answerList;
 }
