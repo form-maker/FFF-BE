@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
@@ -93,14 +95,18 @@ public class SurveyService {
         if (!survey.getUserId().equals(loginId)) {
             throw new CustomException((ErrorCode.NOT_MATCH_USER));
         }
-        List<Question> questions = survey.getQuestionList();
-        for (Question q : questions) {
+        
+        List<Long> questionIdList = new ArrayList<>();
 
-            answerRepository.deleteAllByQuestionId(q.getId());
+        for (Question q : survey.getQuestionList()) {
 
-            questionRepository.deleteAllBySurveyId(surveyId);
-
+            questionIdList.add(q.getId());
         }
+        if(!questionIdList.isEmpty()){
+            answerRepository.deleteAllByQuestionIdIn(questionIdList);
+        }
+
+        questionRepository.deleteAllBySurveyId(surveyId);
         surveyRepository.deleteById(surveyId);
     }
 
