@@ -45,12 +45,17 @@ public class Question {
     private List<Answer> answerList = new ArrayList<>();
 
     @Builder
-    public Question(QuestionTypeEnum questionType, String summary, String title, Integer questionNum, Integer volume, List<Answer> answerList) {
+    public Question(Long surveyId, QuestionTypeEnum questionType, String summary, String title, Integer questionNum, Integer volume) {
+        this.surveyId = surveyId;
         this.questionType = questionType;
         this.summary = summary;
         this.title = title;
         this.questionNum = questionNum;
         this.volume = volume;
-        this.answerList = answerList;
+    }
+
+
+    public void addAnswerList(Answer answer){
+        this.answerList.add(answer);
     }
 }

@@ -3,11 +3,14 @@ package com.formmaker.fff.survey.service;
 
 import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.answer.repositoy.AnswerRepository;
+import com.formmaker.fff.answer.request.AnswerCreateRequest;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
+import com.formmaker.fff.common.type.AnswerTypeEnum;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
+import com.formmaker.fff.question.request.QuestionCreateRequest;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.survey.request.SurveyCreateRequest;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
@@ -37,26 +41,46 @@ public class SurveyService {
 
     @Transactional
     public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
-        surveyRepository.save(
-                Survey.builder()
-                        .title(requestDto.getTitle())
-                        .summary(requestDto.getSummary())
-                        .startedAt(requestDto.getStartedAt())
-                        .endedAt(requestDto.getEndedAt())
-                        .achievement(requestDto.getAchievement())
-                        .userId(userId)
-                        .questionList(questionRepository.saveAll(
-                                requestDto.getQuestionList().stream().map(questionDto -> Question.builder()
-                                        .title(questionDto.getQuestionTitle())
-                                        .summary(questionDto.getSummary())
-                                        .questionType(questionDto.getQuestionType())
-                                        .questionNum(questionDto.getQuestionNum())
-                                        .volume(questionDto.getVolume())
-                                        .answerList(answerRepository.saveAll(
-                                                questionDto.getAnswerList().stream().map(answerDto -> Answer.builder()
-                                                        .answerNum(answerDto.getAnswerNum())
-                                                        .answerType(answerDto.getAnswerType())
-                                                        .answerValue(answerDto.getAnswerValue()).build()).toList())).build()).toList())).build());
+        Survey survey = Survey.builder()
+                .title(requestDto.getTitle())
+                .summary(requestDto.getSummary())
+                .startedAt(requestDto.getStartedAt())
+                .endedAt(requestDto.getEndedAt())
+                .achievement(requestDto.getAchievement())
+                .userId(userId)
+                .build();
+        List<Question> questionList = new ArrayList<>();
+        List<Answer> answerList = new ArrayList<>();
+
+        int questionNum = 1;
+        int answerNum;
+
+        for(QuestionCreateRequest questionDto : requestDto.getQuestionList()){
+            answerNum = 1;
+            Question question = Question.builder()
+                    .title(questionDto.getQuestionTitle())
+                    .questionNum(questionNum++)
+                    .summary(questionDto.getSummary())
+                    .questionType(questionDto.getQuestionType())
+                    .questionNum(questionDto.getQuestionNum())
+                    .volume(questionDto.getVolume())
+                    .build();
+            for(String answerStr : questionDto.getAnswerList()){
+                Answer answer = Answer.builder()
+                        .answerType(AnswerTypeEnum.TEXT)
+                        .answerNum(answerNum++)
+                        .answerValue(answerStr).build();
+                answerList.add(answer);
+                question.addAnswerList(answer);
+            }
+            questionList.add(question);
+            survey.addQuestionList(question);
+        }
+
+        /*이후 쿼리 변환 필요*/
+        surveyRepository.save(survey);
+        questionRepository.saveAll(questionList);
+        answerRepository.saveAll(answerList);
     }
 
     @Transactional(readOnly = true)
@@ -97,7 +121,6 @@ public class SurveyService {
         for (Question q : questions) {
 
             answerRepository.deleteAllByQuestionId(q.getId());
-
             questionRepository.deleteAllBySurveyId(surveyId);
 
         }
