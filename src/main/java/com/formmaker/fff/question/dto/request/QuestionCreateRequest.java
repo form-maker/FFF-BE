@@ -1,6 +1,6 @@
-package com.formmaker.fff.question.request;
+package com.formmaker.fff.question.dto.request;
 
-import com.formmaker.fff.answer.request.AnswerCreateRequest;
+import com.formmaker.fff.answer.dto.request.AnswerCreateRequest;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import lombok.Getter;
 
@@ -13,6 +13,5 @@ public class QuestionCreateRequest {
     private Integer volume;
     private Integer questionNum;
     private String questionTitle;
-    private List<AnswerCreateRequest> answerList;
-
+    private List<String> answerList;
 }

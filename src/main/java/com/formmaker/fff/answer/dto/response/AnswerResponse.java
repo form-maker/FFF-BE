@@ -1,4 +1,4 @@
-package com.formmaker.fff.answer.response;
+package com.formmaker.fff.answer.dto.response;
 
 import com.formmaker.fff.common.type.AnswerTypeEnum;
 import lombok.AllArgsConstructor;

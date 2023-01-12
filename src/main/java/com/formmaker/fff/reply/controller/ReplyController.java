@@ -3,7 +3,7 @@ package com.formmaker.fff.reply.controller;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.reply.service.ReplyService;
-import com.formmaker.fff.reply.request.ReplyCreateRequest;
+import com.formmaker.fff.reply.dto.request.ReplyCreateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
