@@ -57,7 +57,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/oauth/kakao")
+    @GetMapping("/login/kakao")
     public ResponseEntity<ResponseMessage> kakaoLogin(@RequestParam String code, HttpServletResponse response){
         String jwtToken = kakaoService.kakaoLogin(code);
         response.addHeader("Authorization", jwtToken);
@@ -65,7 +65,7 @@ public class UserController {
     }
 
     
-    @GetMapping("/oauth/google")
+    @GetMapping("/login/google")
     public ResponseEntity<ResponseMessage> googleLogin(@RequestParam String code, HttpServletResponse response)
             throws JsonProcessingException {
 
