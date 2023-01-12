@@ -2,7 +2,7 @@ package com.formmaker.fff.question.controller;
 
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.question.service.QuestionService;
-import com.formmaker.fff.question.response.QuestionResponse;
+import com.formmaker.fff.question.dto.response.QuestionResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

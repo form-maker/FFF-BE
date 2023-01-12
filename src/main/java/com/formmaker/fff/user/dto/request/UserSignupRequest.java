@@ -1,4 +1,4 @@
-package com.formmaker.fff.user.request;
+package com.formmaker.fff.user.dto.request;
 
 
 import com.formmaker.fff.user.entity.User;

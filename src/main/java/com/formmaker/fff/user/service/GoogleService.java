@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.formmaker.fff.common.jwt.JwtUtil;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.type.SocialTypeEnum;
+import com.formmaker.fff.user.dto.request.SocialUserInfoDto;
 import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
-import com.formmaker.fff.user.request.SocialUserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
@@ -50,7 +51,7 @@ public class GoogleService {
 
         String createToken =  jwtUtil.createToken(googleUser.getLoginId());
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
-        return new ResponseEntity<ResponseMessage>(new ResponseMessage("로그인 되었습니다.", 200, null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.", 200, null), HttpStatus.OK);
     }
 
     private ResponseEntity<String> getToken(String code) throws JsonProcessingException {

@@ -1,6 +1,6 @@
-package com.formmaker.fff.survey.request;
+package com.formmaker.fff.survey.dto.request;
 
-import com.formmaker.fff.question.request.QuestionCreateRequest;
+import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
 import lombok.Getter;
 
 import java.time.LocalDate;
