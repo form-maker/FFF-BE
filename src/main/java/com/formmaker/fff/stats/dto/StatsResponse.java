@@ -2,6 +2,7 @@ package com.formmaker.fff.stats.dto;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class StatsResponse {
 
@@ -22,6 +24,6 @@ public class StatsResponse {
     private String status;
     private Integer achievement;
     private Integer achievementRate;
-    List<QuestionStatsListResponse> statsListResponses = new ArrayList<>();
+    List<QuestionStats> questionStatsList = new ArrayList<>();
 
 }

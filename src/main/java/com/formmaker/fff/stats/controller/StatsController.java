@@ -3,6 +3,7 @@ package com.formmaker.fff.stats.controller;
 
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.question.dto.response.QuestionResponse;
+import com.formmaker.fff.stats.dto.StatsResponse;
 import com.formmaker.fff.stats.service.StatsService;
 import com.formmaker.fff.survey.dto.response.SurveyReadResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,9 @@ public class StatsController {
 
     @GetMapping
     public ResponseEntity<ResponseMessage> getStats(@RequestParam Long surveyId) {
-        QuestionResponse questionResponse = statsService.getStats(surveyId);
-        ResponseMessage responseMessage = new ResponseMessage<>("통계 조회 성공", 200, questionResponse);
+        StatsResponse statsResponse = statsService.getStats(surveyId);
+
+        ResponseMessage responseMessage = new ResponseMessage<>("통계 조회 성공", 200, statsResponse);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
     //스위치문을 써서 메소드를 가져와서 쓴다?
