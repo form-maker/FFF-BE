@@ -25,9 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
@@ -111,9 +109,9 @@ public class SurveyService {
         
         List<Long> questionIdList = new ArrayList<>();
 
-        for (Question q : survey.getQuestionList()) {
+        for (QuestionDto questionDto : surveyDto.getQuestionList()) {
 
-            questionIdList.add(q.getId());
+            questionIdList.add(questionDto.getId());
         }
         if(!questionIdList.isEmpty()){
             answerRepository.deleteAllByQuestionIdIn(questionIdList);
