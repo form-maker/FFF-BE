@@ -11,6 +11,7 @@ public enum ErrorCode {
 
     DUPLICATE_ID("중복된 아이디 입니다.",400),
     DUPLICATE_USERNAME("중복된 닉네임 입니다.",400),
+    DUPLICATE_EMAIL("중복된 이메일 입니다.", 400),
     NOT_FOUND_ID("아이디 또는 비밀번호가 일치하지 않습니다.",400),
 
     /*토큰 에러*/

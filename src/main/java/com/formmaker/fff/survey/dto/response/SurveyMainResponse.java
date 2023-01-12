@@ -1,4 +1,4 @@
-package com.formmaker.fff.survey.response;
+package com.formmaker.fff.survey.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
