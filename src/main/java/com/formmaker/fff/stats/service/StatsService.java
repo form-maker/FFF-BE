@@ -1,7 +1,7 @@
 package com.formmaker.fff.stats.service;
 
+
 import com.formmaker.fff.common.exception.CustomException;
-import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.question.dto.QuestionDto;
 import com.formmaker.fff.reply.dto.request.ReplyDto;
 import com.formmaker.fff.reply.repository.ReplyRepository;
@@ -9,12 +9,14 @@ import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.StatsResponse;
 import com.formmaker.fff.survey.dto.SurveyDto;
 import com.formmaker.fff.survey.repository.SurveyRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
@@ -42,6 +44,7 @@ public class StatsService {
         }
 
         StatsResponse statsResponse = StatsResponse.builder().questionStatsList(questionStatsList).build();
+
 
         return statsResponse;
     }
