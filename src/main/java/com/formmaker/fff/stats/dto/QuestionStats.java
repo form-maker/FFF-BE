@@ -11,13 +11,6 @@ import java.util.List;
 @Getter
 public class QuestionStats {
     private Integer questionNum;
-    private QuestionTypeEnum questionType;
-
-import java.util.List;
-
-
-public class QuestionStats {
-    private Integer questionNum;
     private String questionType;
 
     private String questionTitle;
