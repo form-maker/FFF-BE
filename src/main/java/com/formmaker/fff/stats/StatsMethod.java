@@ -44,11 +44,11 @@ public class StatsMethod {
 
 
     }
-    public QuestionStats statsSingleChoice(List<ReplyDto> replyDtoList){
+    public QuestionStats statsMultipleChoice(List<ReplyDto> replyDtoList, QuestionDto questionDto){
 
         return QuestionStats.builder().build();
     }
-    public QuestionStats statsSlide(List<ReplyDto> replyDtoList){
+    public QuestionStats statsSlide(List<ReplyDto> replyDtoList, QuestionDto questionDto){
 
         return QuestionStats.builder().build();
     }
@@ -58,19 +58,19 @@ public class StatsMethod {
         //제일 높은 점수를 가진 폼을 필두로 오름차순 , 및 합계치 퍼센테이지로 변환해서 데이터 반환 ?
         return QuestionStats.builder().build();
     }
-    public QuestionStats statsLongDescriptive(List<ReplyDto> replyDtoList){
+    public QuestionStats statsLongDescriptive(List<ReplyDto> replyDtoList, QuestionDto questionDto){
 
         return QuestionStats.builder().build();
     }
-    public QuestionStats statsShortDescriptive(List<ReplyDto> replyDtoList){
+    public QuestionStats statsShortDescriptive(List<ReplyDto> replyDtoList, QuestionDto questionDto){
 
         return QuestionStats.builder().build();
     }
-    public QuestionStats statsStar(List<ReplyDto> replyDtoList){
+    public QuestionStats statsStar(List<ReplyDto> replyDtoList, QuestionDto questionDto){
 
         return QuestionStats.builder().build();
     }
-    public QuestionStats statsScore(List<ReplyDto> replyDtoList){
+    public QuestionStats statsScore(List<ReplyDto> replyDtoList, QuestionDto questionDto){
 
         return QuestionStats.builder().build();
     }

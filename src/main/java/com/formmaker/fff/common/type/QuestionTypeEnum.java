@@ -22,9 +22,9 @@ public enum QuestionTypeEnum {
     STAR(statsMethod::statsStar),
     SCORE(statsMethod::statsScore);
 
-    private Function<List<ReplyDto>, QuestionStats> fn;
+    private BiFunction<List<ReplyDto>, QuestionDto, QuestionStats> fn;
 
-    QuestionTypeEnum(Function<List<ReplyDto>, QuestionStats> fn) {
+    QuestionTypeEnum(BiFunction<List<ReplyDto>,  QuestionDto, QuestionStats> fn) {
         this.fn = fn;
     }
 }
