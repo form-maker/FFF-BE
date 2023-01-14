@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
@@ -37,7 +36,7 @@ public class StatsService {
         List<ReplyDto> replyDtoList;
         for (QuestionDto questionDto : questionDtoList) {
             replyDtoList = questionDto.getReplyList();
-            questionStats = questionDto.getQuestionType().getFn().apply(replyDtoList, questionDto);
+            questionStats = questionDto.getQuestionType().getStatsFn().apply(replyDtoList, questionDto);
 
 
             questionStatsList.add(questionStats);

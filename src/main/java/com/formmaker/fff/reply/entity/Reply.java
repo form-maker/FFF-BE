@@ -26,7 +26,7 @@ public class Reply {
     @Enumerated(EnumType.STRING)
     private QuestionTypeEnum questionType;
 
-    private Integer selectValue;
+    private String selectValue;
 
     private String descriptive;
 
@@ -38,7 +38,7 @@ public class Reply {
     @JoinColumn(name = "usersId")
     private User user;
 
-    public Reply(QuestionTypeEnum questionType, Integer selectValue, String descriptive, List<Integer> rank, Long questionId, Integer questionNum, User user) {
+    public Reply(QuestionTypeEnum questionType, String selectValue, String descriptive, List<Integer> rank, Long questionId, Integer questionNum, User user) {
         this.questionType = questionType;
         this.selectValue = selectValue;
         this.descriptive = descriptive;

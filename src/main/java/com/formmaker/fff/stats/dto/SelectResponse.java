@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class SelectResponse {
     private String answer;
-    private Integer value;
+    private double value;
 
     private Integer answerNum;
 
@@ -17,5 +17,10 @@ public class SelectResponse {
 
     public void increaseValue(){
         this.value++;
+    }
+    public void valueAvg(int total){
+        value = (Math.round(((total/value)*100)*10)/10.0);
+        //소수점 1째자리까지
+
     }
 }

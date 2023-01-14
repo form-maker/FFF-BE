@@ -12,8 +12,6 @@ import java.util.List;
 
 import java.util.function.BiFunction;
 
-import java.util.function.Function;
-
 @Getter
 public enum QuestionTypeEnum {
 
@@ -27,9 +25,9 @@ public enum QuestionTypeEnum {
     SCORE(statsMethod::statsScore);
 
 
-    private BiFunction<List<ReplyDto>, QuestionDto, QuestionStats> fn;
+    private BiFunction<List<ReplyDto>, QuestionDto, QuestionStats> statsFn;
 
-    QuestionTypeEnum(BiFunction<List<ReplyDto>,  QuestionDto, QuestionStats> fn) {
-        this.fn = fn;
+    QuestionTypeEnum(BiFunction<List<ReplyDto>,  QuestionDto, QuestionStats> statsFn) {
+        this.statsFn = statsFn;
     }
 }

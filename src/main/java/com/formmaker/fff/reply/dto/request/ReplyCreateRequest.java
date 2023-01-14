@@ -11,7 +11,7 @@ public class ReplyCreateRequest {
     private Long questionId;
     private QuestionTypeEnum questionType;
     private Integer questionNum;
-    private Integer selectValue;
+    private String selectValue;
     private String descriptive;
     private List<Integer> rank = new ArrayList<>();
 }

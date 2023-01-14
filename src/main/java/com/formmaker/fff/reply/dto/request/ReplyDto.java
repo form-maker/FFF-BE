@@ -11,7 +11,7 @@ public class ReplyDto {
     private Long questionId;
     private Integer questionNum;
     private QuestionTypeEnum questionType;
-    private Integer selectValue;
+    private String selectValue;
     private String descriptive;
     private String rank;
     private Boolean status;
