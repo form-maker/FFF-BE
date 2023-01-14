@@ -3,7 +3,7 @@ package com.formmaker.fff.stats.service;
 
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.question.dto.QuestionDto;
-import com.formmaker.fff.reply.dto.request.ReplyDto;
+import com.formmaker.fff.reply.dto.ReplyDto;
 import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.StatsResponse;

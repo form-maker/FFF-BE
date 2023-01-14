@@ -3,7 +3,7 @@ package com.formmaker.fff.question.dto;
 import com.formmaker.fff.answer.dto.AnswerDto;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.question.entity.Question;
-import com.formmaker.fff.reply.dto.request.ReplyDto;
+import com.formmaker.fff.reply.dto.ReplyDto;
 import lombok.Getter;
 
 import java.util.ArrayList;

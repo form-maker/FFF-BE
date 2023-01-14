@@ -4,7 +4,7 @@ import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.question.dto.QuestionDto;
 import com.formmaker.fff.question.repository.QuestionRepository;
-import com.formmaker.fff.reply.dto.request.ReplyCreateRequest;
+import com.formmaker.fff.reply.dto.request.EachReply;
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.survey.repository.SurveyRepository;
@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.formmaker.fff.common.exception.ErrorCode.*;
@@ -23,26 +24,33 @@ public class ReplyService {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
 
-    public void postReply(Long surveyId, ReplyCreateRequest replyRequest, UserDetailsImpl userDetails) {
+    public void postReply(Long surveyId, List<EachReply> replyRequest, UserDetailsImpl userDetails) {
         // 응답하려는 Survey 가 존재해?
         surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
 
-        // 응답하려는 Question 이 존재해?
-        QuestionDto questionDto = new QuestionDto(questionRepository.findById(replyRequest.getQuestionId()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_QUESTION))
-        );
+        List<Reply> replyList = new ArrayList<>();
 
-        // 응답하려는 질문 타입과 응답 타입이 일치해?
-        boolean equalType = replyRequest.getQuestionType() == questionDto.getQuestionType();
-        if (!equalType) {
-            throw new CustomException(INVALID_QUESTION_TYPE);
+        for (EachReply eachReply : replyRequest) {
+            // 응답하려는 Question 이 존재해?
+            QuestionDto questionDto = new QuestionDto(questionRepository.findById(eachReply.getQuestionId()).orElseThrow(
+                    () -> new CustomException(NOT_FOUND_QUESTION))
+            );
+
+            // 응답하려는 질문 타입과 응답 타입이 일치해?
+            boolean equalType = eachReply.getQuestionType() == questionDto.getQuestionType();
+            if (!equalType) {
+                throw new CustomException(INVALID_QUESTION_TYPE);
+            }
+
+            String selectValueJsonForm = toStringType(eachReply.getSelectValue());
+
+            Reply reply = new Reply(eachReply.getQuestionId(), eachReply.getQuestionNum(), eachReply.getQuestionType(), selectValueJsonForm, eachReply.getDescriptive(), userDetails.getUser());
+            replyList.add(reply);
         }
 
-        String selectValueJsonForm = toStringType(replyRequest.getSelectValue());
-
-        replyRepository.save(new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValueJsonForm, replyRequest.getDescriptive(), userDetails.getUser()));
+        replyRepository.saveAll(replyList);
     }
 
     private String toStringType(List<Integer> selectValue) {
