@@ -33,8 +33,6 @@ public class Reply {
     @JoinColumn(name = "usersId")
     private User user;
 
-    private Boolean status;
-
     public Reply(Long questionId, Integer questionNum, QuestionTypeEnum questionType, String selectValue, String descriptive, User user) {
         this.questionId = questionId;
         this.questionNum = questionNum;
@@ -42,7 +40,5 @@ public class Reply {
         this.selectValue = selectValue;
         this.descriptive = descriptive;
         this.user = user;
-        // isDone 의 역할로 보고, 끝나지 않은 설문이다 라는 의미로 false 를 줌
-        this.status = false;
     }
 }
