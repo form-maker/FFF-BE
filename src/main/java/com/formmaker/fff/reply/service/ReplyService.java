@@ -9,7 +9,10 @@ import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.formmaker.fff.common.exception.ErrorCode.*;
 
@@ -37,6 +40,20 @@ public class ReplyService {
             throw new CustomException(INVALID_QUESTION_TYPE);
         }
 
-        replyRepository.save(new Reply(replyRequest.getQuestionType(), replyRequest.getSelectValue(), replyRequest.getDescriptive(), replyRequest.getRank(), replyRequest.getQuestionId(), replyRequest.getQuestionNum(), userDetails.getUser()));
+        String selectValueToStringTypeJsonForm = toStringType(replyRequest.getSelectValue());
+
+        replyRepository.save(new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValueToStringTypeJsonForm, replyRequest.getDescriptive(), userDetails.getUser()));
+    }
+
+    private String toStringType(List<Integer> selectValue) {
+        JSONObject jsonObject = new JSONObject();
+
+        int keyValue = 1;
+
+        for (Integer value : selectValue) {
+            jsonObject.put(keyValue++, value);
+        }
+
+        return String.valueOf(jsonObject);
     }
 }
