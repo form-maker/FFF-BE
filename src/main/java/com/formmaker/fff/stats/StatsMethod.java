@@ -34,9 +34,11 @@ public class StatsMethod {
 
 
         for(ReplyDto userReply : replyDtoList){
+
             List<String> selectValueList = List.of(userReply.getSelectValue().split("|"));  //유저들의 문항선택 값을 List에 넣어주고
             List<Integer> changeSelectValueList = selectValueList.stream() //스트링 리스트를 Integer 리스트로 변환
                     .map(Integer::parseInt).toList();
+
 
 
             for (Integer selectValues : changeSelectValueList) { // 유저들의 문항선택 값 리스트 값들을 selectValues 하나하나 넣어주고
