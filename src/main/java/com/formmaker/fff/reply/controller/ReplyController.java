@@ -5,7 +5,6 @@ import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.reply.dto.request.ReplyCreateRequest;
 import com.formmaker.fff.reply.service.ReplyService;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,10 +23,9 @@ public class ReplyController {
 //    }
 
     @PostMapping("/{surveyId}/reply")
-    public ResponseEntity<ResponseMessage> postReply(@PathVariable Long  surveyId, @RequestBody ReplyCreateRequest replyRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) throws ParseException {
+    public ResponseEntity<ResponseMessage> postReply(@PathVariable Long  surveyId, @RequestBody ReplyCreateRequest replyRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         replyService.postReply(surveyId, replyRequest, userDetails);
         ResponseMessage responseMessage = new ResponseMessage("설문 응답 성공", 200, null);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
-
 }

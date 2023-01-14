@@ -40,9 +40,9 @@ public class ReplyService {
             throw new CustomException(INVALID_QUESTION_TYPE);
         }
 
-        String selectValueToStringTypeJsonForm = toStringType(replyRequest.getSelectValue());
+        String selectValueJsonForm = toStringType(replyRequest.getSelectValue());
 
-        replyRepository.save(new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValueToStringTypeJsonForm, replyRequest.getDescriptive(), userDetails.getUser()));
+        replyRepository.save(new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValueJsonForm, replyRequest.getDescriptive(), userDetails.getUser()));
     }
 
     private String toStringType(List<Integer> selectValue) {
