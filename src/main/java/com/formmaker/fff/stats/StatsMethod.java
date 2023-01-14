@@ -4,7 +4,6 @@ package com.formmaker.fff.stats;
 import com.formmaker.fff.answer.dto.AnswerDto;
 import com.formmaker.fff.question.dto.QuestionDto;
 import com.formmaker.fff.reply.dto.request.ReplyDto;
-import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
 
@@ -31,7 +30,7 @@ public class StatsMethod {
                 .sorted(Comparator.comparing(SelectResponse::getAnswerNum)).collect(Collectors.toList());
 
         for(ReplyDto userReply : replyDtoList){
-            Integer selectValue = userReply.getSelectValue(); //선택한 응답에 벨류
+            Integer selectValue = Integer.parseInt(userReply.getSelectValue()); //선택한 응답에 벨류 -> 1/14 (형준 수정) 확인 부탁드립니다.
 
             selectList.get(selectValue-1).increaseValue();
         }
