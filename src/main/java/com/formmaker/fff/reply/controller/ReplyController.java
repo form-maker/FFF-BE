@@ -17,13 +17,6 @@ import java.util.List;
 @RequestMapping("/api/survey")
 public class ReplyController {
     private final ReplyService replyService;
-//    @PostMapping("/{surveyId}/reply")
-//    public ResponseEntity<ResponseMessage> postReply(@PathVariable Long  surveyId, @RequestBody ReplyCreateRequest replyRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        replyService.postReply(surveyId, replyRequest, userDetails);
-//        ResponseMessage responseMessage = new ResponseMessage("설문 응답 성공", 200, null);
-//        return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
-//    }
-
     @PostMapping("/{surveyId}/reply")
     public ResponseEntity<ResponseMessage> postReply(@PathVariable Long  surveyId, @RequestBody List<EachReply> replyRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         replyService.postReply(surveyId, replyRequest, userDetails);
