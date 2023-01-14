@@ -2,7 +2,6 @@ package com.formmaker.fff.stats.controller;
 
 
 import com.formmaker.fff.common.response.ResponseMessage;
-import com.formmaker.fff.question.dto.response.QuestionResponse;
 import com.formmaker.fff.stats.dto.StatsResponse;
 import com.formmaker.fff.stats.service.StatsService;
 import com.formmaker.fff.survey.dto.response.SurveyReadResponse;
