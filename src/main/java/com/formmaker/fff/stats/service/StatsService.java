@@ -38,6 +38,7 @@ public class StatsService {
         StatsResponse statsResponse = StatsResponse.builder()
                 .questionStatsList(questionStatsList).build();
         return statsResponse;
+    }
         
     /**
      * String 타입으로 저장된 Json 형식 문자열을 JsonObject 로 사용할 수 있게 만들어주는 로직
@@ -46,6 +47,5 @@ public class StatsService {
     private void toJsonObjectType(String selectValueToStringTypeJsonForm) throws ParseException {
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject) jsonParser.parse(selectValueToStringTypeJsonForm);
-        }
     }
 }
