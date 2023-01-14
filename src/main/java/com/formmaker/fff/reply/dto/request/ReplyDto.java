@@ -11,9 +11,8 @@ public class ReplyDto {
     private Long questionId;
     private Integer questionNum;
     private QuestionTypeEnum questionType;
-    private Integer selectValue;
+    private String selectValue;
     private String descriptive;
-    private String rank;
     private Boolean status;
     private UserDto userDto;
 
@@ -24,7 +23,6 @@ public class ReplyDto {
         this.questionType = reply.getQuestionType();
         this.selectValue = reply.getSelectValue();
         this.descriptive = reply.getDescriptive();
-        this.rank = reply.getRank();
         this.status = reply.getStatus();
         this.userDto = new UserDto(reply.getUser());
     }

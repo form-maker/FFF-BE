@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
@@ -26,41 +25,24 @@ public class Reply {
     @Enumerated(EnumType.STRING)
     private QuestionTypeEnum questionType;
 
-    private Integer selectValue;
+    private String selectValue;
 
     private String descriptive;
-
-    private String rank;
-
-    private Boolean status;
 
     @ManyToOne
     @JoinColumn(name = "usersId")
     private User user;
 
-    public Reply(QuestionTypeEnum questionType, Integer selectValue, String descriptive, List<Integer> rank, Long questionId, Integer questionNum, User user) {
+    private Boolean status;
+
+    public Reply(Long questionId, Integer questionNum, QuestionTypeEnum questionType, String selectValue, String descriptive, User user) {
+        this.questionId = questionId;
+        this.questionNum = questionNum;
         this.questionType = questionType;
         this.selectValue = selectValue;
         this.descriptive = descriptive;
-        this.rank = toJsonForm(rank);
+        this.user = user;
         // isDone 의 역할로 보고, 끝나지 않은 설문이다 라는 의미로 false 를 줌
         this.status = false;
-        this.questionId = questionId;
-        this.questionNum = questionNum;
-        this.user = user;
-    }
-
-    private String toJsonForm(List<Integer> rank) {
-
-        StringBuilder sb = new StringBuilder();
-        for (Integer integer : rank) {
-            sb.append(integer);
-        }
-
-        if (String.valueOf(sb).isBlank()) {
-            return null;
-        }
-
-        return String.valueOf(sb);
     }
 }
