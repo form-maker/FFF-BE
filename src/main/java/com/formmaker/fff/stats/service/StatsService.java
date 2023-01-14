@@ -9,7 +9,6 @@ import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.StatsResponse;
 import com.formmaker.fff.survey.dto.SurveyDto;
 import com.formmaker.fff.survey.repository.SurveyRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
@@ -64,9 +61,12 @@ public class StatsService {
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(selectValueToStringTypeJsonForm);
         } catch (ParseException e) {
-//            에러 메세지는 로그를 통해 남기는 방식을 채택 -> 로그 남기는 방법 알아봐야함.
-//            에러가 터져서 멈추는게 아닌, 에러가 터진 데이터를 제외한 통계를 반환시켜주어야함.
-//            new CustomException(ErrorCode.INVALID_FORM_DATA);
+            /**
+             * 에러 메세지는 로그를 통해 남기는 방식을 채택 -> 로그 남기는 방법 알아봐야함.
+             * 에러가 터져서 멈추는게 아닌, 에러가 터진 데이터를 제외한 통계를 반환시켜주어야함.
+             * new CustomException(ErrorCode.INVALID_FORM_DATA);
+             */
+
         }
         return new JSONObject();
     }
