@@ -44,6 +44,6 @@ public class Reply {
         this.descriptive = descriptive;
         this.user = user;
         // isDone 의 역할로 보고, 끝나지 않은 설문이다 라는 의미로 false 를 줌
-        this.status = false;
+       
     }
 }
