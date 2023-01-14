@@ -56,16 +56,19 @@ public class Survey extends TimeStamped {
     private List<Question> questionList = new ArrayList<>();
 
     @Builder
-    public Survey(String title, String summary, LocalDate startedAt, LocalDate endedAt, Integer achievement, Long userId, List<Question> questionList) {
+    public Survey(String title, String summary, LocalDate startedAt, LocalDate endedAt, Integer achievement, Long userId) {
         this.title = title;
         this.summary = summary;
         this.startedAt = startedAt;
         this.endedAt = endedAt;
-        this.status = startedAt.isBefore(LocalDate.now()) ? StatusTypeEnum.NOT_START : StatusTypeEnum.IN_PROCEED;
+        this.status = startedAt.isAfter(LocalDate.now()) ? StatusTypeEnum.NOT_START : StatusTypeEnum.IN_PROCEED;
         this.participant = 0;
         this.achievement = achievement;
         this.userId = userId;
-        this.questionList = questionList;
         this.dDay = (int)ChronoUnit.DAYS.between(LocalDate.now(), endedAt);
+    }
+
+    public void addQuestionList(Question question){
+        this.questionList.add(question);
     }
 }
