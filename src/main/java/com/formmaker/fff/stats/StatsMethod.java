@@ -1,5 +1,6 @@
 package com.formmaker.fff.stats;
 
+
 import com.formmaker.fff.answer.dto.AnswerDto;
 import com.formmaker.fff.question.dto.QuestionDto;
 import com.formmaker.fff.reply.dto.request.ReplyDto;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class StatsMethod {
 
     static public StatsMethod statsMethod = new StatsMethod();
+
 
     public QuestionStats statsSingleChoice(List<ReplyDto> replyDtoList, QuestionDto questionDto){
 
