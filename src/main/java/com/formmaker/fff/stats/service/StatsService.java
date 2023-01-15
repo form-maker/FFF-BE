@@ -39,7 +39,7 @@ public class StatsService {
         List<ReplyDto> replyDtoList;
         for (QuestionDto questionDto : questionDtoList) {
             replyDtoList = questionDto.getReplyList();
-            questionStats = questionDto.getQuestionType().getFn().apply(replyDtoList, questionDto);
+            questionStats = questionDto.getQuestionType().getStatsFn().apply(replyDtoList, questionDto);
 
 
             questionStatsList.add(questionStats);

@@ -13,7 +13,6 @@ public class ReplyDto {
     private QuestionTypeEnum questionType;
     private String selectValue;
     private String descriptive;
-    private Boolean status;
     private UserDto userDto;
 
     public ReplyDto(Reply reply) {
@@ -23,7 +22,6 @@ public class ReplyDto {
         this.questionType = reply.getQuestionType();
         this.selectValue = reply.getSelectValue();
         this.descriptive = reply.getDescriptive();
-        this.status = reply.getStatus();
         this.userDto = new UserDto(reply.getUser());
     }
 }

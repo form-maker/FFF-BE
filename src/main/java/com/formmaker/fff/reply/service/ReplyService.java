@@ -9,8 +9,8 @@ import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,9 @@ public class ReplyService {
     private final ReplyRepository replyRepository;
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
+    private final ReplyMethod replyMethod;
 
+    @Transactional
     public void postReply(Long surveyId, List<EachReply> replyRequest, UserDetailsImpl userDetails) {
         // 응답하려는 Survey 가 존재해?
         surveyRepository.findById(surveyId).orElseThrow(
@@ -31,7 +33,7 @@ public class ReplyService {
         );
 
         List<Reply> replyList = new ArrayList<>();
-
+        int count = 1;
         for (EachReply eachReply : replyRequest) {
             // 응답하려는 Question 이 존재해?
             QuestionDto questionDto = new QuestionDto(questionRepository.findById(eachReply.getQuestionId()).orElseThrow(
@@ -44,24 +46,21 @@ public class ReplyService {
                 throw new CustomException(INVALID_QUESTION_TYPE);
             }
 
-            String selectValueJsonForm = toStringType(eachReply.getSelectValue());
-
-            Reply reply = new Reply(eachReply.getQuestionId(), eachReply.getQuestionNum(), eachReply.getQuestionType(), selectValueJsonForm, eachReply.getDescriptive(), userDetails.getUser());
-            replyList.add(reply);
+            switch (eachReply.getQuestionType()) {
+                case STAR, SCORE, SLIDE, SINGLE_CHOICE -> {
+                    replyList.add(replyMethod.replySingleValue(eachReply, userDetails));
+                }
+                case MULTIPLE_CHOICE -> {
+                    replyList.add(replyMethod.replyMultipleChoice(eachReply, userDetails));
+                }
+                case RANK -> {
+                    replyList.add(replyMethod.replyRank(eachReply, userDetails));
+                }
+                case SHORT_DESCRIPTIVE, LONG_DESCRIPTIVE -> {
+                    replyList.add(replyMethod.replyDescriptive(eachReply, userDetails));
+                }
+            }
         }
-
         replyRepository.saveAll(replyList);
-    }
-
-    private String toStringType(List<Integer> selectValue) {
-        JSONObject jsonObject = new JSONObject();
-
-        int keyValue = 1;
-
-        for (Integer value : selectValue) {
-            jsonObject.put(keyValue++, value);
-        }
-
-        return String.valueOf(jsonObject);
     }
 }
