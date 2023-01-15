@@ -36,7 +36,7 @@ public class ReplyMethod {
     // 별점, 스코어, 슬라이드, 단수응답 답변 처리 로직
     public Reply replySingleValue(EachReply eachReply, UserDetailsImpl userDetails) {
         String selectValue = eachReply.getSelectValue().get(0).toString();
-        return new Reply(eachReply.getQuestionId(), eachReply.getQuestionNum(), eachReply.getQuestionType(), selectValue, eachReply.getDescriptive(), userDetails.getUser());
+        return new Reply(eachReply.getQuestionId(), eachReply.getQuestionNum(), eachReply.getQuestionType(), selectValue, null, userDetails.getUser());
     }
 
 
@@ -48,12 +48,12 @@ public class ReplyMethod {
         for (String str : strSelectValue) {
             valueJoiner.add(str);
         }
-        return new Reply(eachReply.getQuestionId(), eachReply.getQuestionNum(), eachReply.getQuestionType(), valueJoiner.toString(), eachReply.getDescriptive(), userDetails.getUser());
+        return new Reply(eachReply.getQuestionId(), eachReply.getQuestionNum(), eachReply.getQuestionType(), valueJoiner.toString(), null, userDetails.getUser());
     }
 
 
     // 단답형, 서술형 답변 처리 로직
     public Reply replyDescriptive(EachReply eachReply, UserDetailsImpl userDetails) {
-        return new Reply(eachReply.getQuestionId(), eachReply.getQuestionNum(), eachReply.getQuestionType(), eachReply.getDescriptive(), eachReply.getDescriptive(), userDetails.getUser());
+        return new Reply(eachReply.getQuestionId(), eachReply.getQuestionNum(), eachReply.getQuestionType(), null, eachReply.getDescriptive(), userDetails.getUser());
     }
 }
