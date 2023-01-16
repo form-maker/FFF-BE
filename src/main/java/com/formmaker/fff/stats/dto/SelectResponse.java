@@ -6,7 +6,6 @@ import lombok.Getter;
 public class SelectResponse {
     private String answer;
     private double value;
-
     private Integer answerNum;
 
     public SelectResponse(String answer, Integer answerNum){

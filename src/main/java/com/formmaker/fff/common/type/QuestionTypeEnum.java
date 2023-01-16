@@ -1,10 +1,11 @@
 package com.formmaker.fff.common.type;
 
 
-import com.formmaker.fff.question.dto.QuestionDto;
-import com.formmaker.fff.reply.dto.ReplyDto;
+import com.formmaker.fff.question.entity.Question;
+import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import lombok.Getter;
+
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -19,12 +20,12 @@ public enum QuestionTypeEnum {
     RANK(statsMethod::statsRank),
     SHORT_DESCRIPTIVE(statsMethod::statsShortDescriptive),
     LONG_DESCRIPTIVE(statsMethod::statsLongDescriptive),
-    STAR(statsMethod::statsStar),
-    SCORE(statsMethod::statsScore);
+    STAR(statsMethod::statsOfPositiveValue),
+    SCORE(statsMethod::statsOfPositiveValue);
 
-    private BiFunction<List<ReplyDto>, QuestionDto, QuestionStats> statsFn;
+    private BiFunction<List<Reply>, Question, QuestionStats> statsFn;
 
-    QuestionTypeEnum(BiFunction<List<ReplyDto>,  QuestionDto, QuestionStats> statsFn) {
+    QuestionTypeEnum(BiFunction<List<Reply>,  Question, QuestionStats> statsFn) {
         this.statsFn = statsFn;
     }
 }
