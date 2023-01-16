@@ -1,13 +1,13 @@
 package com.formmaker.fff.reply.service;
 
 import com.formmaker.fff.common.exception.CustomException;
-import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.question.dto.QuestionDto;
 import com.formmaker.fff.question.repository.QuestionRepository;
-import com.formmaker.fff.reply.dto.request.EachReply;
+import com.formmaker.fff.reply.dto.request.EachReplyRequest;
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.survey.repository.SurveyRepository;
+import com.formmaker.fff.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public class ReplyService {
     private final ReplyMethod replyMethod;
 
     @Transactional
-    public void postReply(Long surveyId, List<EachReply> replyRequest, UserDetailsImpl userDetails) {
+    public void postReply(Long surveyId, List<EachReplyRequest> replyRequest, User user) {
         // 응답하려는 Survey 가 존재해?
         surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
@@ -34,30 +34,30 @@ public class ReplyService {
 
         List<Reply> replyList = new ArrayList<>();
         int count = 1;
-        for (EachReply eachReply : replyRequest) {
+        for (EachReplyRequest eachReplyRequest : replyRequest) {
             // 응답하려는 Question 이 존재해?
-            QuestionDto questionDto = new QuestionDto(questionRepository.findById(eachReply.getQuestionId()).orElseThrow(
+            QuestionDto questionDto = new QuestionDto(questionRepository.findById(eachReplyRequest.getQuestionId()).orElseThrow(
                     () -> new CustomException(NOT_FOUND_QUESTION))
             );
 
             // 응답하려는 질문 타입과 응답 타입이 일치해?
-            boolean equalType = eachReply.getQuestionType() == questionDto.getQuestionType();
+            boolean equalType = eachReplyRequest.getQuestionType() == questionDto.getQuestionType();
             if (!equalType) {
                 throw new CustomException(INVALID_QUESTION_TYPE);
             }
 
-            switch (eachReply.getQuestionType()) {
+            switch (eachReplyRequest.getQuestionType()) {
                 case STAR, SCORE, SLIDE, SINGLE_CHOICE -> {
-                    replyList.add(replyMethod.replySingleValue(eachReply, userDetails));
+                    replyList.add(replyMethod.replyToSingleValue(eachReplyRequest, user));
                 }
                 case MULTIPLE_CHOICE -> {
-                    replyList.add(replyMethod.replyMultipleChoice(eachReply, userDetails));
+                    replyList.add(replyMethod.replyToMultipleValue(eachReplyRequest, user));
                 }
                 case RANK -> {
-                    replyList.add(replyMethod.replyRank(eachReply, userDetails));
+                    replyList.add(replyMethod.replyToRank(eachReplyRequest, user));
                 }
                 case SHORT_DESCRIPTIVE, LONG_DESCRIPTIVE -> {
-                    replyList.add(replyMethod.replyDescriptive(eachReply, userDetails));
+                    replyList.add(replyMethod.replyToDescriptive(eachReplyRequest, user));
                 }
             }
         }
