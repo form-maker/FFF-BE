@@ -11,6 +11,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,16 +97,41 @@ public class StatsMethod {
             valueList.add(value);
         }
 
+        // 평균을 구하는 로직
+        int participant = valueList.size();
         int sum = valueList.stream().mapToInt(Integer::intValue).sum();
+        float average = (float) sum / participant;
+        Float avg = Float.valueOf(String.format("%1f", average));
 
+        // 각 문항이 몇 번 선택받았는지 출력하는 로직
+        int selectOne = Collections.frequency(valueList, 1);
+        int selectTwo = Collections.frequency(valueList, 2);
+        int selectThree = Collections.frequency(valueList, 3);
+        int selectFour = Collections.frequency(valueList, 4);
+        int selectFive = Collections.frequency(valueList, 5);
+
+        // 각 문항의 선택률(?)
+        float rateOne = (float) selectOne / participant;
+        float rateTwo = (float) selectTwo / participant;
+        float rateThree = (float) selectThree / participant;
+        float rateFour = (float) selectFour / participant;
+        float rateFive = (float) selectFive / participant;
+
+        List<Float> selectRate = new ArrayList<>();
+
+        selectRate.add(rateOne);
+        selectRate.add(rateTwo);
+        selectRate.add(rateThree);
+        selectRate.add(rateFour);
+        selectRate.add(rateFive);
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .questionAvg(null)
-                .satisfactionList(null)
+                .questionAvg(avg)
+                .satisfactionList(selectRate)
                 .build();
     }
 
@@ -124,7 +150,6 @@ public class StatsMethod {
              * 에러가 터져서 멈추는게 아닌, 에러가 터진 데이터를 제외한 통계를 반환시켜주어야함.
              * new CustomException(ErrorCode.INVALID_FORM_DATA);
              */
-
         }
         return new JSONObject();
     }

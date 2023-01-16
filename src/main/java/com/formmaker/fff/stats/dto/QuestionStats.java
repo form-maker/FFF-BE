@@ -14,7 +14,7 @@ public class QuestionStats {
     private QuestionTypeEnum questionType;
     private String questionTitle;
     private String questionSummary;
-    private String questionAvg;
-    private List<String> satisfactionList;
+    private Float questionAvg;
+    private List<Float> satisfactionList;
     private List<SelectResponse> selectList;
 }
