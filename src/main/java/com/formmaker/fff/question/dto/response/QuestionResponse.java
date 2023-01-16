@@ -1,7 +1,7 @@
 package com.formmaker.fff.question.dto.response;
 
-import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.answer.dto.response.AnswerResponse;
+import com.formmaker.fff.common.type.QuestionTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

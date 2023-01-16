@@ -16,6 +16,7 @@ public class QuestionStats {
     private String questionTitle;
     private String questionSummary;
     private String questionAvg;
-    private List<String> satisfactionList;
+    private Integer volume;
+    private List<SatisfactionResponse> satisfactionList;
     private List<SelectResponse> selectList;
 }

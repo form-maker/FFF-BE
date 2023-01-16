@@ -5,14 +5,14 @@ import lombok.Getter;
 @Getter
 public class SelectResponse {
     private String answer;
-    private double value;
+    private Double value;
 
     private Integer answerNum;
 
     public SelectResponse(String answer, Integer answerNum){
         this.answer = answer;
         this.answerNum = answerNum;
-        value = 0;
+        value = Double.valueOf(0);
     }
 
     public void increaseValue(){
