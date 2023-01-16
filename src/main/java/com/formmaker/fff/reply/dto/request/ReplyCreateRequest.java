@@ -13,5 +13,4 @@ public class ReplyCreateRequest {
     private Integer questionNum;
     private List<Integer> selectValue = new ArrayList<>();
     private String descriptive;
-    private List<Integer> rank = new ArrayList<>();
 }
