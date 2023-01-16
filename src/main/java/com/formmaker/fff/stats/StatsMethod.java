@@ -6,6 +6,7 @@ import com.formmaker.fff.question.dto.QuestionDto;
 import com.formmaker.fff.reply.dto.ReplyDto;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
+import org.hibernate.sql.SelectValues;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,17 +24,32 @@ public class StatsMethod {
         SelectResponse selectResponse;
         for(AnswerDto answerDto : questionDto.getAnswerList()){
             selectResponse = new SelectResponse(answerDto.getAnswerValue(), answerDto.getAnswerNum());
-            selectList.add(selectResponse); //리스트에 넣다.
-        }
+            selectList.add(selectResponse);
+        } //해당 질문과 관련된 질문 문항과 문항 번호들을 selectList 담아온다.
 
         selectList = selectList.stream()
-                .sorted(Comparator.comparing(SelectResponse::getAnswerNum)).collect(Collectors.toList());
+                    .sorted(Comparator.comparing(SelectResponse::getAnswerNum)).collect(Collectors.toList());
+        //문항 번호별로 정렬해준다.
+        int totalSelect = 0;
+
 
         for(ReplyDto userReply : replyDtoList){
-            Integer selectValue = Integer.parseInt(userReply.getSelectValue()); //선택한 응답에 벨류 -> 1/14 (형준 수정) 확인 부탁드립니다.
 
-            selectList.get(selectValue-1).increaseValue();
+            List<String> selectValueList = List.of(userReply.getSelectValue().split("|"));  //유저들의 문항선택 값을 List에 넣어주고
+            List<Integer> changeSelectValueList = selectValueList.stream() //스트링 리스트를 Integer 리스트로 변환
+                    .map(Integer::parseInt).toList();
+
+
+
+            for (Integer selectValues : changeSelectValueList) { // 유저들의 문항선택 값 리스트 값들을 selectValues 하나하나 넣어주고
+                selectList.get(selectValues-1).increaseValue(); //번호별로 정렬된 문항에서 유저가 문항선택한 값 들이 나올 때마다 해당 문항의 벨류는 증가하고
+                totalSelect++; // 해당 Question의 전체 선택 횟수가 증가한다.
+            }
         }
+        for(SelectResponse select : selectList) {
+            select.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
+        }
+
        return  QuestionStats.builder()
                 .questionNum(questionDto.getQuestionNum())
                 .questionType(questionDto.getQuestionType())
@@ -41,8 +57,6 @@ public class StatsMethod {
                 .questionSummary(questionDto.getSummary())
                 .selectList(selectList)
                 .build();
-
-
 
     }
     public QuestionStats statsMultipleChoice(List<ReplyDto> replyDtoList, QuestionDto questionDto){
