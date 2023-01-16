@@ -3,15 +3,14 @@ package com.formmaker.fff.survey.service;
 
 import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.answer.repositoy.AnswerRepository;
-import com.formmaker.fff.answer.dto.request.AnswerCreateRequest;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.AnswerTypeEnum;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.question.dto.QuestionDto;
+import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
-import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
 import com.formmaker.fff.survey.dto.SurveyDto;
 import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.dto.response.SurveyMainResponse;
@@ -30,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
@@ -64,7 +62,6 @@ public class SurveyService {
                     .questionNum(questionNum++)
                     .summary(questionDto.getSummary())
                     .questionType(questionDto.getQuestionType())
-                    .questionNum(questionDto.getQuestionNum())
                     .volume(questionDto.getVolume())
                     .build();
             for(String answerStr : questionDto.getAnswerList()){

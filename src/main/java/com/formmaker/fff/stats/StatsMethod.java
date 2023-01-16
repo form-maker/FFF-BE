@@ -3,7 +3,7 @@ package com.formmaker.fff.stats;
 
 import com.formmaker.fff.answer.dto.AnswerDto;
 import com.formmaker.fff.question.dto.QuestionDto;
-import com.formmaker.fff.reply.dto.request.ReplyDto;
+import com.formmaker.fff.reply.dto.ReplyDto;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
 import org.hibernate.sql.SelectValues;

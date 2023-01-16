@@ -1,4 +1,4 @@
-package com.formmaker.fff.reply.dto.request;
+package com.formmaker.fff.reply.dto;
 
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.reply.entity.Reply;
