@@ -21,7 +21,9 @@ public class StatsMethod {
     static public StatsMethod statsMethod = new StatsMethod();
 
 
+
     public QuestionStats statsSingleChoice(List<Reply> replyList, Question question) {
+
 
         List<SelectResponse> selectList = new ArrayList<>();
         SelectResponse selectResponse;
@@ -37,8 +39,8 @@ public class StatsMethod {
 
 
         for (Reply userReply : replyList) {
+            List<String> selectValueList = List.of(userReply.getSelectValue().split("\\|"));  //유저들의 문항선택 값을 List에 넣어주고
 
-            List<String> selectValueList = List.of(userReply.getSelectValue().split("|"));  //유저들의 문항선택 값을 List에 넣어주고
             List<Integer> changeSelectValueList = selectValueList.stream() //스트링 리스트를 Integer 리스트로 변환
                     .map(Integer::parseInt).toList();
 
@@ -52,29 +54,63 @@ public class StatsMethod {
             select.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
         }
 
+        selectList.stream().map(select->select.getValue()).collect(Collectors.toList());
+
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .selectList(selectList)
+
+                .selectList(selectList.stream().map(select->select.getValue()).collect(Collectors.toList()))
                 .build();
     }
 
-    public QuestionStats statsMultipleChoice(List<Reply> replyList, Question question) {
 
-        return QuestionStats.builder().build();
-    }
 
     public QuestionStats statsSlide(List<Reply> replyList, Question question) {
 
-        return QuestionStats.builder().build();
+        List<SelectResponse> satisfactionList = new ArrayList<>();
+        SelectResponse selectResponse;
+            int volume = question.getVolume();
+
+
+        for(int x = -volume ; x<=volume; x++){
+           int indexNum = x+volume;
+           int value = indexNum-volume;
+           selectResponse = new SelectResponse(value);
+           satisfactionList.add(selectResponse);
+        }
+        satisfactionList = satisfactionList.stream()
+                .sorted(Comparator.comparing(SelectResponse::getChoiceValue)).collect(Collectors.toList());
+
+        int totalSelect = 0 ;
+
+        for (Reply userReply : replyList) {
+            List<String> satisfactionValueList = List.of(userReply.getSelectValue());  //유저들의 선택 값을 List에 넣어주고
+            List<Integer> changeSatisfactionValueList = satisfactionValueList.stream() //스트링 리스트를 Integer 리스트로 변환
+                    .map(Integer::parseInt).toList();
+
+            for (Integer satisfactionValues : changeSatisfactionValueList) { // 유저들의 만족도선택 값 리스트 값들을 satisfactionValues 하나하나 넣어주고
+                satisfactionList.get(satisfactionValues + volume).increaseValue(); //번호별로 정렬된 만족도에서 유저가 만족도를 선택한 값 들이 나올 때마다 해당 문항의 벨류는 증가하고
+                totalSelect++;
+            }
+        }
+        for (SelectResponse satisfaction : satisfactionList) {
+            satisfaction.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
+        }
+        return QuestionStats.builder()
+                .questionNum(question.getQuestionNum())
+                .questionType(question.getQuestionType())
+                .questionTitle(question.getTitle())
+                .questionSummary(question.getSummary())
+                .volume(question.getVolume())
+                .satisfactionList(satisfactionList.stream().map(satisfaction->satisfaction.getValue()).collect(Collectors.toList()))
+                .build();
     }
 
     public QuestionStats statsRank(List<Reply> replyList, Question question) {
-        // 문항 내 폼 1개당 점수 반영 3개면 1명이 3개 반영
-        // 각 폼에 대해서 합계를 낸 다음에
-        // 제일 높은 점수를 가진 폼을 필두로 오름차순 , 및 합계치 퍼센테이지로 변환해서 데이터 반환 ?
+
         return QuestionStats.builder().build();
     }
 
@@ -90,6 +126,7 @@ public class StatsMethod {
 
     // 별점, 스코어 통계 처리 로직
     public QuestionStats statsOfPositiveValue(List<Reply> replyList, Question question) {
+
         List<Integer> valueList = new ArrayList<>();
 
         for (Reply reply : replyList) {
@@ -132,6 +169,7 @@ public class StatsMethod {
                 .questionSummary(question.getSummary())
                 .questionAvg(avg)
                 .satisfactionList(selectRate)
+
                 .build();
     }
 
@@ -150,6 +188,7 @@ public class StatsMethod {
              * 에러가 터져서 멈추는게 아닌, 에러가 터진 데이터를 제외한 통계를 반환시켜주어야함.
              * new CustomException(ErrorCode.INVALID_FORM_DATA);
              */
+
         }
         return new JSONObject();
     }

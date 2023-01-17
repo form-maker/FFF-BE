@@ -15,6 +15,8 @@ public class QuestionStats {
     private String questionTitle;
     private String questionSummary;
     private Float questionAvg;
+    private Integer volume;
     private List<Float> satisfactionList;
-    private List<SelectResponse> selectList;
+    private List<Float> selectList;
+
 }
