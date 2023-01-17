@@ -96,12 +96,18 @@ public class StatsService {
 
         try{
             csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(headers));
+            int checkValue;
             for(User user : userReply.keySet()){
                 List<Reply> replyList = userReply.get(user).stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
                 List<String> userData = new ArrayList<>();
                 String loginId = user.getLoginId();
                 userData.add(loginId.substring(0, loginId.length()-3)+"***");
-                for (Reply reply : replyList) {
+                checkValue = 1;
+                for(Reply reply : replyList){
+                    System.out.println(checkValue + " " + reply.getQuestionNum() + " " + reply.getSelectValue());
+                    while (reply.getQuestionNum() > checkValue++){
+                        userData.add("");
+                    }
                     userData.add(replyToValue(reply));
                 }
                 csvPrinter.printRecord(userData);
