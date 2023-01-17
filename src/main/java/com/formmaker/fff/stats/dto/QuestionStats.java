@@ -12,11 +12,14 @@ import java.util.List;
 public class QuestionStats {
     private Integer questionNum;
     private QuestionTypeEnum questionType;
-
     private String questionTitle;
     private String questionSummary;
-    private String questionAvg;
+
+   
     private Integer volume;
     private List<SatisfactionResponse> satisfactionList;
+
+    private Float questionAvg;
+   
     private List<SelectResponse> selectList;
 }

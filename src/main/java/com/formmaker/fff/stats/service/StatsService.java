@@ -13,6 +13,7 @@ import com.formmaker.fff.survey.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class StatsService {
     private final QuestionRepository questionRepository;
     private final ReplyRepository replyRepository;
 
+    @Transactional
     public StatsResponse getStats(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)

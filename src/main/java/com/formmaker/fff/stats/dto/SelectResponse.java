@@ -5,7 +5,9 @@ import lombok.Getter;
 @Getter
 public class SelectResponse {
     private String answer;
+
     private Double value;
+
 
     private Integer answerNum;
 
