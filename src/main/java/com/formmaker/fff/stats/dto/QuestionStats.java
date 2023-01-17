@@ -18,5 +18,6 @@ public class QuestionStats {
     private Integer volume;
     private List<Float> satisfactionList;
     private List<Float> selectList;
+    private List<DescriptiveResponse>descriptiveList;
 
 }

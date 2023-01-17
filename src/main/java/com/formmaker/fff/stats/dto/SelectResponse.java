@@ -8,18 +8,22 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SelectResponse {
     private String answer;
-
     private Float value;
     @JsonIgnore
     private Integer choiceValue;
     @JsonIgnore
-
     private Integer answerNum;
 
     public SelectResponse(Integer choiceValue ){
 
         this.choiceValue = choiceValue;
         value = Float.valueOf(0);
+    }
+
+
+    public SelectResponse(String answer){
+        this.answer = answer;
+
     }
 
     public SelectResponse(String answerValue, Integer answerNum) {
@@ -35,5 +39,7 @@ public class SelectResponse {
     public void valueAvg(int total){
         value = (float)(Math.round(((value/total)*100)*10)/10.0);
         //소수점 1째자리까지
+
     }
+
 }
