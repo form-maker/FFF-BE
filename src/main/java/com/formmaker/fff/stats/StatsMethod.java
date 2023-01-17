@@ -5,7 +5,6 @@ import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.stats.dto.QuestionStats;
-import com.formmaker.fff.stats.dto.SatisfactionResponse;
 import com.formmaker.fff.stats.dto.SelectResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,7 +13,6 @@ import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class StatsMethod {
@@ -50,32 +48,32 @@ public class StatsMethod {
         for (SelectResponse select : selectList) {
             select.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
         }
-
+        selectList.stream().map(select->select.getValue()).collect(Collectors.toList());
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .selectList(selectList)
+                .selectList(selectList.stream().map(select->select.getValue()).collect(Collectors.toList()))
                 .build();
     }
 
 
     public QuestionStats statsSlide(List<Reply> replyList, Question question) {
 
-        List<SatisfactionResponse> satisfactionList = new ArrayList<>();
-        SatisfactionResponse satisfactionResponse;
+        List<SelectResponse> satisfactionList = new ArrayList<>();
+        SelectResponse selectResponse;
             int volume = question.getVolume();
 
 
         for(int x = -volume ; x<=volume; x++){
            int indexNum = x+volume;
            int value = indexNum-volume;
-           satisfactionResponse = new SatisfactionResponse(value);
-           satisfactionList.add(satisfactionResponse);
+           selectResponse = new SelectResponse(value);
+           satisfactionList.add(selectResponse);
         }
         satisfactionList = satisfactionList.stream()
-                .sorted(Comparator.comparing(SatisfactionResponse::getValue)).collect(Collectors.toList());
+                .sorted(Comparator.comparing(SelectResponse::getChoiceValue)).collect(Collectors.toList());
 
         int totalSelect = 0 ;
 
@@ -89,7 +87,7 @@ public class StatsMethod {
                 totalSelect++;
             }
         }
-        for (SatisfactionResponse satisfaction : satisfactionList) {
+        for (SelectResponse satisfaction : satisfactionList) {
             satisfaction.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
         }
         return QuestionStats.builder()
@@ -98,7 +96,7 @@ public class StatsMethod {
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
                 .volume(question.getVolume())
-                .satisfactionList(satisfactionList)
+                .satisfactionList(satisfactionList.stream().map(satisfaction->satisfaction.getValue()).collect(Collectors.toList()))
                 .build();
     }
 
