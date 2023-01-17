@@ -31,7 +31,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
-        System.out.println(request.getRequestURI());
         /* Token 유효성 검사 및 인증 */
         if(token != null) {
             if(!jwtUtil.validateToken(token)){
