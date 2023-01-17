@@ -4,6 +4,7 @@ package com.formmaker.fff.stats;
 import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.reply.entity.Reply;
+import com.formmaker.fff.stats.dto.DescriptiveResponse;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
 import org.json.simple.JSONObject;
@@ -12,7 +13,9 @@ import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class StatsMethod {
@@ -48,13 +51,13 @@ public class StatsMethod {
         for (SelectResponse select : selectList) {
             select.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
         }
-        selectList.stream().map(select->select.getValue()).collect(Collectors.toList());
+        selectList.stream().map(select -> select.getValue()).collect(Collectors.toList());
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .selectList(selectList.stream().map(select->select.getValue()).collect(Collectors.toList()))
+                .selectList(selectList.stream().map(select -> select.getValue()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -63,19 +66,19 @@ public class StatsMethod {
 
         List<SelectResponse> satisfactionList = new ArrayList<>();
         SelectResponse selectResponse;
-            int volume = question.getVolume();
+        int volume = question.getVolume();
 
 
-        for(int x = -volume ; x<=volume; x++){
-           int indexNum = x+volume;
-           int value = indexNum-volume;
-           selectResponse = new SelectResponse(value);
-           satisfactionList.add(selectResponse);
+        for (int x = -volume; x <= volume; x++) {
+            int indexNum = x + volume;
+            int value = indexNum - volume;
+            selectResponse = new SelectResponse(value);
+            satisfactionList.add(selectResponse);
         }
         satisfactionList = satisfactionList.stream()
                 .sorted(Comparator.comparing(SelectResponse::getChoiceValue)).collect(Collectors.toList());
 
-        int totalSelect = 0 ;
+        int totalSelect = 0;
 
         for (Reply userReply : replyList) {
             List<String> satisfactionValueList = List.of(userReply.getSelectValue());  //유저들의 선택 값을 List에 넣어주고
@@ -96,7 +99,7 @@ public class StatsMethod {
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
                 .volume(question.getVolume())
-                .satisfactionList(satisfactionList.stream().map(satisfaction->satisfaction.getValue()).collect(Collectors.toList()))
+                .satisfactionList(satisfactionList.stream().map(satisfaction -> satisfaction.getValue()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -114,8 +117,45 @@ public class StatsMethod {
     }
 
     public QuestionStats statsShortDescriptive(List<Reply> replyList, Question question) {
+        ArrayList<String> shortDescriptiveList = new ArrayList<>();
+        ArrayList<DescriptiveResponse> descriptiveList = new ArrayList<>();
+        DescriptiveResponse descriptiveResponse;
 
-        return QuestionStats.builder().build();
+        for (Reply userReply : replyList) { //해당 설문에 유저들이 입력한 단답형을 가져온다 .
+            shortDescriptiveList.add(String.valueOf(userReply.getDescriptive()));
+        }
+
+        Map<String,Integer> map = new HashMap<String,Integer>();
+        for(String str : shortDescriptiveList){
+            Integer count = map.get(str);
+            if(count==null){
+                map.put(str,1);
+            }else{
+                map.put(str,count + 1 );
+            }
+        }
+        for(String key : map.keySet()){
+            String a = (key);
+            Integer b = (map.get(key));
+            descriptiveResponse = new DescriptiveResponse(a,b);
+            descriptiveList.add(descriptiveResponse);
+        }
+//        Set<String> set = new HashSet<String>(shortDescriptiveList); //비교자료로 정의한다.
+//
+//        for (String str : set) {
+//            response =(str + ":" + Collections.frequency(shortDescriptiveList, str));
+//
+//
+//            descriptiveList.add(response);
+//        }
+
+        return QuestionStats.builder()
+                .questionNum(question.getQuestionNum())
+                .questionType(question.getQuestionType())
+                .questionTitle(question.getTitle())
+                .questionSummary(question.getSummary())
+                .descriptiveList(descriptiveList)
+                .build();
     }
 
     // 별점, 스코어 통계 처리 로직
