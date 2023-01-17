@@ -8,10 +8,12 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SelectResponse {
     private String answer;
+
     private Float value;
     @JsonIgnore
     private Integer choiceValue;
     @JsonIgnore
+
     private Integer answerNum;
 
     public SelectResponse(Integer choiceValue ){
