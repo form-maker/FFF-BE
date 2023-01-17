@@ -20,6 +20,7 @@ public class SelectResponse {
         value = Float.valueOf(0);
     }
 
+
     public SelectResponse(String answer){
         this.answer = answer;
 
@@ -27,7 +28,6 @@ public class SelectResponse {
 
     public SelectResponse(String answerValue, Integer answerNum) {
         this.answer = answerValue;
-//        this.value = answerNum;
         this.answerNum = answerNum;
         value = Float.valueOf(0);
     }
@@ -39,16 +39,7 @@ public class SelectResponse {
     public void valueAvg(int total){
         value = (float)(Math.round(((value/total)*100)*10)/10.0);
         //소수점 1째자리까지
-    }
-    public static class DescriptiveResponse{
-        private String answer;
-        private Integer value;
 
-        public DescriptiveResponse(String answer , Integer value){
-            this.answer = answer;
-            this.value = value;
-
-        }
     }
 
 }
