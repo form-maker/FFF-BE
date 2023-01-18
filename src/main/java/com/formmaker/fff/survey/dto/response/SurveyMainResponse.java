@@ -21,5 +21,5 @@ public class SurveyMainResponse {
     private Integer totalTime;
     private Integer dDay;
     private Integer participant;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 }
