@@ -13,6 +13,12 @@ public enum ErrorCode {
     DUPLICATE_USERNAME("중복된 닉네임 입니다.",400),
     DUPLICATE_EMAIL("중복된 이메일 입니다.", 400),
     NOT_FOUND_ID("아이디 또는 비밀번호가 일치하지 않습니다.",400),
+    /*유효성 체크 에러*/
+    NOT_NULL("필수값이 누락되었습니다.", 400),
+    MIN_VALUE("최소값보다 커야 합니다.", 400),
+    PATTERN("형식이 올바르지 않습니다.", 400),
+    NOT_BLANK("필수값이 누락되었습니다.",400),
+    EMAIL("이메일 형식이 아닙니다.", 400),
 
     /*토큰 에러*/
     EXPIRED_TOKEN("토큰이 만료되었습니다.",400),
