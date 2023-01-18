@@ -94,7 +94,7 @@ public class StatsMethod {
         }
 
         //todo(삭제)
-        System.out.println("---------------------------------------" + selectValueList);
+        System.out.println("selectValueList=======================================" + selectValueList);
 
         List<List<Integer>> valuesOfAnswers = new ArrayList<>();
 
@@ -107,17 +107,26 @@ public class StatsMethod {
         }
 
         //todo(삭제)
-        System.out.println("=======================================" + valuesOfAnswers);
+        System.out.println("valuesOfAnswers=======================================" + valuesOfAnswers);
 
         List<Float> rankList = new ArrayList<>();
 
         for (List<Integer> valuesOfAnswer : valuesOfAnswers) {
             List<Integer> selectCountList = new ArrayList<>();
-            for (int i = 0; i < valuesOfAnswer.size(); i++) {
-                selectCountList.add(Collections.frequency(valuesOfAnswer, i + 1));
+            for (int i = 0; i < valuesOfAnswers.size(); i++) {
+                selectCountList.add(Collections.frequency(valuesOfAnswer, (i + 1)));
             }
+
+            //todo
+            System.out.println("selectCountList = " + selectCountList);
             rankList = selectAvg(selectCountList);
-            SelectResponse selectResponse = new SelectResponse(rankList);
+
+            //todo 문항 값 넣어주기
+            List<Answer> answerList = question.getAnswerList();
+            SelectResponse selectResponse = new SelectResponse();
+            for (Answer answer : answerList) {
+                selectResponse = new SelectResponse(answer.getAnswerValue(), rankList);
+            }
             selectResponseList.add(selectResponse);
         }
 
@@ -195,8 +204,12 @@ public class StatsMethod {
         for (Integer selectCount : selectCountList) {
             float selectAvg = (float) selectCount / totalSelectCount;
             rankList.add(selectAvg);
+
+            //todo selectAvg
+            System.out.println("selectAvg = " + selectAvg);
         }
 
+        System.out.println("rankList = " + rankList);
         return rankList;
     };
 

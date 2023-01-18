@@ -1,11 +1,13 @@
 package com.formmaker.fff.stats.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class SelectResponse {
     private String answer;
     private double value;
@@ -18,7 +20,8 @@ public class SelectResponse {
         value = 0;
     }
 
-    public SelectResponse(List<Float> rankList) {
+    public SelectResponse(String answer, List<Float> rankList) {
+        this.answer = answer;
         this.rankList = rankList;
     }
 
