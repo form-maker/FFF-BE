@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -29,6 +30,8 @@ public class Reply {
 
     private String descriptive;
 
+    private LocalDate createdAt;
+
     @ManyToOne
     @JoinColumn(name = "usersId")
     private User user;
@@ -42,5 +45,6 @@ public class Reply {
         this.selectValue = selectValue;
         this.descriptive = descriptive;
         this.user = user;
+        this.createdAt = LocalDate.now();
     }
 }
