@@ -3,9 +3,10 @@ package com.formmaker.fff.reply.service;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
-import com.formmaker.fff.reply.dto.request.EachReplyRequest;
+import com.formmaker.fff.reply.dto.request.ReplyRequest;
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
+import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -26,15 +27,14 @@ public class ReplyService {
     private final ReplyMethod replyMethod;
 
     @Transactional
-    public void postReply(Long surveyId, List<EachReplyRequest> replyRequest, User user) {
+    public void postReply(Long surveyId, List<ReplyRequest> replyRequestList, User user) {
         // 응답하려는 Survey 가 존재해?
-        surveyRepository.findById(surveyId).orElseThrow(
+        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
 
         List<Reply> replyList = new ArrayList<>();
-        int count = 1;
-        for (EachReplyRequest eachReplyRequest : replyRequest) {
+        for (ReplyRequest replyRequest : replyRequestList) {
             // 응답하려는 Question 이 존재해?
             Question question = questionRepository.findById(eachReplyRequest.getQuestionId()).orElseThrow(
                     () -> new CustomException(NOT_FOUND_QUESTION)
@@ -46,21 +46,22 @@ public class ReplyService {
                 throw new CustomException(INVALID_QUESTION_TYPE);
             }
 
-            switch (eachReplyRequest.getQuestionType()) {
+            switch (replyRequest.getQuestionType()) {
                 case STAR, SCORE, SLIDE, SINGLE_CHOICE -> {
-                    replyList.add(replyMethod.replyToSingleValue(eachReplyRequest, user));
+                    replyList.add(replyMethod.replyToSingleValue(replyRequest, user));
                 }
                 case MULTIPLE_CHOICE -> {
-                    replyList.add(replyMethod.replyToMultipleValue(eachReplyRequest, user));
+                    replyList.add(replyMethod.replyToMultipleValue(replyRequest, user));
                 }
                 case RANK -> {
-                    replyList.add(replyMethod.replyToRank(eachReplyRequest, user));
+                    replyList.add(replyMethod.replyToRank(replyRequest, user));
                 }
                 case SHORT_DESCRIPTIVE, LONG_DESCRIPTIVE -> {
-                    replyList.add(replyMethod.replyToDescriptive(eachReplyRequest, user));
+                    replyList.add(replyMethod.replyToDescriptive(replyRequest, user));
                 }
             }
         }
         replyRepository.saveAll(replyList);
+        survey.IncreaseParticipant();
     }
 }
