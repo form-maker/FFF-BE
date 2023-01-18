@@ -2,7 +2,7 @@ package com.formmaker.fff.reply.controller;
 
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.response.security.UserDetailsImpl;
-import com.formmaker.fff.reply.dto.request.EachReplyRequest;
+import com.formmaker.fff.reply.dto.request.ReplyRequest;
 import com.formmaker.fff.reply.service.ReplyService;
 import com.formmaker.fff.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +19,9 @@ import java.util.List;
 public class ReplyController {
     private final ReplyService replyService;
     @PostMapping("/{surveyId}/reply")
-    public ResponseEntity<ResponseMessage> postReply(@PathVariable Long  surveyId, @RequestBody List<EachReplyRequest> replyRequest, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseMessage> postReply(@PathVariable Long  surveyId, @RequestBody List<ReplyRequest> replyRequestList, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        replyService.postReply(surveyId, replyRequest, user);
+        replyService.postReply(surveyId, replyRequestList, user);
         ResponseMessage responseMessage = new ResponseMessage("설문 응답 성공", 200, null);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }

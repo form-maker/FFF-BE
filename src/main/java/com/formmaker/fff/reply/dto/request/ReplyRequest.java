@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class EachReplyRequest {
+public class ReplyRequest {
     private Long questionId;
     private QuestionTypeEnum questionType;
     private Integer questionNum;
