@@ -32,13 +32,11 @@ public class StatsMethod {
         //문항 번호별로 정렬해준다.
         int totalSelect = 0;
 
-
         for (Reply userReply : replyList) {
             List<String> selectValueList = List.of(userReply.getSelectValue().split("\\|"));  //유저들의 문항선택 값을 List에 넣어주고
 
             List<Integer> changeSelectValueList = selectValueList.stream() //스트링 리스트를 Integer 리스트로 변환
                     .map(Integer::parseInt).toList();
-
 
             for (Integer selectValues : changeSelectValueList) { // 유저들의 문항선택 값 리스트 값들을 selectValues 하나하나 넣어주고
                 selectList.get(selectValues - 1).increaseValue(); //번호별로 정렬된 문항에서 유저가 문항선택한 값 들이 나올 때마다 해당 문항의 벨류는 증가하고
@@ -59,11 +57,11 @@ public class StatsMethod {
     }
 
     public QuestionStats statsSlide(List<Reply> replyList, Question question) {
+
         List<SelectResponse> satisfactionList = new ArrayList<>();
         SelectResponse selectResponse;
 
         int volume = question.getVolume();
-
 
         for (int x = -volume; x <= volume; x++) {
             int indexNum = x + volume;
@@ -72,20 +70,21 @@ public class StatsMethod {
             satisfactionList.add(selectResponse);
 
         }
+
         satisfactionList = satisfactionList.stream()
                 .sorted(Comparator.comparing(SelectResponse::getChoiceValue)).collect(Collectors.toList());
 
-
         int totalSelect = 0;
-
 
         for (Reply userReply : replyList) {
             satisfactionList.get(Integer.parseInt(userReply.getSelectValue()) + volume).increaseValue();
             totalSelect++;
         }
+
         for (SelectResponse satisfaction : satisfactionList) {
             satisfaction.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
         }
+
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
@@ -120,7 +119,6 @@ public class StatsMethod {
             }
             selectValueList.add(selectValue);
         }
-
 
         /*
             selectValue 는 index 가 answer 의 번호(number)를 나타내며,
@@ -175,27 +173,22 @@ public class StatsMethod {
 
     public QuestionStats statsShortDescriptive(List<Reply> replyList, Question question) {
 
-
         ArrayList<DescriptiveResponse> descriptiveList = new ArrayList<>();
-        DescriptiveResponse descriptiveResponse;
-
-
 
         List<String> shortDescriptiveList = replyList.stream().map(Reply::getDescriptive).toList();
 
-        Map<String,Integer> map = new HashMap<String,Integer>();
-        for(String str : shortDescriptiveList){
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        for (String str : shortDescriptiveList) {
             Integer count = map.get(str);
-            if(count==null){
-                map.put(str,1);
-            }else{
-                map.put(str,count + 1 );
+            if (count == null) {
+                map.put(str, 1);
+            } else {
+                map.put(str, count + 1);
             }
         }
-        for(String key : map.keySet()){
+        for (String key : map.keySet()) {
             descriptiveList.add(new DescriptiveResponse(key, map.get(key)));
         }
-
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
@@ -209,7 +202,6 @@ public class StatsMethod {
     // 별점, 스코어 통계 처리 로직
     public QuestionStats statsOfPositiveValue(List<Reply> replyList, Question question) {
 
-
         List<Integer> valueList = new ArrayList<>();
 
         for (Reply reply : replyList) {
@@ -220,13 +212,12 @@ public class StatsMethod {
         // 평균을 구하는 로직
         int participant = valueList.size();
         int sum = valueList.stream().mapToInt(Integer::intValue).sum();
-        float avg = Math.round(sum/participant*100f);
+        float avg = Math.round(sum / participant * 100f);
 
         List<Float> selectRate = new ArrayList<>();
 
-
-        for(int i = 1; i <= 5; i++){
-            selectRate.add((float) Math.round(Collections.frequency(valueList, i)/participant*100f));
+        for (int i = 1; i <= 5; i++) {
+            selectRate.add((float) Math.round(Collections.frequency(valueList, i) / participant * 100f));
         }
 
         return QuestionStats.builder()
