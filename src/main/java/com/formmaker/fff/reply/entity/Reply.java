@@ -1,5 +1,6 @@
 package com.formmaker.fff.reply.entity;
 
+import com.formmaker.fff.common.TimeStamped;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.user.entity.User;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Reply {
+public class Reply extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,8 +31,6 @@ public class Reply {
 
     private String descriptive;
 
-    private LocalDate createdAt;
-
     @ManyToOne
     @JoinColumn(name = "usersId")
     private User user;
@@ -45,6 +44,5 @@ public class Reply {
         this.selectValue = selectValue;
         this.descriptive = descriptive;
         this.user = user;
-        this.createdAt = LocalDate.now();
     }
 }
