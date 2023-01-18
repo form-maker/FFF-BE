@@ -224,8 +224,7 @@ public class StatsMethod {
         // 평균을 구하는 로직
         int participant = valueList.size();
         int sum = valueList.stream().mapToInt(Integer::intValue).sum();
-        float avg = Math.round(sum / participant * 100f);
-
+        float avg = Math.round(sum / participant);
         List<Float> selectRate = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
