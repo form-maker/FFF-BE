@@ -13,4 +13,8 @@ public class DescriptiveResponse {
         this.answer = answer;
         this.value = value;
     }
+    public DescriptiveResponse(String answer){
+        this.answer = answer;
+        this.value = null;
+    }
 }

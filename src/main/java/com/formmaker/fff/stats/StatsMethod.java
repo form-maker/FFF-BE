@@ -166,8 +166,20 @@ public class StatsMethod {
     }
 
     public QuestionStats statsLongDescriptive(List<Reply> replyList, Question question) {
+        List<DescriptiveResponse> descriptiveList = new ArrayList<>();
+        int randomValue;
+        for(int i = 0; i < Math.min(3, replyList.size()); i++){
+            randomValue = (int)(Math.random() * 100)%replyList.size();
+            descriptiveList.add(new DescriptiveResponse(replyList.get(randomValue).getDescriptive()));
+        }
 
-        return QuestionStats.builder().build();
+        return QuestionStats.builder()
+                .questionNum(question.getQuestionNum())
+                .questionType(question.getQuestionType())
+                .questionTitle(question.getTitle())
+                .questionSummary(question.getSummary())
+                .descriptiveList(descriptiveList)
+                .build();
     }
 
 
