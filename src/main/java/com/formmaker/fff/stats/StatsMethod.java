@@ -24,12 +24,8 @@ public class StatsMethod {
     static public StatsMethod statsMethod = new StatsMethod();
 
     public QuestionStats statsChoice(List<Reply> replyList, Question question) {
-        List<SelectResponse> selectList = new ArrayList<>();
-        SelectResponse selectResponse;
-        for (Answer answer : question.getAnswerList()) {
-            selectResponse = new SelectResponse(answer.getAnswerValue(), answer.getAnswerNum());
-            selectList.add(selectResponse);
-        } //해당 질문과 관련된 질문 문항과 문항 번호들을 selectList 담아온다.
+
+        List<SelectResponse> selectList = question.getAnswerList().stream().map(answer -> new SelectResponse(answer.getAnswerValue(), answer.getAnswerNum())).collect(Collectors.toList());
 
         selectList = selectList.stream()
                 .sorted(Comparator.comparing(SelectResponse::getAnswerNum)).collect(Collectors.toList());
@@ -84,14 +80,8 @@ public class StatsMethod {
 
 
         for (Reply userReply : replyList) {
-            List<String> satisfactionValueList = List.of(userReply.getSelectValue());  //유저들의 선택 값을 List에 넣어주고
-            List<Integer> changeSatisfactionValueList = satisfactionValueList.stream() //스트링 리스트를 Integer 리스트로 변환
-                    .map(Integer::parseInt).toList();
-
-            for (Integer satisfactionValues : changeSatisfactionValueList) { // 유저들의 만족도선택 값 리스트 값들을 satisfactionValues 하나하나 넣어주고
-                satisfactionList.get(satisfactionValues + volume).increaseValue(); //번호별로 정렬된 만족도에서 유저가 만족도를 선택한 값 들이 나올 때마다 해당 문항의 벨류는 증가하고
-                totalSelect++;
-            }
+            satisfactionList.get(Integer.parseInt(userReply.getSelectValue()) + volume).increaseValue();
+            totalSelect++;
         }
         for (SelectResponse satisfaction : satisfactionList) {
             satisfaction.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
@@ -131,6 +121,7 @@ public class StatsMethod {
             selectValueList.add(selectValue);
         }
 
+
         /*
             selectValue 는 index 가 answer 의 번호(number)를 나타내며,
             value 는 문항에 대해 응답자가 지정한 순위를 나타낸다.
@@ -142,6 +133,7 @@ public class StatsMethod {
             List<Integer> eachValuesOfAnswer = new ArrayList<>();
             for (int j = 0; j < selectValueList.size(); j++) {
                 eachValuesOfAnswer.add(Integer.parseInt("" + selectValueList.get(j).get(i)));
+//                eachValuesOfAnswer.add(selectValueList.get(j).get(i));
             }
             valuesOfAnswers.add(eachValuesOfAnswer);
         }
@@ -182,13 +174,14 @@ public class StatsMethod {
 
 
     public QuestionStats statsShortDescriptive(List<Reply> replyList, Question question) {
-        ArrayList<String> shortDescriptiveList = new ArrayList<>();
+
+
         ArrayList<DescriptiveResponse> descriptiveList = new ArrayList<>();
         DescriptiveResponse descriptiveResponse;
 
-        for (Reply userReply : replyList) { //해당 설문에 유저들이 입력한 단답형을 가져온다 .
-            shortDescriptiveList.add(String.valueOf(userReply.getDescriptive()));
-        }
+
+
+        List<String> shortDescriptiveList = replyList.stream().map(Reply::getDescriptive).toList();
 
         Map<String,Integer> map = new HashMap<String,Integer>();
         for(String str : shortDescriptiveList){
@@ -200,10 +193,7 @@ public class StatsMethod {
             }
         }
         for(String key : map.keySet()){
-            String a = (key);
-            Integer b = (map.get(key));
-            descriptiveResponse = new DescriptiveResponse(a,b);
-            descriptiveList.add(descriptiveResponse);
+            descriptiveList.add(new DescriptiveResponse(key, map.get(key)));
         }
 
 
@@ -230,30 +220,14 @@ public class StatsMethod {
         // 평균을 구하는 로직
         int participant = valueList.size();
         int sum = valueList.stream().mapToInt(Integer::intValue).sum();
-        float average = (float) sum / participant;
-        Float avg = Float.valueOf(String.format("%1f", average));
-
-        // 각 문항이 몇 번 선택받았는지 출력하는 로직
-        int selectOne = Collections.frequency(valueList, 1);
-        int selectTwo = Collections.frequency(valueList, 2);
-        int selectThree = Collections.frequency(valueList, 3);
-        int selectFour = Collections.frequency(valueList, 4);
-        int selectFive = Collections.frequency(valueList, 5);
-
-        // 각 문항의 선택률(?)
-        float rateOne = (float) selectOne / participant;
-        float rateTwo = (float) selectTwo / participant;
-        float rateThree = (float) selectThree / participant;
-        float rateFour = (float) selectFour / participant;
-        float rateFive = (float) selectFive / participant;
+        float avg = Math.round(sum/participant*100f);
 
         List<Float> selectRate = new ArrayList<>();
 
-        selectRate.add(rateOne);
-        selectRate.add(rateTwo);
-        selectRate.add(rateThree);
-        selectRate.add(rateFour);
-        selectRate.add(rateFive);
+
+        for(int i = 1; i <= 5; i++){
+            selectRate.add((float) Math.round(Collections.frequency(valueList, i)/participant*100f));
+        }
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
