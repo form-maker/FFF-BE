@@ -47,6 +47,7 @@ public class StatsService {
             questionStatsList.add(questionStats);
         }
 
-        return StatsResponse.builder().questionStatsList(questionStatsList).build();
+        return StatsResponse.builder()
+                .questionStatsList(questionStatsList).build();
     }
 }
