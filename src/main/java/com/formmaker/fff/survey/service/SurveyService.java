@@ -7,6 +7,7 @@ import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.AnswerTypeEnum;
 import com.formmaker.fff.common.type.SortTypeEnum;
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.question.dto.QuestionDto;
 import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
 import com.formmaker.fff.question.entity.Question;
@@ -144,10 +145,10 @@ public class SurveyService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, int myPage, int size) {
+    public Page<SurveyMyResponse> getMySurveyList(Long userId, SortTypeEnum sortBy, int myPage, int size, StatusTypeEnum status) {
         Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(myPage, size, sort);
-        Page<Survey> surveyPage = surveyRepository.findByUserId(userId, pageable);
+        Page<Survey> surveyPage = surveyRepository.findByUserIdAndStatus(userId, status, pageable);
 
         return surveyPage.map(survey -> SurveyMyResponse.builder()
                         .surveyId(survey.getId())
