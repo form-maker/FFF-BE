@@ -71,4 +71,8 @@ public class Survey extends TimeStamped {
     public void addQuestionList(Question question){
         this.questionList.add(question);
     }
+
+    public void IncreaseParticipant(){
+        this.participant++;
+    }
 }

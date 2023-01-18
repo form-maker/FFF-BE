@@ -6,6 +6,7 @@ import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.reply.dto.request.EachReplyRequest;
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
+import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -26,15 +27,14 @@ public class ReplyService {
     private final ReplyMethod replyMethod;
 
     @Transactional
-    public void postReply(Long surveyId, List<EachReplyRequest> replyRequest, User user) {
+    public void postReply(Long surveyId, List<EachReplyRequest> eachReplyRequestList, User user) {
         // 응답하려는 Survey 가 존재해?
-        surveyRepository.findById(surveyId).orElseThrow(
+        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
 
         List<Reply> replyList = new ArrayList<>();
-        int count = 1;
-        for (EachReplyRequest eachReplyRequest : replyRequest) {
+        for (EachReplyRequest eachReplyRequest : eachReplyRequestList) {
             // 응답하려는 Question 이 존재해?
             QuestionDto questionDto = new QuestionDto(questionRepository.findById(eachReplyRequest.getQuestionId()).orElseThrow(
                     () -> new CustomException(NOT_FOUND_QUESTION))
@@ -62,5 +62,6 @@ public class ReplyService {
             }
         }
         replyRepository.saveAll(replyList);
+        survey.IncreaseParticipant();
     }
 }
