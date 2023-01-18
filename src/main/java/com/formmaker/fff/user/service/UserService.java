@@ -2,7 +2,6 @@ package com.formmaker.fff.user.service;
 
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.jwt.JwtUtil;
-import com.formmaker.fff.user.dto.UserDto;
 import com.formmaker.fff.user.dto.request.UserLoginRequest;
 import com.formmaker.fff.user.dto.request.UserSignupRequest;
 import com.formmaker.fff.user.entity.User;
@@ -65,16 +64,16 @@ public class UserService {
         String password = userLoginRequest.getPassword();
 
         /* 일치하는 아이디가 없을 경우 예외 반환 */
-        UserDto userDto = new UserDto(userRepository.findByLoginId(loginId). orElseThrow(
-                () -> new CustomException(NOT_FOUND_ID))
+        User user = userRepository.findByLoginId(loginId). orElseThrow(
+                () -> new CustomException(NOT_FOUND_ID)
         );
 
         /* 비밀번호가 일치하지 않을 때 예외 반환 */
-        if(!passwordEncoder.matches(password, userDto.getPassword())){
+        if(!passwordEncoder.matches(password, user.getPassword())){
             throw new CustomException(NOT_FOUND_ID);
         }
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(userDto.getLoginId()));
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getLoginId()));
     }
 }
 
