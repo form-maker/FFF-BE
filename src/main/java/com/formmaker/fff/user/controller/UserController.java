@@ -12,10 +12,12 @@ import com.formmaker.fff.user.service.KakaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user")
@@ -27,7 +29,7 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<ResponseMessage> signup(@RequestBody UserSignupRequest userSignupRequest){
+    public ResponseEntity<ResponseMessage> signup(@Validated @RequestBody UserSignupRequest userSignupRequest){
         userService.signup(userSignupRequest);
         return new ResponseEntity<>(new ResponseMessage<>("회원가입이 완료되었습니다.",200,null), HttpStatus.OK);
     }
@@ -45,7 +47,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/login")
-    public ResponseEntity<ResponseMessage> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
+    public ResponseEntity<ResponseMessage> login(@Valid @RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
         userService.login(userLoginRequest, response);
         return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null), HttpStatus.OK);
     }
