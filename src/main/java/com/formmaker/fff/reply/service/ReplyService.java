@@ -1,7 +1,7 @@
 package com.formmaker.fff.reply.service;
 
 import com.formmaker.fff.common.exception.CustomException;
-import com.formmaker.fff.question.dto.QuestionDto;
+import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.reply.dto.request.EachReplyRequest;
 import com.formmaker.fff.reply.entity.Reply;
@@ -36,12 +36,12 @@ public class ReplyService {
         int count = 1;
         for (EachReplyRequest eachReplyRequest : replyRequest) {
             // 응답하려는 Question 이 존재해?
-            QuestionDto questionDto = new QuestionDto(questionRepository.findById(eachReplyRequest.getQuestionId()).orElseThrow(
-                    () -> new CustomException(NOT_FOUND_QUESTION))
+            Question question = questionRepository.findById(eachReplyRequest.getQuestionId()).orElseThrow(
+                    () -> new CustomException(NOT_FOUND_QUESTION)
             );
 
             // 응답하려는 질문 타입과 응답 타입이 일치해?
-            boolean equalType = eachReplyRequest.getQuestionType() == questionDto.getQuestionType();
+            boolean equalType = eachReplyRequest.getQuestionType() == question.getQuestionType();
             if (!equalType) {
                 throw new CustomException(INVALID_QUESTION_TYPE);
             }
