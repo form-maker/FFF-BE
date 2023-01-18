@@ -16,6 +16,8 @@ import java.util.List;
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
     Page<Survey> findByUserId(Long userId, Pageable pageable);
 
+    Page<Survey> findByUserIdAndStatus(Long userId, StatusTypeEnum status, Pageable pageable);
+
     @Modifying
     @Transactional
     @Query("update Survey s set s.dDay = s.dDay-1 where s.status = :status")

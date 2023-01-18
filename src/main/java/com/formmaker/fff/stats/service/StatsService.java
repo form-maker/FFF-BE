@@ -2,12 +2,9 @@ package com.formmaker.fff.stats.service;
 
 
 import com.formmaker.fff.common.exception.CustomException;
-
-import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
-
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.stats.dto.QuestionStats;
@@ -19,21 +16,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
@@ -65,9 +53,28 @@ public class StatsService {
             questionStatsList.add(questionStats);
         }
 
-        return StatsResponse.builder().questionStatsList(questionStatsList).build();
+        return StatsResponse.builder()
+                .dailyParticipants(null)
+                .totalParticipant(survey.getParticipant())
+                .totalQuestion(questionList.size())
+                .surveyTitle(survey.getTitle())
+                .surveySummary(survey.getSummary())
+                .createAt(survey.getCreatedAt().toLocalDate())
+                .startedAt(survey.getStartedAt())
+                .endedAt(survey.getEndedAt())
+                .status(survey.getStatus().toString())
+                .achievement(survey.getAchievement())
+                .achievementRate(achievementRateCal(survey.getParticipant(), survey.getAchievement()))
+                .questionStatsList(questionStatsList).build();
     }
 
+    private float achievementRateCal(int participant, int achievement) {
+        float achievementRate = (float) participant / achievement * 100;
+        String floatFormat = String.format("%.1f", achievementRate);
+        return Float.parseFloat(floatFormat);
+    }
+
+    @Transactional(readOnly = true)
     public byte[] getStatsCsvFile(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 ()-> new CustomException(NOT_FOUND_SURVEY)

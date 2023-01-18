@@ -5,6 +5,7 @@ import com.formmaker.fff.common.response.DataPageResponse;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.common.type.SortTypeEnum;
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.reply.service.ReplyService;
 import com.formmaker.fff.survey.service.SurveyService;
 import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
@@ -61,9 +62,9 @@ public class SurveyController {
 
     /*마이페이지 설문 불러오기*/
     @GetMapping("/my-page")
-    public ResponseEntity<ResponseMessage> getMySurveyList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam SortTypeEnum sortBy, @RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<ResponseMessage> getMySurveyList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam SortTypeEnum sortBy, @RequestParam int page, @RequestParam int size, @RequestParam StatusTypeEnum status) {
         Long userId = userDetails.getUserId();
-        Page<SurveyMyResponse> surveyMyResponseList = surveyService.getMySurveyList(userId, sortBy, page - 1, size);
+        Page<SurveyMyResponse> surveyMyResponseList = surveyService.getMySurveyList(userId, sortBy, page - 1, size, status);
         DataPageResponse<SurveyMyResponse> response = new DataPageResponse<>(surveyMyResponseList);
         ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));

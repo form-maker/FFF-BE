@@ -16,22 +16,23 @@ public class ReplyMethod {
     public Reply replyToRank(ReplyRequest replyRequest, User user) {
         JSONObject jsonObject = new JSONObject();
 
-        int index = 1;
+        int rank = 1;
 
         /**
-         * 프론트에서 넣어온 형태 [1, 2, 3, 4, 5]
+         * 프론트에서 넣어온 형태 [5, 3, 2, 1, 4]
          * 각 요소는 AnswerNum 를 나타낸다..
          * 배열의 index 값이 순위로 여겨진다.
          */
-        for (Integer value : replyRequest.getSelectValue()) {
-            jsonObject.put(value, index++);
+
+        for (Integer value : eachReplyRequest.getSelectValue()) {
+            jsonObject.put(value, rank++);
+
         }
 
         String selectValueJsonForm = jsonObject.toJSONString();
 
         return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValueJsonForm, replyRequest.getDescriptive(), user);
     }
-
 
     // 별점, 스코어, 슬라이드, 단수응답 답변 처리 로직
     public Reply replyToSingleValue(ReplyRequest replyRequest, User user) {
