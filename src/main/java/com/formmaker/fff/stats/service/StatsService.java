@@ -49,7 +49,7 @@ public class StatsService {
         QuestionStats questionStats;
         List<Reply> replyList;
 
-//        List<Reply> dailySample = questionList.stream().max(Comparator.comparingInt(a -> a.getReplyList().size())).orElse(questionList.get(1)).getReplyList();
+        List<Reply> dailySample = questionList.stream().max(Comparator.comparing(a -> a.getReplyList().size())).orElse(questionList.get(0)).getReplyList();
 
         for (Question question : questionList) {
             replyList = question.getReplyList();
@@ -58,7 +58,7 @@ public class StatsService {
             questionStatsList.add(questionStats);
         }
         return StatsResponse.builder()
-                .dailyParticipants(getDailyParticipant(questionList.get(1).getReplyList(), survey.getStartedAt(), survey.getEndedAt()))
+                .dailyParticipants(getDailyParticipant(dailySample, survey.getStartedAt(), survey.getEndedAt()))
                 .totalParticipant(survey.getParticipant())
                 .totalQuestion(questionList.size())
                 .surveyTitle(survey.getTitle())
