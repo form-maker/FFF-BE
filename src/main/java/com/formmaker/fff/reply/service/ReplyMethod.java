@@ -24,7 +24,7 @@ public class ReplyMethod {
          * 배열의 index 값이 순위로 여겨진다.
          */
 
-        for (Integer value : eachReplyRequest.getSelectValue()) {
+        for (Integer value : replyRequest.getSelectValue()) {
             jsonObject.put(value, rank++);
 
         }
