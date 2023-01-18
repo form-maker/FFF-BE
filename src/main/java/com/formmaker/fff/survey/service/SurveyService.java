@@ -149,6 +149,19 @@ public class SurveyService {
         Pageable pageable = PageRequest.of(myPage, size, sort);
         Page<Survey> surveyPage = surveyRepository.findByUserId(userId, pageable);
 
-        return surveyPage.map(survey -> new SurveyMyResponse(survey.getId(), survey.getTitle(), survey.getSummary(), survey.getEndedAt(), survey.getDDay(), survey.getParticipant(), survey.getAchievement(), survey.getStatus(), survey.getCreatedAt()));
+        return surveyPage.map(survey -> SurveyMyResponse.builder()
+                        .surveyId(survey.getId())
+                        .title(survey.getTitle())
+                        .summary(survey.getSummary())
+                        .startedAt(survey.getStartedAt())
+                        .endedAt(survey.getEndedAt())
+                        .dDay(survey.getDDay())
+                        .achievement(survey.getAchievement())
+                        .achievementRate(Math.round(survey.getParticipant()/survey.getAchievement()*100))
+                        .totalQuestion(survey.getQuestionList().size())
+                        .participant(survey.getParticipant())
+                        .status(survey.getStatus())
+                        .createdAt(survey.getCreatedAt().toLocalDate())
+                        .build());
     }
 }
