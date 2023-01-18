@@ -7,6 +7,7 @@ import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
+import com.formmaker.fff.stats.dto.DailyParticipant;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.StatsResponse;
 import com.formmaker.fff.survey.entity.Survey;
@@ -21,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -46,15 +49,16 @@ public class StatsService {
         QuestionStats questionStats;
         List<Reply> replyList;
 
+        List<Reply> dailySample = questionList.stream().max(Comparator.comparing(a -> a.getReplyList().size())).orElse(questionList.get(0)).getReplyList();
+
         for (Question question : questionList) {
             replyList = question.getReplyList();
             questionStats = question.getQuestionType().getStatsFn().apply(replyList, question);
 
             questionStatsList.add(questionStats);
         }
-
         return StatsResponse.builder()
-                .dailyParticipants(null)
+                .dailyParticipants(getDailyParticipant(dailySample, survey.getStartedAt(), survey.getEndedAt()))
                 .totalParticipant(survey.getParticipant())
                 .totalQuestion(questionList.size())
                 .surveyTitle(survey.getTitle())
@@ -66,6 +70,28 @@ public class StatsService {
                 .achievement(survey.getAchievement())
                 .achievementRate(achievementRateCal(survey.getParticipant(), survey.getAchievement()))
                 .questionStatsList(questionStatsList).build();
+    }
+
+    private DailyParticipant getDailyParticipant(List<Reply> replyList, LocalDate start, LocalDate end){
+        Map<LocalDate, Integer> dailyCount = new HashMap<>();
+        DailyParticipant dailyParticipant = new DailyParticipant();
+
+        for(LocalDate day = start; !day.isAfter(end); day = day.plusDays(1)){
+            dailyCount.put(day, 0);
+        }
+
+        for(Reply reply : replyList){
+            dailyCount.put(reply.getCreatedAt().toLocalDate(), dailyCount.get(reply.getCreatedAt().toLocalDate())+1);
+        }
+
+        for(LocalDate day : dailyCount.keySet()){
+            dailyParticipant.addDate(day);
+            dailyParticipant.addParticipant(dailyCount.get(day));
+        }
+
+
+        return dailyParticipant;
+
     }
 
     private float achievementRateCal(int participant, int achievement) {

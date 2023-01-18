@@ -1,16 +1,18 @@
 package com.formmaker.fff.reply.entity;
 
+import com.formmaker.fff.common.TimeStamped;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
 @NoArgsConstructor
-public class Reply {
+public class Reply extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
