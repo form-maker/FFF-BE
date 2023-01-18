@@ -46,9 +46,15 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         /* 3. Request에 대한 인증/인가 */
-        http.authorizeRequests().
-                antMatchers("/api/user/**").permitAll().
-                antMatchers(HttpMethod.GET, "/api/survey/**").permitAll().
+        http.authorizeRequests()
+                .antMatchers("/api/user/**").permitAll()
+                /*swagger*/
+                .antMatchers("/v2/**").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+                .antMatchers("/swagger**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/survey/**").permitAll().
                 /* 이후 sse관련 기능 사용시 */
 //                antMatchers("/api/sse/**").permitAll().
                 /* 3-1. Authentication 예외 처리 */
