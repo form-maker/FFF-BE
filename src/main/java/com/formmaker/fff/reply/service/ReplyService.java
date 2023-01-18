@@ -36,12 +36,12 @@ public class ReplyService {
         List<Reply> replyList = new ArrayList<>();
         for (ReplyRequest replyRequest : replyRequestList) {
             // 응답하려는 Question 이 존재해?
-            Question question = questionRepository.findById(eachReplyRequest.getQuestionId()).orElseThrow(
+            Question question = questionRepository.findById(replyRequest.getQuestionId()).orElseThrow(
                     () -> new CustomException(NOT_FOUND_QUESTION)
             );
 
             // 응답하려는 질문 타입과 응답 타입이 일치해?
-            boolean equalType = eachReplyRequest.getQuestionType() == question.getQuestionType();
+            boolean equalType = replyRequest.getQuestionType() == question.getQuestionType();
             if (!equalType) {
                 throw new CustomException(INVALID_QUESTION_TYPE);
             }
