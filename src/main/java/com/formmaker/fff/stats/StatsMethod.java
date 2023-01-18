@@ -132,7 +132,8 @@ public class StatsMethod {
         for (int i = 0; i < selectValueList.get(0).size(); i++) {
             List<Integer> eachValuesOfAnswer = new ArrayList<>();
             for (int j = 0; j < selectValueList.size(); j++) {
-                eachValuesOfAnswer.add(selectValueList.get(j).get(i));
+                eachValuesOfAnswer.add(Integer.parseInt("" + selectValueList.get(j).get(i)));
+//                eachValuesOfAnswer.add(selectValueList.get(j).get(i));
             }
             valuesOfAnswers.add(eachValuesOfAnswer);
         }
