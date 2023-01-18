@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,16 +19,18 @@ public class SelectResponse {
     @JsonIgnore
     private Integer answerNum;
     private List<Float> rankList = new ArrayList<>();
-    public SelectResponse(Integer choiceValue ){
 
+    public SelectResponse(Integer choiceValue) {
         this.choiceValue = choiceValue;
         value = Float.valueOf(0);
+        rankList = null;
     }
 
     public SelectResponse(String answerValue, Integer answerNum) {
         this.answer = answerValue;
         this.answerNum = answerNum;
         value = Float.valueOf(0);
+        rankList = null;
     }
 
     public SelectResponse(String answer, List<Float> rankList) {
@@ -39,8 +42,8 @@ public class SelectResponse {
         this.value++;
     }
 
-    public void valueAvg(int total){
-        value = (float)(Math.round(((value/total)*100)*10)/10.0);
+    public void valueAvg(int total) {
+        value = (float) (Math.round(((value / total) * 100) * 10) / 10.0);
         //소수점 1째자리까지
     }
 }

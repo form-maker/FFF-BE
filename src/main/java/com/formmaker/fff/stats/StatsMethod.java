@@ -53,17 +53,14 @@ public class StatsMethod {
             select.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
         }
 
-        selectList.stream().map(select -> select.getValue()).collect(Collectors.toList());
-
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .selectList(selectList.stream().map(select -> select.getValue()).collect(Collectors.toList()))
+                .selectList(selectList)
                 .build();
     }
-
 
     public QuestionStats statsSlide(List<Reply> replyList, Question question) {
         List<SelectResponse> satisfactionList = new ArrayList<>();
