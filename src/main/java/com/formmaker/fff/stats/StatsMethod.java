@@ -4,21 +4,26 @@ package com.formmaker.fff.stats;
 import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.reply.entity.Reply;
+import com.formmaker.fff.stats.dto.DescriptiveResponse;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class StatsMethod {
 
     static public StatsMethod statsMethod = new StatsMethod();
 
-    public QuestionStats statsSingleChoice(List<Reply> replyList, Question question) {
-
+    public QuestionStats statsChoice(List<Reply> replyList, Question question) {
         List<SelectResponse> selectList = new ArrayList<>();
         SelectResponse selectResponse;
         for (Answer answer : question.getAnswerList()) {
@@ -33,38 +38,75 @@ public class StatsMethod {
 
 
         for (Reply userReply : replyList) {
+            List<String> selectValueList = List.of(userReply.getSelectValue().split("\\|"));  //유저들의 문항선택 값을 List에 넣어주고
 
-            List<String> selectValueList = List.of(userReply.getSelectValue().split("|"));  //유저들의 문항선택 값을 List에 넣어주고
             List<Integer> changeSelectValueList = selectValueList.stream() //스트링 리스트를 Integer 리스트로 변환
                     .map(Integer::parseInt).toList();
 
 
             for (Integer selectValues : changeSelectValueList) { // 유저들의 문항선택 값 리스트 값들을 selectValues 하나하나 넣어주고
                 selectList.get(selectValues - 1).increaseValue(); //번호별로 정렬된 문항에서 유저가 문항선택한 값 들이 나올 때마다 해당 문항의 벨류는 증가하고
-                totalSelect++; // 해당 Question 전체 선택 횟수가 증가한다.
+                totalSelect++; // 해당 Question의 전체 선택 횟수가 증가한다.
             }
         }
         for (SelectResponse select : selectList) {
             select.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
         }
 
+        selectList.stream().map(select -> select.getValue()).collect(Collectors.toList());
+
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .selectList(selectList)
+                .selectList(selectList.stream().map(select -> select.getValue()).collect(Collectors.toList()))
                 .build();
     }
 
-    public QuestionStats statsMultipleChoice(List<Reply> replyList, Question question) {
-
-        return QuestionStats.builder().build();
-    }
 
     public QuestionStats statsSlide(List<Reply> replyList, Question question) {
+        List<SelectResponse> satisfactionList = new ArrayList<>();
+        SelectResponse selectResponse;
 
-        return QuestionStats.builder().build();
+        int volume = question.getVolume();
+
+
+        for (int x = -volume; x <= volume; x++) {
+            int indexNum = x + volume;
+            int value = indexNum - volume;
+            selectResponse = new SelectResponse(value);
+            satisfactionList.add(selectResponse);
+
+        }
+        satisfactionList = satisfactionList.stream()
+                .sorted(Comparator.comparing(SelectResponse::getChoiceValue)).collect(Collectors.toList());
+
+
+        int totalSelect = 0;
+
+
+        for (Reply userReply : replyList) {
+            List<String> satisfactionValueList = List.of(userReply.getSelectValue());  //유저들의 선택 값을 List에 넣어주고
+            List<Integer> changeSatisfactionValueList = satisfactionValueList.stream() //스트링 리스트를 Integer 리스트로 변환
+                    .map(Integer::parseInt).toList();
+
+            for (Integer satisfactionValues : changeSatisfactionValueList) { // 유저들의 만족도선택 값 리스트 값들을 satisfactionValues 하나하나 넣어주고
+                satisfactionList.get(satisfactionValues + volume).increaseValue(); //번호별로 정렬된 만족도에서 유저가 만족도를 선택한 값 들이 나올 때마다 해당 문항의 벨류는 증가하고
+                totalSelect++;
+            }
+        }
+        for (SelectResponse satisfaction : satisfactionList) {
+            satisfaction.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
+        }
+        return QuestionStats.builder()
+                .questionNum(question.getQuestionNum())
+                .questionType(question.getQuestionType())
+                .questionTitle(question.getTitle())
+                .questionSummary(question.getSummary())
+                .volume(question.getVolume())
+                .satisfactionList(satisfactionList.stream().map(satisfaction -> satisfaction.getValue()).collect(Collectors.toList()))
+                .build();
     }
 
     public QuestionStats statsRank(List<Reply> replyList, Question question) {
@@ -141,13 +183,46 @@ public class StatsMethod {
         return QuestionStats.builder().build();
     }
 
-    public QuestionStats statsShortDescriptive(List<Reply> replyList, Question question) {
 
-        return QuestionStats.builder().build();
+    public QuestionStats statsShortDescriptive(List<Reply> replyList, Question question) {
+        ArrayList<String> shortDescriptiveList = new ArrayList<>();
+        ArrayList<DescriptiveResponse> descriptiveList = new ArrayList<>();
+        DescriptiveResponse descriptiveResponse;
+
+        for (Reply userReply : replyList) { //해당 설문에 유저들이 입력한 단답형을 가져온다 .
+            shortDescriptiveList.add(String.valueOf(userReply.getDescriptive()));
+        }
+
+        Map<String,Integer> map = new HashMap<String,Integer>();
+        for(String str : shortDescriptiveList){
+            Integer count = map.get(str);
+            if(count==null){
+                map.put(str,1);
+            }else{
+                map.put(str,count + 1 );
+            }
+        }
+        for(String key : map.keySet()){
+            String a = (key);
+            Integer b = (map.get(key));
+            descriptiveResponse = new DescriptiveResponse(a,b);
+            descriptiveList.add(descriptiveResponse);
+        }
+
+
+        return QuestionStats.builder()
+                .questionNum(question.getQuestionNum())
+                .questionType(question.getQuestionType())
+                .questionTitle(question.getTitle())
+                .questionSummary(question.getSummary())
+                .descriptiveList(descriptiveList)
+                .build();
     }
 
     // 별점, 스코어 통계 처리 로직
     public QuestionStats statsOfPositiveValue(List<Reply> replyList, Question question) {
+
+
         List<Integer> valueList = new ArrayList<>();
 
         for (Reply reply : replyList) {

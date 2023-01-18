@@ -29,12 +29,20 @@ dependencies {
 	compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
-
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	// 스프링 시큐리티
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	// goole JSON
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+
+	implementation("io.springfox:springfox-swagger2:2.9.2")
+	implementation("io.springfox:springfox-swagger-ui:2.9.2")
+
+	implementation 'org.apache.commons:commons-csv:1.9.0'
+
 }
 
 tasks.named('test') {

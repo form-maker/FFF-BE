@@ -46,9 +46,17 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         /* 3. Request에 대한 인증/인가 */
-        http.authorizeRequests().
-                antMatchers("/api/user/**").permitAll().
-                antMatchers(HttpMethod.GET, "/api/survey/**").permitAll().
+        http.authorizeRequests()
+                .antMatchers("/api/user/**").permitAll()
+                /*swagger*/
+                .antMatchers("/v2/**").permitAll()
+                .antMatchers("/webjars/**").permitAll()
+                .antMatchers("/swagger**").permitAll()
+                .antMatchers("/swagger-resources/**").permitAll()
+
+                .antMatchers(HttpMethod.GET, "/api/survey/**").permitAll().
+                /* 이후 sse관련 기능 사용시 */
+//                antMatchers("/api/sse/**").permitAll().
                 /* 3-1. Authentication 예외 처리 */
                 anyRequest().authenticated();
 
@@ -62,7 +70,7 @@ public class WebSecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
-//        configuration.addAllowedOrigin("http:///");
+//        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*"); // 허용할 Http Method
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true); // 내 서버가 응답할 때 json을 js에서 처리할 수 있게 설정

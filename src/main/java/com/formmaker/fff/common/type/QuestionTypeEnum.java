@@ -14,8 +14,9 @@ import static com.formmaker.fff.stats.StatsMethod.statsMethod;
 @Getter
 public enum QuestionTypeEnum {
 
-    MULTIPLE_CHOICE(statsMethod::statsMultipleChoice),
-    SINGLE_CHOICE(statsMethod::statsSingleChoice),
+
+    MULTIPLE_CHOICE(statsMethod::statsChoice),
+    SINGLE_CHOICE(statsMethod::statsChoice),
     SLIDE(statsMethod::statsSlide),
     RANK(statsMethod::statsRank),
     SHORT_DESCRIPTIVE(statsMethod::statsShortDescriptive),
