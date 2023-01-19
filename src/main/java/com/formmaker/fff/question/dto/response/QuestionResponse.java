@@ -18,5 +18,5 @@ public class QuestionResponse {
     private Integer volume;
     private Integer totalQuestion;
     private String questionTitle;
-    private List<AnswerResponse> answerResponses = new ArrayList<>();
+    private List<AnswerResponse> answerList = new ArrayList<>();
 }
