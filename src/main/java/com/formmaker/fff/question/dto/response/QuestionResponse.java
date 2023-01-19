@@ -3,6 +3,7 @@ package com.formmaker.fff.question.dto.response;
 import com.formmaker.fff.answer.dto.response.AnswerResponse;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class QuestionResponse {
     private String summary;
     private Integer questionNum;
     private Integer volume;
+    private Integer totalQuestion;
     private String questionTitle;
     private List<AnswerResponse> answerResponses = new ArrayList<>();
 }
