@@ -92,7 +92,10 @@ public class StatsService {
         }
 
         for(Reply reply : replyList){
-            dailyCount.put(reply.getCreatedAt().toLocalDate(), dailyCount.get(reply.getCreatedAt().toLocalDate())+1);
+            if(dailyCount.containsKey(reply.getCreatedAt().toLocalDate())){
+                dailyCount.put(reply.getCreatedAt().toLocalDate(), dailyCount.get(reply.getCreatedAt().toLocalDate())+1);
+            }
+
         }
 
         for(LocalDate day : dailyCount.keySet()){
