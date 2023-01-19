@@ -28,6 +28,6 @@ public class MailController {
     @PostMapping("/mail-auth/verify")
     public ResponseEntity<ResponseMessage> verityCode(@RequestParam String email, @RequestParam String code) {
         mailService.verifyCode (email, code);
-        return new ResponseEntity<>(new ResponseMessage<>("인증이 완료되엇습니다.", 200, null), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseMessage<>("인증이 완료되었습니다.", 200, null), HttpStatus.OK);
     }
 }
