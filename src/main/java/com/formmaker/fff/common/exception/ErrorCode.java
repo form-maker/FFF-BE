@@ -30,7 +30,10 @@ public enum ErrorCode {
     /*응답 에러*/
     INVALID_QUESTION_TYPE("질문 타입과 일치하지 않는 응답입니다.", 400),
     INVALID_QUESTION_NUM("질문 번호와 일치하지 않는 응답입니다.", 400),
-    INVALID_FORM_DATA("유효하지 않은 형식의 데이터입니다.", 400);
+    INVALID_FORM_DATA("유효하지 않은 형식의 데이터입니다.", 400),
+
+    /*인증 메일 발송 에러*/
+    FAILED_TO_SEND_MAIL("메일 발송에 실패하였습니다.", 400);
 
 
     private final String msg;
