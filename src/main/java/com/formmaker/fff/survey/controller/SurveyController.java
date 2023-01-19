@@ -7,6 +7,7 @@ import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.reply.service.ReplyService;
+import com.formmaker.fff.survey.dto.response.MyPageResponse;
 import com.formmaker.fff.survey.service.SurveyService;
 import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.dto.response.SurveyMainResponse;
@@ -65,8 +66,9 @@ public class SurveyController {
     public ResponseEntity<ResponseMessage> getMySurveyList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam SortTypeEnum sortBy, @RequestParam int page, @RequestParam int size, @RequestParam StatusTypeEnum status) {
         Long userId = userDetails.getUserId();
         Page<SurveyMyResponse> surveyMyResponseList = surveyService.getMySurveyList(userId, sortBy, page - 1, size, status);
-        DataPageResponse<SurveyMyResponse> response = new DataPageResponse<>(surveyMyResponseList);
-        ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
+        DataPageResponse<SurveyMyResponse> pageResponse = new DataPageResponse<>(surveyMyResponseList);
+        MyPageResponse<SurveyMyResponse> response = new MyPageResponse<>(userDetails.getUsername(), pageResponse);
+        ResponseMessage<MyPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }
 }
