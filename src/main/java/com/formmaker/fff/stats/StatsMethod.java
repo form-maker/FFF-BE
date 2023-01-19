@@ -166,8 +166,20 @@ public class StatsMethod {
     }
 
     public QuestionStats statsLongDescriptive(List<Reply> replyList, Question question) {
+        List<DescriptiveResponse> descriptiveList = new ArrayList<>();
+        int randomValue;
+        for(int i = 0; i < Math.min(3, replyList.size()); i++){
+            randomValue = (int)(Math.random() * 100)%replyList.size();
+            descriptiveList.add(new DescriptiveResponse(replyList.get(randomValue).getDescriptive()));
+        }
 
-        return QuestionStats.builder().build();
+        return QuestionStats.builder()
+                .questionNum(question.getQuestionNum())
+                .questionType(question.getQuestionType())
+                .questionTitle(question.getTitle())
+                .questionSummary(question.getSummary())
+                .descriptiveList(descriptiveList)
+                .build();
     }
 
 
@@ -212,8 +224,7 @@ public class StatsMethod {
         // 평균을 구하는 로직
         int participant = valueList.size();
         int sum = valueList.stream().mapToInt(Integer::intValue).sum();
-        float avg = Math.round(sum / participant * 100f);
-
+        float avg = Math.round(sum / participant);
         List<Float> selectRate = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
