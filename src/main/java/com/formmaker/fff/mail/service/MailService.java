@@ -2,6 +2,8 @@ package com.formmaker.fff.mail.service;
 
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
+import com.formmaker.fff.mail.entity.EmailAuth;
+import com.formmaker.fff.mail.repository.EmailAuthRepository;
 import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +14,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
@@ -22,11 +25,28 @@ import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_EMAIL;
 public class MailService {
     private final JavaMailSender javaMailSender;
     private final UserRepository userRepository;
+    private final EmailAuthRepository emailAuthRepository;
     private String authNum;
     @Value("${admin.mail.id}")
     private String id;
 
-    public String sendSimpleMessage(String email) throws MessagingException, UnsupportedEncodingException {
+    @Transactional
+    public void sendSimpleMessage(String email) throws MessagingException, UnsupportedEncodingException {
+        /*
+            이메일 중복 체크
+         */
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new CustomException(DUPLICATE_EMAIL);
+        }
+
+        /*
+            해당 메일로 인증 코드 발급 여부 확인
+         */
+        EmailAuth emailAuth = emailAuthRepository.findByEmail(email);
+        if (emailAuth != null) {
+            emailAuthRepository.delete(emailAuth);
+        }
+
         authNum = createCode();
 
         MimeMessage message = createMessage(email);
@@ -34,11 +54,19 @@ public class MailService {
         try {
             javaMailSender.send(message);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new CustomException(ErrorCode.FAILED_TO_SEND_MAIL);
         }
 
-        return authNum;
+        emailAuth = EmailAuth.builder()
+                .email(email)
+                .code(authNum)
+                .status(false)
+                .build();
+
+        emailAuthRepository.save(emailAuth);
     }
+
     public MimeMessage createMessage(String email) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
 
@@ -79,9 +107,13 @@ public class MailService {
         return authNum = key.toString();
     }
 
-    private void checkEmail(String email) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new CustomException(DUPLICATE_EMAIL);
+    @Transactional
+    public void verifyCode(String email, String code) {
+        EmailAuth emailAuth = emailAuthRepository.findByEmail(email);
+        if (!emailAuth.getCode().equals(code)) {
+            throw new CustomException(ErrorCode.CODE_DOSE_NOT_MATCH);
         }
+
+        emailAuth.success();
     }
 }

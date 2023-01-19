@@ -1,7 +1,10 @@
 package com.formmaker.fff.user.service;
 
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.jwt.JwtUtil;
+import com.formmaker.fff.mail.entity.EmailAuth;
+import com.formmaker.fff.mail.repository.EmailAuthRepository;
 import com.formmaker.fff.user.dto.request.UserLoginRequest;
 import com.formmaker.fff.user.dto.request.UserSignupRequest;
 import com.formmaker.fff.user.entity.User;
@@ -18,8 +21,8 @@ import static com.formmaker.fff.common.exception.ErrorCode.*;
 @RequiredArgsConstructor
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
+    private final EmailAuthRepository emailAuthRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
@@ -34,7 +37,17 @@ public class UserService {
 
         String email = userSignupRequest.getEmail();
         checkEmail(email);
+
         String password = passwordEncoder.encode(userSignupRequest.getPassword());
+
+        /*
+            이메일 인증 성공 여부 체크 ->
+         */
+        EmailAuth emailAuth = emailAuthRepository.findByEmail(userSignupRequest.getEmail());
+        if (!emailAuth.isStatus()) {
+            throw new CustomException(ErrorCode.MAIL_AUTHENTICATION_NOT_COMPLETED);
+        }
+        emailAuthRepository.delete(emailAuth);
 
         this.userRepository.save(new User(loginId , userName , password , email));
     }

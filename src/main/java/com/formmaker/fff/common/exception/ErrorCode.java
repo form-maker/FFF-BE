@@ -33,7 +33,9 @@ public enum ErrorCode {
     INVALID_FORM_DATA("유효하지 않은 형식의 데이터입니다.", 400),
 
     /*인증 메일 발송 에러*/
-    FAILED_TO_SEND_MAIL("메일 발송에 실패하였습니다.", 400);
+    FAILED_TO_SEND_MAIL("메일 발송에 실패하였습니다.", 400),
+    CODE_DOSE_NOT_MATCH("인증 코드가 일치하지 않습니다.", 400),
+    MAIL_AUTHENTICATION_NOT_COMPLETED("메일 인증이 완료되지 않았습니다.", 400);
 
 
     private final String msg;
