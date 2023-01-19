@@ -25,8 +25,8 @@ public class StatsController {
     private final StatsService statsService;
 
     @GetMapping
-    public ResponseEntity<ResponseMessage> getStats(@RequestParam Long surveyId) {
-        StatsResponse statsResponse = statsService.getStats(surveyId);
+    public ResponseEntity<ResponseMessage> getStats(@RequestParam Long surveyId, @RequestParam String start, @RequestParam String end) {
+        StatsResponse statsResponse = statsService.getStats(surveyId, start, end);
 
         ResponseMessage responseMessage = new ResponseMessage<>("통계 조회 성공", 200, statsResponse);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));

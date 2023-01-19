@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Stream;
@@ -38,7 +39,7 @@ public class StatsService {
     private final ReplyRepository replyRepository;
 
     @Transactional
-    public StatsResponse getStats(Long surveyId) {
+    public StatsResponse getStats(Long surveyId, String start, String end) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
@@ -48,11 +49,20 @@ public class StatsService {
         List<QuestionStats> questionStatsList = new ArrayList<>();
         QuestionStats questionStats;
         List<Reply> replyList;
+        LocalDate startedAT;
+        LocalDate endedAT;
+        try{
+            startedAT = LocalDate.parse(start);
+            endedAT = LocalDate.parse(end);
+        }catch (DateTimeParseException e){
+            startedAT = LocalDate.MIN;
+            endedAT = LocalDate.MAX;
+        }
 
         List<Reply> dailySample = questionList.stream().max(Comparator.comparing(a -> a.getReplyList().size())).orElse(questionList.get(0)).getReplyList();
 
         for (Question question : questionList) {
-            replyList = question.getReplyList();
+            replyList = replyRepository.findAllByQuestionIdAndCreatedAtAfterAndCreatedAtBefore(question.getId(), startedAT.atStartOfDay(), endedAT.atStartOfDay());
             questionStats = question.getQuestionType().getStatsFn().apply(replyList, question);
 
             questionStatsList.add(questionStats);
