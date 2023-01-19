@@ -127,14 +127,18 @@ public class StatsMethod {
             ex -> valuesOfAnswers 의 0 번 index 에 있는 리스트는 1번 문항에 대해 응답자들이 지정한 순위를 나열
          */
         List<List<Integer>> valuesOfAnswers = new ArrayList<>();
-        for (int i = 0; i < selectValueList.get(0).size(); i++) {
-            List<Integer> eachValuesOfAnswer = new ArrayList<>();
-            for (int j = 0; j < selectValueList.size(); j++) {
-                eachValuesOfAnswer.add(Integer.parseInt("" + selectValueList.get(j).get(i)));
+        if(!selectValueList.isEmpty()){
+            for (int i = 0; i < selectValueList.get(0).size(); i++) {
+                List<Integer> eachValuesOfAnswer = new ArrayList<>();
+                for (int j = 0; j < selectValueList.size(); j++) {
+                    eachValuesOfAnswer.add(Integer.parseInt("" + selectValueList.get(j).get(i)));
 //                eachValuesOfAnswer.add(selectValueList.get(j).get(i));
+                }
+                valuesOfAnswers.add(eachValuesOfAnswer);
             }
-            valuesOfAnswers.add(eachValuesOfAnswer);
         }
+
+
 
         /*
             각 문항에 대해 응답자들이 지정한 순위가 나열된 List 를 가지고,
@@ -224,11 +228,11 @@ public class StatsMethod {
         // 평균을 구하는 로직
         int participant = valueList.size();
         int sum = valueList.stream().mapToInt(Integer::intValue).sum();
-        float avg = Math.round(sum / participant);
+        float avg = participant!=0?Math.round(sum / (participant)):0;
         List<Float> selectRate = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            selectRate.add((float) Math.round(Collections.frequency(valueList, i) / participant * 100f));
+            selectRate.add(participant!=0?((float) Math.round(Collections.frequency(valueList, i) / participant * 100f)):0);
         }
 
         return QuestionStats.builder()

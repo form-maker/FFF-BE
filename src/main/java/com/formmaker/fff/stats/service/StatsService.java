@@ -45,6 +45,7 @@ public class StatsService {
         );
 
         List<Question> questionList = survey.getQuestionList();
+        System.out.println(questionList.size());
 
         List<QuestionStats> questionStatsList = new ArrayList<>();
         QuestionStats questionStats;
@@ -55,8 +56,8 @@ public class StatsService {
             startedAT = LocalDate.parse(start);
             endedAT = LocalDate.parse(end);
         }catch (DateTimeParseException e){
-            startedAT = LocalDate.MIN;
-            endedAT = LocalDate.MAX;
+            startedAT = LocalDate.of(1, 1, 1);
+            endedAT = LocalDate.of(9999, 1, 1);
         }
 
         List<Reply> dailySample = questionList.stream().max(Comparator.comparing(a -> a.getReplyList().size())).orElse(questionList.get(0)).getReplyList();
