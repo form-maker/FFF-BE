@@ -41,7 +41,7 @@ public class UserService {
         String password = passwordEncoder.encode(userSignupRequest.getPassword());
 
         /*
-            이메일 인증 성공 여부 체크 ->
+            이메일 인증 성공 여부 체크
          */
         EmailAuth emailAuth = emailAuthRepository.findByEmail(userSignupRequest.getEmail());
         if (!emailAuth.isStatus()) {
