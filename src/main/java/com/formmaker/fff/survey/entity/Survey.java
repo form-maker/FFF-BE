@@ -61,7 +61,7 @@ public class Survey extends TimeStamped {
         this.summary = summary;
         this.startedAt = startedAt;
         this.endedAt = endedAt;
-        this.status = startedAt.isAfter(LocalDate.now()) ? StatusTypeEnum.NOT_START : StatusTypeEnum.IN_PROCEED;
+        this.status = startedAt.isAfter(LocalDate.now()) ? StatusTypeEnum.NOT_START : endedAt.isBefore(LocalDate.now())?StatusTypeEnum.IN_PROCEED:StatusTypeEnum.DONE;
         this.participant = 0;
         this.achievement = achievement;
         this.userId = userId;
