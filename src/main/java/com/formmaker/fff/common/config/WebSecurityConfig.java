@@ -50,6 +50,8 @@ public class WebSecurityConfig {
                 .antMatchers("/api/user/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/survey").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/question").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/survey/**/reply").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/survey/main").permitAll()
                 /*swagger*/
                 .antMatchers("/v2/**").permitAll()
                 .antMatchers("/webjars/**").permitAll()
@@ -57,11 +59,11 @@ public class WebSecurityConfig {
 
                 .antMatchers("/swagger-resources/**").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/api/survey/**").permitAll().
+
                 /* 이후 sse관련 기능 사용시 */
 //                antMatchers("/api/sse/**").permitAll().
                 /* 3-1. Authentication 예외 처리 */
-                anyRequest().authenticated();
+                .anyRequest().authenticated();
 
         http.addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
