@@ -48,10 +48,13 @@ public class WebSecurityConfig {
         /* 3. Request에 대한 인증/인가 */
         http.authorizeRequests()
                 .antMatchers("/api/user/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/survey").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/question").permitAll()
                 /*swagger*/
                 .antMatchers("/v2/**").permitAll()
                 .antMatchers("/webjars/**").permitAll()
                 .antMatchers("/swagger**").permitAll()
+
                 .antMatchers("/swagger-resources/**").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/survey/**").permitAll().
