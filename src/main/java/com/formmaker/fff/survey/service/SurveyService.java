@@ -120,7 +120,7 @@ public class SurveyService {
                 .createAt(survey.getCreatedAt())
                 .achievement(survey.getAchievement())
                 .status(survey.getStatus())
-                .questions(questionResponses)
+                .questionIdList(questionResponses)
                 .build();
     }
 
