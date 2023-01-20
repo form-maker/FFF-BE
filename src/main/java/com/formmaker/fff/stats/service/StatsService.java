@@ -69,7 +69,7 @@ public class StatsService {
             questionStatsList.add(questionStats);
         }
         return StatsResponse.builder()
-                .dailyParticipants(getDailyParticipant(dailySample, survey.getStartedAt(), survey.getEndedAt()))
+                .dailyParticipantList(getDailyParticipant(dailySample, survey.getStartedAt(), survey.getEndedAt()))
                 .totalParticipant(survey.getParticipant())
                 .totalQuestion(questionList.size())
                 .surveyTitle(survey.getTitle())
