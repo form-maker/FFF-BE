@@ -56,7 +56,7 @@ public class Survey extends TimeStamped {
     @JoinColumn(name = "surveyId")
     private List<Question> questionList = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "survey")
     private List<Participant> participantList = new ArrayList<>();
 
     @Builder
