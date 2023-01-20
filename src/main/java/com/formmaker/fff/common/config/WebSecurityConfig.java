@@ -75,6 +75,7 @@ public class WebSecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://formformform.s3-website.ap-northeast-2.amazonaws.com/");
+        configuration.addAllowedOrigin("http://localhost:3000/");
 //        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*"); // 허용할 Http Method
         configuration.addAllowedHeader("*");
