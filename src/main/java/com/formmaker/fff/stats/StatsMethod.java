@@ -250,7 +250,7 @@ public class StatsMethod {
         List<Float> rankList = new ArrayList<>();
         int totalSelectCount = selectCountList.stream().mapToInt(Integer::intValue).sum();
         for (Integer selectCount : selectCountList) {
-            float selectAvg = (float) selectCount / totalSelectCount;
+            float selectAvg = (float) selectCount / totalSelectCount * 100f;
             rankList.add(selectAvg);
         }
         return rankList;
