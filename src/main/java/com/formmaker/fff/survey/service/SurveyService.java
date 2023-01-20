@@ -59,7 +59,7 @@ public class SurveyService {
             Question question = Question.builder()
                     .title(questionDto.getQuestionTitle())
                     .questionNum(questionNum++)
-                    .summary(questionDto.getSummary())
+                    .summary(questionDto.getQuestionSummary())
                     .questionType(questionDto.getQuestionType())
                     .volume(questionDto.getVolume())
                     .build();
