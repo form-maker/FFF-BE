@@ -1,6 +1,8 @@
 package com.formmaker.fff.reply.service;
 
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.participant.Participant;
+import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.reply.dto.request.ReplyRequest;
@@ -25,6 +27,8 @@ public class ReplyService {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final ReplyMethod replyMethod;
+
+    private final ParticipantRepository participantRepository;
 
     @Transactional
     public void postReply(Long surveyId, List<ReplyRequest> replyRequestList, User user) {
@@ -62,6 +66,9 @@ public class ReplyService {
             }
         }
         replyRepository.saveAll(replyList);
+        Participant participant = participantRepository.save(new Participant(user, survey));
+        survey.addParticipant(participant);
+
         survey.IncreaseParticipant();
     }
 }
