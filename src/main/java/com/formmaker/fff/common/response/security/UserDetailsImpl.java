@@ -14,11 +14,14 @@ public class UserDetailsImpl implements UserDetails {
     private final String password;
     private final Long userId;
 
-    public UserDetailsImpl(User user, String loginId, String password) {
+    private final String username;
+
+    public UserDetailsImpl(User user) {
         this.user = user;
-        this.loginId = loginId;
-        this.password = password;
+        this.loginId = user.getLoginId();
+        this.password = user.getPassword();
         this.userId = user.getId();
+        this.username = user.getUsername();
     }
 
     public Long getUserId(){
@@ -36,7 +39,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.loginId;
+        return this.username;
     }
 
     @Override
