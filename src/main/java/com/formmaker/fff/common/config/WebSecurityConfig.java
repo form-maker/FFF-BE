@@ -50,7 +50,8 @@ public class WebSecurityConfig {
                 .antMatchers("/api/user/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/survey").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/question").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/survey/**/reply").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/survey/**/reply").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/survey/stats/download").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/survey/main").permitAll()
                 /*swagger*/
                 .antMatchers("/v2/**").permitAll()
