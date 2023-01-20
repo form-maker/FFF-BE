@@ -86,7 +86,7 @@ public class SurveyService {
 
         Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Survey> surveyPage = surveyRepository.findAll(pageable);
+        Page<Survey> surveyPage = surveyRepository.findByStatus(pageable , StatusTypeEnum.IN_PROCEED);
         return surveyPage.map(survey -> SurveyMainResponse.builder()
                         .surveyId(survey.getId())
                         .title(survey.getTitle())
