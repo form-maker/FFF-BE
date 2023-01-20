@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 public class QuestionCreateRequest {
     private QuestionTypeEnum questionType;
-    private String summary;
+    private String questionSummary;
     private Integer volume;
     private String questionTitle;
     private List<String> answerList;
