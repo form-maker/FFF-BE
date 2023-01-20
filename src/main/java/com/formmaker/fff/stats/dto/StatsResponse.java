@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class StatsResponse {
 
-    DailyParticipant dailyParticipants;
+    DailyParticipant dailyParticipantList;
     private Integer totalParticipant;
     private Integer totalQuestion;
     private String surveyTitle;
@@ -26,8 +26,8 @@ public class StatsResponse {
     List<QuestionStats> questionStatsList = new ArrayList<>();
 
     @Builder
-    public StatsResponse(DailyParticipant dailyParticipants, Integer totalParticipant, Integer totalQuestion, String surveyTitle, String surveySummary, LocalDate createAt, LocalDate startedAt, LocalDate endedAt, String status, Integer achievement, Float achievementRate, List<QuestionStats> questionStatsList) {
-        this.dailyParticipants = dailyParticipants;
+    public StatsResponse(DailyParticipant dailyParticipantList, Integer totalParticipant, Integer totalQuestion, String surveyTitle, String surveySummary, LocalDate createAt, LocalDate startedAt, LocalDate endedAt, String status, Integer achievement, Float achievementRate, List<QuestionStats> questionStatsList) {
+        this.dailyParticipantList = dailyParticipantList;
         this.totalParticipant = totalParticipant;
         this.totalQuestion = totalQuestion;
         this.surveyTitle = surveyTitle;
