@@ -13,7 +13,7 @@ import java.util.List;
 public class QuestionResponse {
     private Long questionId;
     private QuestionTypeEnum questionType;
-    private String summary;
+    private String questionSummary;
     private Integer questionNum;
     private Integer volume;
     private Integer totalQuestion;
