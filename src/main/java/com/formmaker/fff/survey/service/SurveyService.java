@@ -59,7 +59,7 @@ public class SurveyService {
             Question question = Question.builder()
                     .title(questionDto.getQuestionTitle())
                     .questionNum(questionNum++)
-                    .summary(questionDto.getSummary())
+                    .summary(questionDto.getQuestionSummary())
                     .questionType(questionDto.getQuestionType())
                     .volume(questionDto.getVolume())
                     .build();
@@ -163,7 +163,7 @@ public class SurveyService {
                         .endedAt(survey.getEndedAt())
                         .dDay(survey.getDDay())
                         .achievement(survey.getAchievement())
-                        .achievementRate(Math.round(survey.getParticipant()/survey.getAchievement()*100))
+                        .achievementRate(Math.round(((float)survey.getParticipant()/survey.getAchievement()*1000))/10f)
                         .totalQuestion(survey.getQuestionList().size())
                         .participant(survey.getParticipant())
                         .status(survey.getStatus())
