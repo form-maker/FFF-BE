@@ -1,6 +1,8 @@
 package com.formmaker.fff.reply.service;
 
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.participant.Participant;
+import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.reply.dto.request.ReplyRequest;
@@ -14,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static com.formmaker.fff.common.exception.ErrorCode.*;
 
@@ -26,21 +30,23 @@ public class ReplyService {
     private final QuestionRepository questionRepository;
     private final ReplyMethod replyMethod;
 
+    private final ParticipantRepository participantRepository;
+
     @Transactional
     public void postReply(Long surveyId, List<ReplyRequest> replyRequestList, User user) {
-        // 응답하려는 Survey 가 존재해?
+
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
 
         List<Reply> replyList = new ArrayList<>();
         for (ReplyRequest replyRequest : replyRequestList) {
-            // 응답하려는 Question 이 존재해?
+
             Question question = questionRepository.findById(replyRequest.getQuestionId()).orElseThrow(
                     () -> new CustomException(NOT_FOUND_QUESTION)
             );
 
-            // 응답하려는 질문 타입과 응답 타입이 일치해?
+
             boolean equalType = replyRequest.getQuestionType() == question.getQuestionType();
             if (!equalType) {
                 throw new CustomException(INVALID_QUESTION_TYPE);
@@ -61,7 +67,22 @@ public class ReplyService {
                 }
             }
         }
+        Optional<Participant> participant = participantRepository.findBySurveyAndUser(survey, user);
+
+        if(participant.isPresent()){
+            Reply replyRequest;
+            List<Reply> dbReplyList =  replyRepository.findAllByParticipant(participant.get());
+            for(int i = 0; i < dbReplyList.size(); i++){
+                replyRequest = replyList.get(i);
+                dbReplyList.get(i).updateReply(replyRequest.getSelectValue(), replyRequest.getDescriptive());
+            }
+            return;
+        }
         replyRepository.saveAll(replyList);
+        Participant saveParticipant = participantRepository.save(new Participant(user, survey));
+        saveParticipant.updateReplyList(replyList);
+        survey.addParticipant(saveParticipant);
         survey.IncreaseParticipant();
     }
+
 }

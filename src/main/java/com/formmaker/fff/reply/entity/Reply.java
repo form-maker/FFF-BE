@@ -2,6 +2,7 @@ package com.formmaker.fff.reply.entity;
 
 import com.formmaker.fff.common.TimeStamped;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
+import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.user.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,9 @@ public class Reply extends TimeStamped {
     @JoinColumn(name = "usersId")
     private User user;
 
+    @ManyToOne
+    private Participant participant;
+
 
 
     public Reply(Long questionId, Integer questionNum, QuestionTypeEnum questionType, String selectValue, String descriptive, User user) {
@@ -44,5 +48,14 @@ public class Reply extends TimeStamped {
         this.selectValue = selectValue;
         this.descriptive = descriptive;
         this.user = user;
+    }
+
+    public void updateParticipant(Participant participant){
+        this.participant = participant;
+    }
+
+    public void updateReply(String selectValue, String descriptive){
+        this.selectValue = selectValue;
+        this.descriptive = descriptive;
     }
 }

@@ -3,6 +3,8 @@ package com.formmaker.fff.stats.service;
 
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
+import com.formmaker.fff.participant.Participant;
+import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.reply.entity.Reply;
@@ -36,6 +38,7 @@ import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 public class StatsService {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
+    private final ParticipantRepository participantRepository;
     private final ReplyRepository replyRepository;
 
     @Transactional
@@ -59,8 +62,7 @@ public class StatsService {
             startedAT = LocalDate.of(1, 1, 1);
             endedAT = LocalDate.of(9999, 1, 1);
         }
-
-        List<Reply> dailySample = questionList.stream().max(Comparator.comparing(a -> a.getReplyList().size())).orElse(questionList.get(0)).getReplyList();
+        List<Participant> participantList = participantRepository.findAllBySurvey(survey);
 
         for (Question question : questionList) {
             replyList = replyRepository.findAllByQuestionIdAndCreatedAtAfterAndCreatedAtBefore(question.getId(), startedAT.atStartOfDay(), endedAT.atStartOfDay());
@@ -69,7 +71,7 @@ public class StatsService {
             questionStatsList.add(questionStats);
         }
         return StatsResponse.builder()
-                .dailyParticipantList(getDailyParticipant(dailySample, survey.getStartedAt(), survey.getEndedAt()))
+                .dailyParticipantList(getDailyParticipant(participantList, survey.getStartedAt(), survey.getEndedAt()))
                 .totalParticipant(survey.getParticipant())
                 .totalQuestion(questionList.size())
                 .surveyTitle(survey.getTitle())
@@ -83,7 +85,7 @@ public class StatsService {
                 .questionStatsList(questionStatsList).build();
     }
 
-    private DailyParticipant getDailyParticipant(List<Reply> replyList, LocalDate start, LocalDate end){
+    private DailyParticipant getDailyParticipant(List<Participant> replyList, LocalDate start, LocalDate end){
         Map<LocalDate, Integer> dailyCount = new HashMap<>();
         DailyParticipant dailyParticipant = new DailyParticipant();
 
@@ -91,10 +93,11 @@ public class StatsService {
             dailyCount.put(day, 0);
         }
 
-        for(Reply reply : replyList){
-            if(dailyCount.containsKey(reply.getCreatedAt().toLocalDate())){
-                dailyCount.put(reply.getCreatedAt().toLocalDate(), dailyCount.get(reply.getCreatedAt().toLocalDate())+1);
+        for(Participant participant : replyList){
+            if(dailyCount.containsKey(participant.getCreatedAt().toLocalDate())){
+                dailyCount.put(participant.getCreatedAt().toLocalDate(), dailyCount.get(participant.getCreatedAt().toLocalDate())+1);
             }
+
 
         }
 
@@ -102,6 +105,8 @@ public class StatsService {
             dailyParticipant.addDate(day);
             dailyParticipant.addParticipant(dailyCount.get(day));
         }
+        Collections.reverse(dailyParticipant.getDate());
+        Collections.reverse(dailyParticipant.getParticipant());
 
 
         return dailyParticipant;

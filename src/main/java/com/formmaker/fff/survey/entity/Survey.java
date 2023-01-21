@@ -2,6 +2,7 @@ package com.formmaker.fff.survey.entity;
 
 import com.formmaker.fff.common.TimeStamped;
 import com.formmaker.fff.common.type.StatusTypeEnum;
+import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.question.entity.Question;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,6 +56,9 @@ public class Survey extends TimeStamped {
     @JoinColumn(name = "surveyId")
     private List<Question> questionList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "survey")
+    private List<Participant> participantList = new ArrayList<>();
+
     @Builder
     public Survey(String title, String summary, LocalDate startedAt, LocalDate endedAt, Integer achievement, Long userId) {
         this.title = title;
@@ -70,6 +74,9 @@ public class Survey extends TimeStamped {
 
     public void addQuestionList(Question question){
         this.questionList.add(question);
+    }
+    public void addParticipant(Participant participant){
+        this.participantList.add(participant);
     }
 
     public void IncreaseParticipant(){
