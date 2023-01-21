@@ -4,12 +4,14 @@ import com.formmaker.fff.common.TimeStamped;
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.user.entity.User;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class Participant extends TimeStamped {
     @Id
@@ -22,8 +24,7 @@ public class Participant extends TimeStamped {
     @ManyToOne
     private Survey survey;
 
-    @OneToMany
-    @JoinColumn(name = "participantId")
+    @OneToMany(mappedBy = "participant")
     private List<Reply> replyList;
 
     public Participant(User user, Survey survey) {
@@ -31,7 +32,10 @@ public class Participant extends TimeStamped {
         this.survey = survey;
     }
 
-    public void setReplyList(List<Reply> replyList) {
+    public void updateReplyList(List<Reply> replyList) {
+        for(Reply reply : replyList){
+            reply.updateParticipant(this);
+        }
         this.replyList = replyList;
     }
 }
