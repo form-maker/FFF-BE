@@ -67,6 +67,7 @@ public class ReplyService {
         }
         replyRepository.saveAll(replyList);
         Participant participant = participantRepository.save(new Participant(user, survey));
+        participant.setReplyList(replyList);
         survey.addParticipant(participant);
 
         survey.IncreaseParticipant();
