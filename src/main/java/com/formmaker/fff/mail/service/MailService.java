@@ -2,8 +2,7 @@ package com.formmaker.fff.mail.service;
 
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
-import com.formmaker.fff.mail.entity.EmailAuth;
-import com.formmaker.fff.mail.repository.EmailAuthRepository;
+import com.formmaker.fff.common.redis.RedisUtil;
 import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,7 @@ import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_EMAIL;
 public class MailService {
     private final JavaMailSender javaMailSender;
     private final UserRepository userRepository;
-    private final EmailAuthRepository emailAuthRepository;
+    private final RedisUtil redisUtil;
     private String authNum;
     @Value("${admin.mail.id}")
     private String id;
@@ -42,9 +41,9 @@ public class MailService {
         /*
             해당 메일로 인증 코드 발급 여부 확인
          */
-        EmailAuth emailAuth = emailAuthRepository.findByEmail(email);
-        if (emailAuth != null) {
-            emailAuthRepository.delete(emailAuth);
+        String authCode = redisUtil.getData(email);
+        if (authCode != null) {
+            redisUtil.deleteData(email);
         }
 
         authNum = createCode();
@@ -58,13 +57,15 @@ public class MailService {
             throw new CustomException(ErrorCode.FAILED_TO_SEND_MAIL);
         }
 
-        emailAuth = EmailAuth.builder()
-                .email(email)
-                .code(authNum)
-                .status(false)
-                .build();
+        redisUtil.setDataExpire(email, authNum, 5 * 60 * 1000L);
 
-        emailAuthRepository.save(emailAuth);
+//        emailAuth = EmailAuth.builder()
+//                .email(email)
+//                .code(authNum)
+//                .status(false)
+//                .build();
+//
+//        emailAuthRepository.save(emailAuth);
     }
 
     public MimeMessage createMessage(String email) throws MessagingException, UnsupportedEncodingException {
@@ -109,11 +110,9 @@ public class MailService {
 
     @Transactional
     public void verifyCode(String email, String code) {
-        EmailAuth emailAuth = emailAuthRepository.findByEmail(email);
-        if (!emailAuth.getCode().equals(code)) {
+        String authCode = redisUtil.getData(email);
+        if (!authCode.equals(code)) {
             throw new CustomException(ErrorCode.CODE_DOSE_NOT_MATCH);
         }
-
-        emailAuth.success();
     }
 }
