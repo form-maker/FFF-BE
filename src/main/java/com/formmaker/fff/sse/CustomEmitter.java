@@ -6,14 +6,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Getter
 public class CustomEmitter {
     private SseEmitter sseEmitter;
-    private Integer count;
+    private String id;
 
-    public CustomEmitter(SseEmitter sseEmitter) {
+    public CustomEmitter(SseEmitter sseEmitter, String id) {
         this.sseEmitter = sseEmitter;
-        this.count = 0;
+        this.id = id;
     }
 
-    public void increase(){
-        this.count++;
-    }
 }

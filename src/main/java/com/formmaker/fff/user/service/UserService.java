@@ -52,6 +52,8 @@ public class UserService {
 
         String password = passwordEncoder.encode(userSignupRequest.getPassword());
 
+        redisUtil.deleteData(email);
+
         this.userRepository.save(new User(loginId , userName , password , email));
     }
 

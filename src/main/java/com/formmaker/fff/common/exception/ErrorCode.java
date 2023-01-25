@@ -34,6 +34,7 @@ public enum ErrorCode {
     EMPTY_ANSWER("비어있는 항목이 존재합니다.", 400),
     EMPTY_QUESTION("비어있는 값이 존재합니다.", 400),
     SERVER_ERROR("서버에러입니다. 서버관리자에게 문의주세요", 500),
+    EXPIRED_SURVEY("삭제된 설문입니다.",400),
 
 
 

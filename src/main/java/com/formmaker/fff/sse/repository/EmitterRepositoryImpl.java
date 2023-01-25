@@ -15,28 +15,25 @@ import java.util.concurrent.ConcurrentHashMap;
 @Log4j2
 public class EmitterRepositoryImpl implements EmitterRepository {
 
-    private final Map<Long, CustomEmitter> emitters = new ConcurrentHashMap<>();
+    private final Map<String, CustomEmitter> emitters = new ConcurrentHashMap<>();
 
     @Override
-    public CustomEmitter save(Long emitterId, SseEmitter sseEmitter) {
-        CustomEmitter customEmitter = new CustomEmitter(sseEmitter);
-        emitters.put(emitterId, customEmitter);
-        log.info(emitters);
-        return customEmitter;
+    public CustomEmitter save(CustomEmitter seeEmitter) {
+        emitters.put(seeEmitter.getId(), seeEmitter);
+        return seeEmitter;
     }
 
 
 
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         emitters.remove(id);
     }
 
     @Override
-    public CustomEmitter findBySurveyId(Long surveyId) {
-        log.info(emitters);
-        return emitters.get(surveyId);
+    public CustomEmitter findByUserId(String userId) {
+        return emitters.get(userId);
     }
 
 
