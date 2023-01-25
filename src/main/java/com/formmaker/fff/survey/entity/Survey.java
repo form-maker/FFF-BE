@@ -82,4 +82,8 @@ public class Survey extends TimeStamped {
     public void IncreaseParticipant(){
         this.participant++;
     }
+
+    public void updateStatus(StatusTypeEnum status) {
+        this.status = status;
+    }
 }

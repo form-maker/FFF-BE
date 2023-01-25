@@ -6,7 +6,6 @@ import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
-import com.formmaker.fff.reply.service.ReplyService;
 import com.formmaker.fff.survey.dto.response.MyPageResponse;
 import com.formmaker.fff.survey.service.SurveyService;
 import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SurveyController {
     private final SurveyService surveyService;
-    private final ReplyService replyService;
 
 
     @PostMapping
