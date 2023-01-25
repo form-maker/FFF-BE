@@ -6,8 +6,7 @@ import com.formmaker.fff.common.jwt.JwtUtil;
 import com.formmaker.fff.common.jwt.RefreshToken;
 import com.formmaker.fff.common.jwt.RefreshTokenRepository;
 import com.formmaker.fff.common.jwt.TokenDto;
-import com.formmaker.fff.mail.entity.EmailAuth;
-import com.formmaker.fff.mail.repository.EmailAuthRepository;
+
 
 import com.formmaker.fff.common.redis.RedisUtil;
 
