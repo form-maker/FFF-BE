@@ -1,8 +1,11 @@
 package com.formmaker.fff.common.jwt;
 
 import com.formmaker.fff.common.response.security.UserDetailsServiceImpl;
+import com.formmaker.fff.user.controller.RefreshController;
+import com.formmaker.fff.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,16 +23,12 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-
-import static com.formmaker.fff.common.exception.ErrorCode.EMPTY_TOKEN;
-import static com.formmaker.fff.common.exception.ErrorCode.EXPIRED_TOKEN;
-import static com.formmaker.fff.common.exception.ErrorCode.INVALID_TOKEN;
-import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_TOKEN;
-import static com.formmaker.fff.common.exception.ErrorCode.UNSUPPORTED_TOKEN;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -37,8 +36,10 @@ import static com.formmaker.fff.common.exception.ErrorCode.UNSUPPORTED_TOKEN;
 public class JwtUtil {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String REFRESH_HEADER = "REFRESH_Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L;
+    private static final long REFRESH_TOKEN_VALID_TIME = 300 * 300 * 1000L;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Value("${jwt.secret.key}")
@@ -53,7 +54,7 @@ public class JwtUtil {
     }
 
     // header 토큰을 가져오기
-    public String resolveToken(HttpServletRequest request,String authorization) {
+    public String resolveToken(HttpServletRequest request, String authorization) {
         String bearerToken = request.getHeader(authorization);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
@@ -63,15 +64,30 @@ public class JwtUtil {
 
     // 토큰 생성
     public String createToken(String loginId) {
-        Date date = new Date();
 
-        return BEARER_PREFIX +
+        Date date = new Date();
+        return null;
+    }
+
+    public TokenDto createRefreshToken(String loginId) {
+        Claims claims = Jwts.claims().setSubject(loginId);
+        Date date = new Date();
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_VALID_TIME))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
+
+        String token = BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(loginId)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
                         .compact();
+        return TokenDto.builder().token(token).refreshToken(refreshToken).key(loginId).build();
+
     }
 
     /* Access 토큰 검증 */
@@ -93,6 +109,33 @@ public class JwtUtil {
         return false;
     }
 
+    public String validateRefreshToken(RefreshToken refreshTokenObj){
+        String refreshToken = refreshTokenObj.getRefreshToken();
+                try{
+                    Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken);
+                    if(!claims.getBody().getExpiration().before(new Date())) {
+                        return recreationAccessToken(claims.getBody().get("sub").toString());
+                    }
+                    }catch (Exception e){
+                    return null;
+                }
+                return null;
+    }
+
+    public String recreationAccessToken(String loginId){
+
+        Claims claims = Jwts.claims().setSubject(loginId);
+        Date date = new Date();
+
+        String accessToken = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
+        return accessToken;
+
+    }
     /* 토큰에서 사용자 정보 가져오기 */
     public Claims getUserInfo(String token){
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();

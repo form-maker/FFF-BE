@@ -30,11 +30,6 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer(){
-//
-//        return (web) -> web.ignoring().requestMatchers(PathRequest.toH2Console());
-//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,6 +43,7 @@ public class WebSecurityConfig {
         /* 3. Request에 대한 인증/인가 */
         http.authorizeRequests()
                 .antMatchers("/api/user/**").permitAll()
+                .antMatchers("/refresh").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/survey").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/question").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/survey/**/reply").permitAll()
