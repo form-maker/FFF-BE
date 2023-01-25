@@ -8,9 +8,10 @@ import java.util.Map;
 
 public interface EmitterRepository {
 
-    CustomEmitter save(Long emitterId, SseEmitter sseEmitter); //Emitter 저장
+    CustomEmitter save(CustomEmitter emitter); //Emitter 저장
 
-    void deleteById(Long id); //Emitter를 지운다
 
-    CustomEmitter findBySurveyId(Long surveyId);
+    void deleteById(String id); //Emitter를 지운다
+
+    CustomEmitter findByUserId(String surveyId);
 }
