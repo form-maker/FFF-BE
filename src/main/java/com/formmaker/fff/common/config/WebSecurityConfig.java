@@ -59,10 +59,8 @@ public class WebSecurityConfig {
                 .antMatchers("/swagger**").permitAll()
 
                 .antMatchers("/swagger-resources/**").permitAll()
-
-
-                /* 이후 sse관련 기능 사용시 */
-//                antMatchers("/api/sse/**").permitAll().
+                
+                .antMatchers("/api/sse/**").permitAll()
                 /* 3-1. Authentication 예외 처리 */
                 .anyRequest().authenticated();
 
