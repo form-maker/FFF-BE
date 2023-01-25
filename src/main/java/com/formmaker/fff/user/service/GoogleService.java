@@ -49,7 +49,7 @@ public class GoogleService {
         SocialUserInfoDto googleUserInfoDto = getGoogleUserInfo(accessToken);
         User googleUser = registerGoogleUserIfNeeded(googleUserInfoDto);
 
-        String createToken = String.valueOf(jwtUtil.createToken(googleUser.getLoginId()));
+        String createToken = jwtUtil.createToken(googleUser.getLoginId());
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
         return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.", 200, null), HttpStatus.OK);
     }
