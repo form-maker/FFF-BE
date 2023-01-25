@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.formmaker.fff.common.exception.ErrorCode.EXPIRED_SURVEY;
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
 @Service
@@ -105,6 +106,9 @@ public class SurveyService {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                         () -> new CustomException(NOT_FOUND_SURVEY)
         );
+        if(survey.getStatus()==StatusTypeEnum.DELETE){
+            throw new CustomException(EXPIRED_SURVEY);
+        }
 
         List<Long> questionResponses = new ArrayList<>();
         for (Question question : survey.getQuestionList()) {
@@ -133,20 +137,7 @@ public class SurveyService {
         if (!survey.getUserId().equals(loginId)) {
             throw new CustomException((ErrorCode.NOT_MATCH_USER));
         }
-        
-        List<Long> questionIdList = new ArrayList<>();
-
-
-        for (Question question : survey.getQuestionList()) {
-            questionIdList.add(question.getId());
-        }
-        if(!questionIdList.isEmpty()){
-            answerRepository.deleteAllByQuestionIdIn(questionIdList);
-        }
-
-        questionRepository.deleteAllBySurveyId(surveyId);
-
-        surveyRepository.deleteById(surveyId);
+        survey.updateStatus(StatusTypeEnum.DELETE);
     }
 
     @Transactional(readOnly = true)
