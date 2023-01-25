@@ -3,7 +3,9 @@ package com.formmaker.fff.user.controller;
 
 import com.formmaker.fff.common.jwt.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.formmaker.fff.common.jwt.TokenDto;
 import com.formmaker.fff.common.response.ResponseMessage;
+import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.service.GoogleService;
 import com.formmaker.fff.user.service.UserService;
 import com.formmaker.fff.user.dto.request.UserLoginRequest;
@@ -45,13 +47,12 @@ public class UserController {
         return new ResponseEntity<>(new ResponseMessage("사용가능한 닉네임 입니다.",200,null), HttpStatus.OK);
     }
 
-    @ResponseBody
     @PostMapping("/login")
-    public ResponseEntity<ResponseMessage> login(@Valid @RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response) {
-        userService.login(userLoginRequest, response);
-        return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null), HttpStatus.OK);
+    public ResponseEntity<ResponseMessage> login(@Valid @RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response, TokenDto tokenDto) {
+        tokenDto = jwtUtil.createRefreshToken(userLoginRequest.getLoginId());
+       userService.login(userLoginRequest, response, tokenDto);
+       return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null),HttpStatus.OK);
     }
-
     @GetMapping
     public ResponseEntity<ResponseMessage> checkLogin(HttpServletRequest request){
         String token = jwtUtil.resolveToken(request, "Authorization");
