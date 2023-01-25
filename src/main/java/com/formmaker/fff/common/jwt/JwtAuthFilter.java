@@ -3,6 +3,9 @@ package com.formmaker.fff.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.formmaker.fff.common.response.ResponseMessage;
+import com.formmaker.fff.user.controller.RefreshController;
+import com.formmaker.fff.user.entity.User;
+import com.formmaker.fff.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,18 +23,17 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
-
     private final JwtUtil jwtUtil;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
         String token = jwtUtil.resolveToken(request, JwtUtil.AUTHORIZATION_HEADER);
-
         if(request.getRequestURI().contains("api/user")){
             filterChain.doFilter(request,response);
             return;
         }
         /* Token 유효성 검사 및 인증 */
+
+
         if(token != null) {
             if(!jwtUtil.validateToken(token)){
                 jwtExceptionHandler(response, "로그인 상태를 확인해주세요.", 403);
