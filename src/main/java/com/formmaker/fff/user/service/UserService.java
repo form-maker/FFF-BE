@@ -89,31 +89,39 @@ public class UserService {
         }
         RefreshToken refreshToken = RefreshToken.builder().keyLoginId(tokenDto.getKey()).refreshToken(tokenDto.getRefreshToken()).build();
         String tokenLoginId = refreshToken.getKeyLoginId();
-        if(refreshTokenRepository.existsByKeyLoginId(tokenLoginId)){
-            refreshTokenRepository.deleteByKeyLoginId(tokenLoginId);
-        }
-        refreshTokenRepository.save(refreshToken);
+
+        redisUtil.deleteData(tokenLoginId); // redis안에 중복되는 키가 있으면 삭제하고 아래서 생성
         TokenDto token = jwtUtil.createRefreshToken(user.getLoginId());
+        redisUtil.setDataExpire(tokenLoginId, token.getRefreshToken() ,24*60*60*1000L);
+
+
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token.getToken());
         response.addHeader(JwtUtil.REFRESH_HEADER, token.getRefreshToken());
 
 
 
     }
-    public Optional<RefreshToken> getRefreshToken(String refreshToken){
-        return refreshTokenRepository.findByRefreshToken(refreshToken);
+    public String getRefreshToken(String refreshToken){
+    String key = jwtUtil.getUserInfo(refreshToken).getSubject();
+
+        return redisUtil.getValue(key);
+
     }
     public Map<String, String> validateRefreshToken(String refreshToken){
-        RefreshToken refreshToken1 = getRefreshToken(refreshToken).get();
-        String createdAccessToken = jwtUtil.validateRefreshToken(refreshToken1);
-        return createRefreshJson(createdAccessToken);
+
+        if(getRefreshToken(refreshToken).equals(refreshToken)){
+            return createRefreshJson(jwtUtil.recreationAccessToken(jwtUtil.getUserInfo(refreshToken)
+                    .getSubject()));
+        }else {
+            return createRefreshJson(null);
+        }
     }
     public Map<String,String> createRefreshJson(String createdAccessToken){
         Map<String,String> map = new HashMap<>();
         if(createdAccessToken == null){
             map.put("errortype","Forbidden");
             map.put("status","400");
-            map.put("message","리프레쉬 토큰이 만료되었습니다. 로그인이 필요합니다.");
+            map.put("message","리프레쉬 토큰이 일치하지 않습니다. 로그인이 필요합니다.");
             return map;
         }
         map.put("status","200");
