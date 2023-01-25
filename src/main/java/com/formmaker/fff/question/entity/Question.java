@@ -2,6 +2,8 @@ package com.formmaker.fff.question.entity;
 
 
 import com.formmaker.fff.answer.entity.Answer;
+import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.reply.entity.Reply;
 import lombok.Builder;
@@ -11,6 +13,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.formmaker.fff.common.exception.ErrorCode.EMPTY_QUESTION;
 
 @Entity
 @Getter
@@ -51,6 +55,9 @@ public class Question {
         this.summary = summary;
         this.title = title;
         this.questionNum = questionNum;
+        if(this.questionType == QuestionTypeEnum.SLIDE && volume == null){
+            throw new CustomException(EMPTY_QUESTION);
+        }
         this.volume = volume;
     }
 
