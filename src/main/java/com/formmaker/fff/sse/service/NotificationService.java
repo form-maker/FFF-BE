@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import springfox.documentation.spring.web.json.Json;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ public class NotificationService {
         if(!setOperations.isMember(surveyId, sessionId)){
             setOperations.add(surveyId, sessionId);
         }
+
 
         CustomEmitter emitter = emitterRepository.save(new CustomEmitter(new SseEmitter(DEFAULT_TIMEOUT), sessionId));
         setOperations.members(surveyId);
@@ -79,6 +81,7 @@ public class NotificationService {
                 continue;
             }
             JsonObject data = new JsonObject();
+            data.addProperty("msg", "data");
             data.addProperty("total", setOperations.size(surveyId));
             sendToClient(emitter, data.toString());
         }
@@ -108,7 +111,9 @@ public class NotificationService {
     }
     private Boolean connectCheck(CustomEmitter emitter){
         try {
-            emitter.getSseEmitter().send(SseEmitter.event().data("try connect"));
+            JsonObject data = new JsonObject();
+            data.addProperty("msg", "connect");
+            emitter.getSseEmitter().send(SseEmitter.event().data(data.toString()));
             return true;
         }catch (IOException e){
             return false;

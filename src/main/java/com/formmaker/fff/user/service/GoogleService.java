@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.formmaker.fff.common.jwt.JwtUtil;
+import com.formmaker.fff.common.jwt.TokenDto;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.type.SocialTypeEnum;
 import com.formmaker.fff.user.dto.request.SocialUserInfoDto;
@@ -49,8 +50,9 @@ public class GoogleService {
         SocialUserInfoDto googleUserInfoDto = getGoogleUserInfo(accessToken);
         User googleUser = registerGoogleUserIfNeeded(googleUserInfoDto);
 
-        String createToken = jwtUtil.createToken(googleUser.getLoginId());
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
+        TokenDto createToken = jwtUtil.createRefreshToken(googleUser.getLoginId());
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken.getToken());
+        response.addHeader(JwtUtil.REFRESH_HEADER, createToken.getRefreshToken());
         return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.", 200, null), HttpStatus.OK);
     }
 

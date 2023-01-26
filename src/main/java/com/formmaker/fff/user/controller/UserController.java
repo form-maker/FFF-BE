@@ -50,8 +50,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ResponseMessage> login(@Valid @RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response, TokenDto tokenDto) {
         tokenDto = jwtUtil.createRefreshToken(userLoginRequest.getLoginId());
-       userService.login(userLoginRequest, response, tokenDto);
-       return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null),HttpStatus.OK);
+        userService.login(userLoginRequest, response, tokenDto);
+        return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null),HttpStatus.OK);
     }
     @GetMapping
     public ResponseEntity<ResponseMessage> checkLogin(HttpServletRequest request){
@@ -62,8 +62,9 @@ public class UserController {
 
     @GetMapping("/login/kakao")
     public ResponseEntity<ResponseMessage> kakaoLogin(@RequestParam String code, HttpServletResponse response){
-        String jwtToken = kakaoService.kakaoLogin(code);
-        response.addHeader("Authorization", jwtToken);
+        TokenDto token = kakaoService.kakaoLogin(code);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token.getToken());
+        response.addHeader(JwtUtil.REFRESH_HEADER, token.getRefreshToken());
         return new ResponseEntity<>(new ResponseMessage("로그인 되었습니다.", 200, null), HttpStatus.OK);
     }
 
