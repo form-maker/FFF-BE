@@ -1,11 +1,13 @@
 package com.formmaker.fff.user.service;
 
+import antlr.Token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.jwt.JwtUtil;
+import com.formmaker.fff.common.jwt.TokenDto;
 import com.formmaker.fff.common.type.SocialTypeEnum;
 import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
@@ -40,7 +42,7 @@ public class KakaoService {
 
 
     @Transactional
-    public String kakaoLogin(String code){
+    public TokenDto kakaoLogin(String code){
         try{
             String token = getToken(code);
             User loginUser = getKakaoUserInfo(token);
@@ -53,7 +55,7 @@ public class KakaoService {
             }else{
                 user.socialUpdate(SocialTypeEnum.KAKAO);
             }
-            return jwtUtil.createToken(user.getLoginId());
+            return jwtUtil.createRefreshToken(user.getLoginId());
         }catch (JsonProcessingException e){
             throw new CustomException(ErrorCode.SERVER_ERROR);
         }

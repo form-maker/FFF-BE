@@ -63,11 +63,11 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String loginId) {
-
-        Date date = new Date();
-        return null;
-    }
+//    public String createToken(String loginId) {
+//
+//        Date date = new Date();
+//        return null;
+//    }
 
     public TokenDto createRefreshToken(String loginId) {
         Claims claims = Jwts.claims().setSubject(loginId);
