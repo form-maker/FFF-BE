@@ -3,13 +3,11 @@ package com.formmaker.fff.common.config;
 import com.formmaker.fff.common.jwt.JwtAuthFilter;
 import com.formmaker.fff.common.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -77,6 +75,7 @@ public class WebSecurityConfig {
         configuration.setAllowCredentials(true); // 내 서버가 응답할 때 json을 js에서 처리할 수 있게 설정
         configuration.setMaxAge(3600L);
         configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
+        configuration.addExposedHeader(JwtUtil.REFRESH_HEADER);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
         return source;
