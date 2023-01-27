@@ -23,14 +23,14 @@ public class GlobalExceptionHandler {
                 , HttpStatus.OK);
     }
 
-    @ExceptionHandler({Exception.class})
-    protected ResponseEntity handleServerException(Exception ex) {
-        return new ResponseEntity(new ResponseMessage(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), "error")
-                , HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler({Exception.class})
+//    protected ResponseEntity handleServerException(Exception ex) {
+//        return new ResponseEntity(new ResponseMessage(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), "error")
+//                , HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidMessageResponse> methodValidException (MethodArgumentNotValidException e, HttpServletRequest request){
-            ValidMessageResponse errorResponse = ValidMessageResponse.makeErrorResponse(e.getBindingResult());
-            return new ResponseEntity<ValidMessageResponse>(errorResponse, HttpStatus.BAD_REQUEST);
-        }
+        ValidMessageResponse errorResponse = ValidMessageResponse.makeErrorResponse(e.getBindingResult());
+        return new ResponseEntity<ValidMessageResponse>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+}
