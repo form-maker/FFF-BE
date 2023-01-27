@@ -51,11 +51,13 @@ public class WebSecurityConfig {
                 .antMatchers("/v2/**").permitAll()
                 .antMatchers("/webjars/**").permitAll()
                 .antMatchers("/swagger**").permitAll()
-
                 .antMatchers("/swagger-resources/**").permitAll()
                 
                 .antMatchers("/api/sse/**").permitAll()
                 /* 3-1. Authentication 예외 처리 */
+
+                /*test*/
+                .antMatchers("/login/oauth2/**").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
