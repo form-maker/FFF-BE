@@ -20,27 +20,27 @@ public class StatsMethod {
     static public StatsMethod statsMethod = new StatsMethod();
 
     public QuestionStats statsChoice(List<Reply> replyList, Question question) {
-        List<SelectResponse> selectList = question.getAnswerList().stream()
-                .map(answer -> new SelectResponse(answer.getAnswerValue(), answer.getAnswerNum()))
-                .sorted(Comparator.comparing(SelectResponse::getAnswerNum))
-                .collect(Collectors.toList());
-
-        int totalSelect = 0;
+        List<Answer> answerList = question.getAnswerList();
+        List<Integer> countList = new ArrayList<>(Collections.nCopies(answerList.size(), 0));
         List<Integer> changeSelectValueList;
-        for (Reply userReply : replyList) {
-
+        int totalSelect = 0;
+        for(Reply reply : replyList){
             changeSelectValueList = Stream
-                    .of(userReply.getSelectValue().split("\\|"))
-                    .map(Integer::parseInt)
+                    .of(reply.getSelectValue().split("\\|"))
+                    .map(s -> Integer.parseInt(s)-1)
                     .toList();
 
             for (Integer selectValues : changeSelectValueList) {
-                selectList.get(selectValues - 1).increaseValue();
+                countList.set(selectValues, countList.get(selectValues)+1);
                 totalSelect++;
             }
         }
-        for (SelectResponse select : selectList) {
-            select.valueAvg(totalSelect);
+
+        List<Float> averageList = getAverageList(countList, totalSelect);
+        List<SelectResponse> selectResponseList = new ArrayList<>();
+
+        for(int i = 0; i < answerList.size();i++){
+            selectResponseList.add(new SelectResponse(answerList.get(i).getAnswerValue(), averageList.get(i)));
         }
 
         return QuestionStats.builder()
@@ -48,7 +48,8 @@ public class StatsMethod {
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .selectList(selectList)
+                .selectList(selectResponseList)
+
                 .build();
     }
 
@@ -64,7 +65,7 @@ public class StatsMethod {
             index = Integer.parseInt(userReply.getSelectValue()) + volume;
             countList.set(index, countList.get(index)+1);
         }
-        List<Float> avgList = countList.stream()
+        List<Float> averageList = countList.stream()
                 .map(value -> (Math.round(((float)value / totalSelect) * 1000) / 10.0f))
                 .collect(Collectors.toList());
 
@@ -74,7 +75,7 @@ public class StatsMethod {
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
                 .volume(question.getVolume())
-                .satisfactionList(avgList)
+                .satisfactionList(averageList)
                 .build();
     }
 
@@ -260,5 +261,11 @@ public class StatsMethod {
             jsonObject = null;
         }
         return jsonObject;
+    }
+
+    private List<Float> getAverageList(List<Integer> selectValue, Integer total){
+        return selectValue.stream()
+                .map(value -> (Math.round(((float)value / total) * 1000) / 10.0f))
+                .collect(Collectors.toList());
     }
 }
