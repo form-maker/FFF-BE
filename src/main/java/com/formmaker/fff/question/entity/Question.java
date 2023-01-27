@@ -2,6 +2,8 @@ package com.formmaker.fff.question.entity;
 
 
 import com.formmaker.fff.answer.entity.Answer;
+import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.reply.entity.Reply;
 import lombok.Builder;
@@ -11,6 +13,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.formmaker.fff.common.exception.ErrorCode.EMPTY_QUESTION;
 
 @Entity
 @Getter
@@ -23,7 +27,7 @@ public class Question {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private QuestionTypeEnum questionType;
-    
+
     private String summary;
 
     @Column(nullable = false)
@@ -51,6 +55,15 @@ public class Question {
         this.summary = summary;
         this.title = title;
         this.questionNum = questionNum;
+        if(this.questionType == QuestionTypeEnum.SLIDE){
+            if(volume == null){
+                throw new CustomException(EMPTY_QUESTION);
+            }
+            if(volume == 0 || volume > 5){
+                throw  new CustomException(ErrorCode.INVALID_FORM_DATA);
+            }
+
+        }
         this.volume = volume;
     }
 

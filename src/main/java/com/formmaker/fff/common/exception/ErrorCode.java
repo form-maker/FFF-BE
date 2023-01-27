@@ -31,8 +31,12 @@ public enum ErrorCode {
     NOT_FOUND_SURVEY("존재하지 않는 설문입니다.",400),
     NOT_MATCH_USER("권한이 없는 설문입니다.",400),
     NOT_FOUND_QUESTION("질문지가 존재하지 않습니다.",400),
+    EMPTY_ANSWER("비어있는 항목이 존재합니다.", 400),
+    EMPTY_QUESTION("비어있는 값이 존재합니다.", 400),
     SERVER_ERROR("서버에러입니다. 서버관리자에게 문의주세요", 500),
     EXPIRED_SURVEY("삭제된 설문입니다.",400),
+
+
 
     /*응답 에러*/
     INVALID_QUESTION_TYPE("질문 타입과 일치하지 않는 응답입니다.", 400),

@@ -15,18 +15,20 @@ import static com.formmaker.fff.stats.StatsMethod.statsMethod;
 public enum QuestionTypeEnum {
 
 
-    MULTIPLE_CHOICE(statsMethod::statsChoice),
-    SINGLE_CHOICE(statsMethod::statsChoice),
-    SLIDE(statsMethod::statsSlide),
-    RANK(statsMethod::statsRank),
-    SHORT_DESCRIPTIVE(statsMethod::statsShortDescriptive),
-    LONG_DESCRIPTIVE(statsMethod::statsLongDescriptive),
-    STAR(statsMethod::statsOfPositiveValue),
-    SCORE(statsMethod::statsOfPositiveValue);
+    MULTIPLE_CHOICE(statsMethod::statsChoice, true),
+    SINGLE_CHOICE(statsMethod::statsChoice, true),
+    SLIDE(statsMethod::statsSlide, true),
+    RANK(statsMethod::statsRank, true),
+    SHORT_DESCRIPTIVE(statsMethod::statsShortDescriptive, false),
+    LONG_DESCRIPTIVE(statsMethod::statsLongDescriptive, false),
+    STAR(statsMethod::statsOfPositiveValue, false),
+    SCORE(statsMethod::statsOfPositiveValue, false);
 
     private BiFunction<List<Reply>, Question, QuestionStats> statsFn;
+    private Boolean hasAnswer;
 
-    QuestionTypeEnum(BiFunction<List<Reply>,  Question, QuestionStats> statsFn) {
+    QuestionTypeEnum(BiFunction<List<Reply>, Question, QuestionStats> statsFn, Boolean hasAnswer) {
         this.statsFn = statsFn;
+        this.hasAnswer = hasAnswer;
     }
 }
