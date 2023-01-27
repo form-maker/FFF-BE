@@ -7,6 +7,8 @@ import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.stats.dto.DescriptiveResponse;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -80,66 +82,32 @@ public class StatsMethod {
     }
 
     public QuestionStats statsRank(List<Reply> replyList, Question question) {
-        /*
-            모든 랭크 타입의 응답을 List 로 저장 단일 요소의 형태
-            -> {Key:Value, Key:Value, Key:Value ...}
-         */
-        List<JSONObject> rankObjectList = new ArrayList<>();
-        for (Reply reply : replyList) {
-            JSONObject rankObject = toJsonObjectType(reply.getSelectValue());
-            rankObjectList.add(rankObject);
-        }
 
-        /*
-            rankObject 는 key, value 값으로 구성되어 있으며,
-            key 값으로 정렬되어 있다.
-            value 로만 구성된 List 를 생성하기 위한 로직 (List<Integer>)
-         */
-        List<List<Integer>> selectValueList = new ArrayList<>();
-        for (JSONObject rankObject : rankObjectList) {
-            List<Integer> selectValue = new ArrayList<>();
-            for (int answerNum = 0; answerNum < rankObject.size(); answerNum++) {
-                selectValue = new ArrayList<>(rankObject.values());
-            }
-            selectValueList.add(selectValue);
+        List<Answer> answerList = question.getAnswerList();
+        List<List<Integer>> answerValueList = new ArrayList<>();
+        for(int i = 0; i<answerList.size(); i++){
+            answerValueList.add(new ArrayList<>());
         }
+        Map<Integer, Integer> rankMap;
+        for(Reply reply : replyList){
+            rankMap = new Gson().fromJson(reply.getSelectValue(), new TypeToken<Map<Integer,Integer>>(){}.getType());
 
-        /*
-            selectValue 는 index 가 answer 의 번호(number)를 나타내며,
-            value 는 문항에 대해 응답자가 지정한 순위를 나타낸다.
-            각각의 문항에 대해 응답자들이 지정한 순위를 담은 List 를 생성하기 위한 로직
-            ex -> valuesOfAnswers 의 0 번 index 에 있는 리스트는 1번 문항에 대해 응답자들이 지정한 순위를 나열
-         */
-        List<List<Integer>> valuesOfAnswers = new ArrayList<>();
-        if(!selectValueList.isEmpty()){
-            for (int i = 0; i < selectValueList.get(0).size(); i++) {
-                List<Integer> eachValuesOfAnswer = new ArrayList<>();
-                for (int j = 0; j < selectValueList.size(); j++) {
-                    eachValuesOfAnswer.add(Integer.parseInt("" + selectValueList.get(j).get(i)));
-//                eachValuesOfAnswer.add(selectValueList.get(j).get(i));
-                }
-                valuesOfAnswers.add(eachValuesOfAnswer);
+            for(Integer key : rankMap.keySet()){
+                answerValueList.get(key-1).add(rankMap.get(key));
+
             }
         }
 
-
-
-        /*
-            각 문항에 대해 응답자들이 지정한 순위가 나열된 List 를 가지고,
-            지정 순위의 선택 비율을 계산
-         */
         List<SelectResponse> selectResponseList = new ArrayList<>();
         List<Float> rankList = new ArrayList<>();
         int answerNum = 0;
-        for (List<Integer> valuesOfAnswer : valuesOfAnswers) {
+        for (List<Integer> valuesOfAnswer : answerValueList) {
             List<Integer> selectCountList = new ArrayList<>();
-            for (int i = 0; i < valuesOfAnswers.size(); i++) {
-                selectCountList.add(Collections.frequency(valuesOfAnswer, (i + 1)));
+            for (int i = 1; i <= answerValueList.size(); i++) {
+                selectCountList.add(Collections.frequency(valuesOfAnswer, i));
             }
-            rankList = selectAvg(selectCountList);
+            rankList = getAverageList(selectCountList, replyList.size());
 
-            // 각 문항에 값 넣어주기
-            List<Answer> answerList = question.getAnswerList();
             SelectResponse selectResponse = new SelectResponse(answerList.get(answerNum++).getAnswerValue(), rankList);
             selectResponseList.add(selectResponse);
         }
@@ -241,31 +209,32 @@ public class StatsMethod {
         }
         return rankList;
     }
+    private List<Float> getAverageList(List<Integer> selectValue, Integer total){
+        return selectValue.stream()
+                .map(value -> (Math.round(((float)value / total) * 1000) / 10.0f))
+                .collect(Collectors.toList());
+    }
 
     /*
         String 타입으로 저장된 Json 형식 문자열을 JsonObject
         로 사용할 수 있게 만들어주는 로직
         JsonObject 는 HashMap 을 상속받는 클래스이다. Key, Value 로 값에 접근할 수 있다.
      */
-    private JSONObject toJsonObjectType(String selectValueToStringTypeJsonForm) {
-        JSONObject jsonObject;
-        try {
-            JSONParser jsonParser = new JSONParser();
-            jsonObject = (JSONObject) jsonParser.parse(selectValueToStringTypeJsonForm);
-        } catch (ParseException e) {
-            /*
-              에러 메세지는 로그를 통해 남기는 방식을 채택 -> 로그 남기는 방법 알아봐야함.
-              에러가 터져서 멈추는게 아닌, 에러가 터진 데이터를 제외한 통계를 반환시켜주어야함.
-              new CustomException(ErrorCode.INVALID_FORM_DATA);
-             */
-            jsonObject = null;
-        }
-        return jsonObject;
-    }
+//    private JSONObject toJsonObjectType(String selectValueToStringTypeJsonForm) {
+//        JSONObject jsonObject;
+//        try {
+//            JSONParser jsonParser = new JSONParser();
+//            jsonObject = (JSONObject) jsonParser.parse(selectValueToStringTypeJsonForm);
+//        } catch (ParseException e) {
+//            /*
+//              에러 메세지는 로그를 통해 남기는 방식을 채택 -> 로그 남기는 방법 알아봐야함.
+//              에러가 터져서 멈추는게 아닌, 에러가 터진 데이터를 제외한 통계를 반환시켜주어야함.
+//              new CustomException(ErrorCode.INVALID_FORM_DATA);
+//             */
+//            jsonObject = null;
+//        }
+//        return jsonObject;
+//    }
 
-    private List<Float> getAverageList(List<Integer> selectValue, Integer total){
-        return selectValue.stream()
-                .map(value -> (Math.round(((float)value / total) * 1000) / 10.0f))
-                .collect(Collectors.toList());
-    }
+
 }
