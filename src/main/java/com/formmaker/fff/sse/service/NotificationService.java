@@ -15,7 +15,7 @@ import java.util.Iterator;
 
 @Service
 public class NotificationService {
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000*2;
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000;
 
     private final EmitterRepository emitterRepository;
 
@@ -27,29 +27,47 @@ public class NotificationService {
     }
 
 
-    public CustomEmitter joinSurvey(Long surveyId, String sessionId) {
+    public CustomEmitter connect(Long surveyId, String sessionId) {
+        CustomEmitter emitter;
+        CustomEmitter check = emitterRepository.findByUserId(sessionId);
+        if(check == null){
+            emitter = emitterRepository.save(new CustomEmitter(new SseEmitter(DEFAULT_TIMEOUT), sessionId));
+        }else{
+            if(check.getSseEmitter().getTimeout() <= 1000L){
+                check.getSseEmitter().complete();
+                emitter = emitterRepository.save(new CustomEmitter(new SseEmitter(DEFAULT_TIMEOUT), sessionId));
+            }else{
+                return check;
+            }
 
-        if(!setOperations.isMember(surveyId, sessionId)){
-            setOperations.add(surveyId, sessionId);
         }
 
-
-        CustomEmitter emitter = emitterRepository.save(new CustomEmitter(new SseEmitter(DEFAULT_TIMEOUT), sessionId));
-        setOperations.members(surveyId);
-
-        notificationAll(surveyId);
+        if(setOperations.isMember(surveyId, sessionId)){
+            emitterRepository.update(emitter, sessionId);
+            joinSurvey(surveyId, sessionId);
+        }
 
         emitter.getSseEmitter().onCompletion(() -> {
             emitterRepository.deleteById(sessionId);
-            setOperations.remove(surveyId, sessionId);
-            notificationAll(surveyId);
         });
 
         emitter.getSseEmitter().onTimeout(() -> {
             emitter.getSseEmitter().complete();
         });
-
+        JsonObject data = new JsonObject();
+        data.addProperty("msg", "connect");
+        sendToClient(emitter, data.toString());
         return emitter;
+    }
+
+    public void joinSurvey(Long surveyId, String sessionId) {
+        CustomEmitter check = emitterRepository.findByUserId(sessionId);
+        if(Boolean.FALSE.equals(setOperations.isMember(surveyId, sessionId)) || check == null){
+            connect(surveyId, sessionId);
+        }
+        setOperations.add(surveyId, sessionId);
+        notificationAll(surveyId);
+
     }
 
     // 3
@@ -58,7 +76,8 @@ public class NotificationService {
             emitter.getSseEmitter().send(SseEmitter.event()
                     .data(data));
         } catch (Exception exception) {
-            emitterRepository.deleteById(emitter.getId()); //만료된 emitter 제거
+            emitterRepository.deleteById(emitter.getId());
+
         }
     }
 
@@ -76,7 +95,7 @@ public class NotificationService {
         while(iter.hasNext()){
             String id = iter.next();
             emitter = emitterRepository.findByUserId(id);
-            if(emitter ==null){
+            if(emitter==null){
                 setOperations.remove(surveyId, id);
                 continue;
             }
@@ -100,12 +119,8 @@ public class NotificationService {
         while(iter.hasNext()){
             String id = iter.next();
             emitter = emitterRepository.findByUserId(id);
-            if(emitter == null){
-                setOperations.remove(surveyId, id);
-            }else{
-                if(!connectCheck(emitter)){
-                    emitterRepository.deleteById(id);
-                }
+            if(emitter == null || !connectCheck(emitter)){
+                deleteEmitter(surveyId, id);
             }
         }
     }
@@ -115,10 +130,16 @@ public class NotificationService {
             data.addProperty("msg", "connect");
             emitter.getSseEmitter().send(SseEmitter.event().data(data.toString()));
             return true;
-        }catch (IOException e){
+        }catch (IOException | IllegalStateException e){
             return false;
         }
     }
+
+    private void deleteEmitter(Long surveyId, String sessionId){
+        setOperations.remove(surveyId, sessionId);
+        emitterRepository.deleteById(sessionId);
+    }
+
 
 
 }
