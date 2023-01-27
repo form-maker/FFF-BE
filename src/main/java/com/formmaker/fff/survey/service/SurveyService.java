@@ -91,7 +91,7 @@ public class SurveyService {
         return surveyPage.map(survey -> SurveyMainResponse.builder()
                         .surveyId(survey.getId())
                         .title(survey.getTitle())
-                        .summery(survey.getSummary())
+                        .summary(survey.getSummary())
                         .startedAt(survey.getStartedAt())
                         .endedAt(survey.getEndedAt())
                         .totalQuestion(survey.getQuestionList().size())

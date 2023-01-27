@@ -1,11 +1,9 @@
 package com.formmaker.fff.sse.repository;
 
 import com.formmaker.fff.sse.CustomEmitter;
-import com.formmaker.fff.sse.repository.EmitterRepository;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,6 +31,13 @@ public class EmitterRepositoryImpl implements EmitterRepository {
 
     @Override
     public CustomEmitter findByUserId(String userId) {
+        return emitters.get(userId);
+    }
+
+    @Override
+    public CustomEmitter update(CustomEmitter emitter, String userId) {
+        emitter.setId(userId);
+        emitters.put(userId, emitter);
         return emitters.get(userId);
     }
 
