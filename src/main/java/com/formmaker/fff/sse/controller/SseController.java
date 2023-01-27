@@ -27,12 +27,12 @@ public class SseController {
         SseEmitter sseEmitter = notificationService.connect(surveyId, sessionId).getSseEmitter();
         return ResponseEntity.ok(sseEmitter);
     }
-    
+
     @GetMapping(value = "/join/{surveyId}")
     public ResponseEntity<ResponseMessage> joinSurvey(@PathVariable Long surveyId, @RequestParam String sessionId) {
 
         notificationService.joinSurvey(surveyId, sessionId);
-        return ResponseEntity.ok(new ResponseMessage("done", 200));
+        return ResponseEntity.ok(new ResponseMessage("연결 성공", 200));
     }
 
 
