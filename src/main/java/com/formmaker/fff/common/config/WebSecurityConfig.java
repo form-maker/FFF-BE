@@ -51,11 +51,14 @@ public class WebSecurityConfig {
                 .antMatchers("/v2/**").permitAll()
                 .antMatchers("/webjars/**").permitAll()
                 .antMatchers("/swagger**").permitAll()
-
                 .antMatchers("/swagger-resources/**").permitAll()
-                
+                /* sse */
                 .antMatchers("/api/sse/**").permitAll()
-                /* 3-1. Authentication 예외 처리 */
+                /* oauth */
+                .antMatchers("/login/oauth2/**").permitAll()
+                /* certbot */
+                .antMatchers("/.well-known/acme-challenge/83uJnLcbeDXcIbvL3Tv8WrLtVqvz4kr5A12i5E2IsPU").permitAll()
+                .antMatchers("/.well-known/acme-challenge/KlMCBPNioLlCM0x08hj7nkV8nJ53ibdKXY2lEYQMu1A").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

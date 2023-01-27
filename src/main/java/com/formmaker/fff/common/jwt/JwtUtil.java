@@ -38,8 +38,8 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String REFRESH_HEADER = "REFRESH_Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIME = 60 * 60 * 1000L;
-    private static final long REFRESH_TOKEN_VALID_TIME = 300 * 300 * 1000L;
+    private static final long TOKEN_TIME = 3 * 60 * 1000L;
+    private static final long REFRESH_TOKEN_VALID_TIME = 24 * 60 * 60 * 1000L;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Value("${jwt.secret.key}")
@@ -109,25 +109,14 @@ public class JwtUtil {
         return false;
     }
 
-    public String validateRefreshToken(RefreshToken refreshTokenObj){
-        String refreshToken = refreshTokenObj.getRefreshToken();
-                try{
-                    Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken);
-                    if(!claims.getBody().getExpiration().before(new Date())) {
-                        return recreationAccessToken(claims.getBody().get("sub").toString());
-                    }
-                    }catch (Exception e){
-                    return null;
-                }
-                return null;
-    }
 
     public String recreationAccessToken(String loginId){
 
         Claims claims = Jwts.claims().setSubject(loginId);
         Date date = new Date();
 
-        String accessToken = Jwts.builder()
+        String accessToken = BEARER_PREFIX +
+                Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                 .setIssuedAt(date)

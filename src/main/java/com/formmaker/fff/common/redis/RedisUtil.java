@@ -17,6 +17,10 @@ public class RedisUtil {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         return valueOperations.get(key);
     }
+    public String getValue(String key){
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        return values.get(key);
+    }
 
     public void setDataExpire(String key, String value, long duration) {
         //  duration 동안 (key, value)를 저장한다.

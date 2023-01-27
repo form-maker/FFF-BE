@@ -6,6 +6,7 @@ import com.formmaker.fff.answer.repositoy.AnswerRepository;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.AnswerTypeEnum;
+import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.formmaker.fff.common.exception.ErrorCode.EMPTY_ANSWER;
 import static com.formmaker.fff.common.exception.ErrorCode.EXPIRED_SURVEY;
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
 
@@ -54,7 +56,6 @@ public class SurveyService {
 
         int questionNum = 1;
         int answerNum;
-
         for(QuestionCreateRequest questionDto : requestDto.getQuestionList()){
             answerNum = 1;
             Question question = Question.builder()
@@ -64,6 +65,9 @@ public class SurveyService {
                     .questionType(questionDto.getQuestionType())
                     .volume(questionDto.getVolume())
                     .build();
+            if(question.getQuestionType().getHasAnswer() && questionDto.getAnswerList().size() == 0){
+                throw new CustomException(EMPTY_ANSWER);
+            }
             for(String answerStr : questionDto.getAnswerList()){
                 Answer answer = Answer.builder()
                         .answerType(AnswerTypeEnum.TEXT)
@@ -91,7 +95,7 @@ public class SurveyService {
         return surveyPage.map(survey -> SurveyMainResponse.builder()
                         .surveyId(survey.getId())
                         .title(survey.getTitle())
-                        .summery(survey.getSummary())
+                        .summary(survey.getSummary())
                         .startedAt(survey.getStartedAt())
                         .endedAt(survey.getEndedAt())
                         .totalQuestion(survey.getQuestionList().size())

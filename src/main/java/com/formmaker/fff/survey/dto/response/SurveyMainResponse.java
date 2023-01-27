@@ -14,7 +14,7 @@ public class SurveyMainResponse {
 
     private Long surveyId;
     private String title;
-    private String summery;
+    private String summary;
     private LocalDate startedAt;
     private LocalDate endedAt;
     private Integer totalQuestion;

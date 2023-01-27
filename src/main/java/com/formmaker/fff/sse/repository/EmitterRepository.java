@@ -14,4 +14,6 @@ public interface EmitterRepository {
     void deleteById(String id); //Emitter를 지운다
 
     CustomEmitter findByUserId(String surveyId);
+
+    CustomEmitter update(CustomEmitter emitter, String userId);
 }
