@@ -11,12 +11,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,32 +54,19 @@ public class StatsMethod {
 
     public QuestionStats statsSlide(List<Reply> replyList, Question question) {
 
-        List<SelectResponse> satisfactionList = new ArrayList<>();
-        SelectResponse selectResponse;
-
         int volume = question.getVolume();
 
-        for (int x = -volume; x <= volume; x++) {
-            int indexNum = x + volume;
-            int value = indexNum - volume;
-            selectResponse = new SelectResponse(value);
-            satisfactionList.add(selectResponse);
+        List<Integer> countList = new ArrayList<>(Collections.nCopies(volume*2+1, 0));
 
-        }
-
-        satisfactionList = satisfactionList.stream()
-                .sorted(Comparator.comparing(SelectResponse::getChoiceValue)).collect(Collectors.toList());
-
-        int totalSelect = 0;
-
+        int totalSelect = replyList.size();
+        int index;
         for (Reply userReply : replyList) {
-            satisfactionList.get(Integer.parseInt(userReply.getSelectValue()) + volume).increaseValue();
-            totalSelect++;
+            index = Integer.parseInt(userReply.getSelectValue()) + volume;
+            countList.set(index, countList.get(index)+1);
         }
-
-        for (SelectResponse satisfaction : satisfactionList) {
-            satisfaction.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
-        }
+        List<Float> avgList = countList.stream()
+                .map(value -> (Math.round(((float)value / totalSelect) * 1000) / 10.0f))
+                .collect(Collectors.toList());
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
@@ -92,7 +74,7 @@ public class StatsMethod {
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
                 .volume(question.getVolume())
-                .satisfactionList(satisfactionList.stream().map(satisfaction -> satisfaction.getValue()).collect(Collectors.toList()))
+                .satisfactionList(avgList)
                 .build();
     }
 
