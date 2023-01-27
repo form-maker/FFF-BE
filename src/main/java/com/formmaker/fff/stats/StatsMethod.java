@@ -18,33 +18,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StatsMethod {
 
     static public StatsMethod statsMethod = new StatsMethod();
 
     public QuestionStats statsChoice(List<Reply> replyList, Question question) {
+        List<SelectResponse> selectList = question.getAnswerList().stream()
+                .map(answer -> new SelectResponse(answer.getAnswerValue(), answer.getAnswerNum()))
+                .sorted(Comparator.comparing(SelectResponse::getAnswerNum))
+                .collect(Collectors.toList());
 
-        List<SelectResponse> selectList = question.getAnswerList().stream().map(answer -> new SelectResponse(answer.getAnswerValue(), answer.getAnswerNum())).collect(Collectors.toList());
-
-        selectList = selectList.stream()
-                .sorted(Comparator.comparing(SelectResponse::getAnswerNum)).collect(Collectors.toList());
-        //문항 번호별로 정렬해준다.
         int totalSelect = 0;
-
+        List<Integer> changeSelectValueList;
         for (Reply userReply : replyList) {
-            List<String> selectValueList = List.of(userReply.getSelectValue().split("\\|"));  //유저들의 문항선택 값을 List에 넣어주고
 
-            List<Integer> changeSelectValueList = selectValueList.stream() //스트링 리스트를 Integer 리스트로 변환
-                    .map(Integer::parseInt).toList();
+            changeSelectValueList = Stream
+                    .of(userReply.getSelectValue().split("\\|"))
+                    .map(Integer::parseInt)
+                    .toList();
 
-            for (Integer selectValues : changeSelectValueList) { // 유저들의 문항선택 값 리스트 값들을 selectValues 하나하나 넣어주고
-                selectList.get(selectValues - 1).increaseValue(); //번호별로 정렬된 문항에서 유저가 문항선택한 값 들이 나올 때마다 해당 문항의 벨류는 증가하고
-                totalSelect++; // 해당 Question의 전체 선택 횟수가 증가한다.
+            for (Integer selectValues : changeSelectValueList) {
+                selectList.get(selectValues - 1).increaseValue();
+                totalSelect++;
             }
         }
         for (SelectResponse select : selectList) {
-            select.valueAvg(totalSelect); //문항별로 Value= 백분율 통계를 내준다.
+            select.valueAvg(totalSelect);
         }
 
         return QuestionStats.builder()
