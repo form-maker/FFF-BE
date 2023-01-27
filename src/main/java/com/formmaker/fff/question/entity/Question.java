@@ -55,8 +55,14 @@ public class Question {
         this.summary = summary;
         this.title = title;
         this.questionNum = questionNum;
-        if(this.questionType == QuestionTypeEnum.SLIDE && volume == null){
-            throw new CustomException(EMPTY_QUESTION);
+        if(this.questionType == QuestionTypeEnum.SLIDE){
+            if(volume == null){
+                throw new CustomException(EMPTY_QUESTION);
+            }
+            if(volume == 0 || volume > 5){
+                throw  new CustomException(ErrorCode.INVALID_FORM_DATA);
+            }
+
         }
         this.volume = volume;
     }
