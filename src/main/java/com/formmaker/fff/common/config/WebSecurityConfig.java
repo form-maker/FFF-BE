@@ -53,8 +53,9 @@ public class WebSecurityConfig {
                 .antMatchers("/v2/**").permitAll()
                 .antMatchers("/webjars/**").permitAll()
                 .antMatchers("/swagger**").permitAll()
-
                 .antMatchers("/swagger-resources/**").permitAll()
+                /*test*/
+                .antMatchers("/login/oauth2/**").permitAll()
 
 
                 /* 이후 sse관련 기능 사용시 */
