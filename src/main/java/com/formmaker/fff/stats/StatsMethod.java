@@ -125,9 +125,12 @@ public class StatsMethod {
         List<DescriptiveResponse> descriptiveList = new ArrayList<>();
         int randomValue;
 
-        for(int i = 0; i < Math.min(3, replyList.size()); i++){
+        for(int i = 0; i < 3; i++){
+            if(replyList.isEmpty()){
+                break;
+            }
             randomValue = (int)(Math.random() * 100)%replyList.size();
-            descriptiveList.add(new DescriptiveResponse(replyList.get(randomValue).getDescriptive()));
+            descriptiveList.add(new DescriptiveResponse(replyList.remove(randomValue).getDescriptive()));
         }
 
         return QuestionStats.builder()
