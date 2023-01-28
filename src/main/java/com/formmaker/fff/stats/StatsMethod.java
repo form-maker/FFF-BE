@@ -67,9 +67,7 @@ public class StatsMethod {
             index = Integer.parseInt(userReply.getSelectValue()) + volume;
             countList.set(index, countList.get(index)+1);
         }
-        List<Float> averageList = countList.stream()
-                .map(value -> (Math.round(((float)value / totalSelect) * 1000) / 10.0f))
-                .collect(Collectors.toList());
+        List<Float> averageList = getAverageList(countList, totalSelect);
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
