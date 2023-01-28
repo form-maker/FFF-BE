@@ -2,6 +2,7 @@ package com.formmaker.fff.stats.service;
 
 
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.participant.ParticipantRepository;
@@ -15,6 +16,8 @@ import com.formmaker.fff.stats.dto.StatsResponse;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.user.entity.User;
+import com.formmaker.fff.user.repository.UserRepository;
+import com.formmaker.fff.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
@@ -31,28 +34,31 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
+import static com.formmaker.fff.common.exception.ErrorCode.NOT_MATCH_USER;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class StatsService {
     private final SurveyRepository surveyRepository;
-    private final QuestionRepository questionRepository;
+    private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
     private final ReplyRepository replyRepository;
 
     @Transactional
-    public StatsResponse getStats(Long surveyId, String start, String end) {
+    public StatsResponse getStats(Long surveyId, String start, String end, Long userId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
 
-        List<Question> questionList = survey.getQuestionList();
-        System.out.println(questionList.size());
+        if(!survey.getUserId().equals(userId)){
+            throw new CustomException(NOT_MATCH_USER);
+        }
 
         List<QuestionStats> questionStatsList = new ArrayList<>();
-        QuestionStats questionStats;
+        List<Question> questionList = survey.getQuestionList();
         List<Reply> replyList;
+
         LocalDate startedAT;
         LocalDate endedAT;
         try{
@@ -66,9 +72,8 @@ public class StatsService {
 
         for (Question question : questionList) {
             replyList = replyRepository.findAllByQuestionIdAndCreatedAtAfterAndCreatedAtBefore(question.getId(), startedAT.atStartOfDay(), endedAT.atStartOfDay());
-            questionStats = question.getQuestionType().getStatsFn().apply(replyList, question);
 
-            questionStatsList.add(questionStats);
+            questionStatsList.add(question.getQuestionType().getStatsFn().apply(replyList, question));
         }
         return StatsResponse.builder()
                 .dailyParticipantList(getDailyParticipant(participantList, survey.getStartedAt(), survey.getEndedAt()))
