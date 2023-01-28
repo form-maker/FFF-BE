@@ -10,6 +10,8 @@ import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
+import com.formmaker.fff.question.dto.response.QuestionNavigationResponse;
+import com.formmaker.fff.question.dto.response.QuestionResponse;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.formmaker.fff.common.exception.ErrorCode.EMPTY_ANSWER;
 import static com.formmaker.fff.common.exception.ErrorCode.EXPIRED_SURVEY;
@@ -129,6 +132,15 @@ public class SurveyService {
                 .achievement(survey.getAchievement())
                 .status(survey.getStatus())
                 .questionIdList(questionResponses)
+                .questionList(survey.getQuestionList()
+                        .stream()
+                        .map(question -> QuestionNavigationResponse.builder()
+                                .questionId(question.getId())
+                                .questionNum(question.getQuestionNum())
+                                .questionType(question.getQuestionType())
+                                .questionTitle(question.getTitle())
+                                .build())
+                        .collect(Collectors.toList()))
                 .build();
     }
 
