@@ -111,6 +111,17 @@ public class StatsMethod {
             SelectResponse selectResponse = new SelectResponse(answerList.get(answerNum++).getAnswerValue(), rankList);
             selectResponseList.add(selectResponse);
         }
+        selectResponseList.sort((r1, r2) -> {
+            int size = Math.min(3, question.getAnswerList().size());
+            for(int i = 0; i < size; i++){
+                if(Objects.equals(r2.getRankList().get(i), r1.getRankList().get(i))){
+                    continue;
+                }
+                return r2.getRankList().get(i).compareTo(r1.getRankList().get(i));
+            }
+            return r2.getRankList().get(size-1).compareTo(r1.getRankList().get(size-1));
+
+        });
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
@@ -151,12 +162,7 @@ public class StatsMethod {
 
         Map<String, Integer> map = new HashMap<String, Integer>();
         for (String str : shortDescriptiveList) {
-            Integer count = map.get(str);
-            if (count == null) {
-                map.put(str, 1);
-            } else {
-                map.put(str, count + 1);
-            }
+            map.merge(str, 1, Integer::sum);
         }
         for (String key : map.keySet()) {
             descriptiveList.add(new DescriptiveResponse(key, map.get(key)));
@@ -167,11 +173,10 @@ public class StatsMethod {
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .descriptiveList(descriptiveList)
+                .descriptiveList(descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList()))
                 .build();
     }
 
-    // 별점, 스코어 통계 처리 로직
     public QuestionStats statsOfPositiveValue(List<Reply> replyList, Question question) {
 
         List<Integer> valueList = new ArrayList<>();
@@ -202,42 +207,12 @@ public class StatsMethod {
                 .build();
     }
 
-    //todo 해당 순위로의 선택률(?)
-    private List<Float> selectAvg(List<Integer> selectCountList) {
-        List<Float> rankList = new ArrayList<>();
-        int totalSelectCount = selectCountList.stream().mapToInt(Integer::intValue).sum();
-        for (Integer selectCount : selectCountList) {
-            float selectAvg = (float) selectCount / totalSelectCount * 100f;
-            rankList.add(selectAvg);
-        }
-        return rankList;
-    }
+
     private List<Float> getAverageList(List<Integer> selectValue, Integer total){
         return selectValue.stream()
                 .map(value -> (Math.round(((float)value / total) * 1000) / 10.0f))
                 .collect(Collectors.toList());
     }
-
-    /*
-        String 타입으로 저장된 Json 형식 문자열을 JsonObject
-        로 사용할 수 있게 만들어주는 로직
-        JsonObject 는 HashMap 을 상속받는 클래스이다. Key, Value 로 값에 접근할 수 있다.
-     */
-//    private JSONObject toJsonObjectType(String selectValueToStringTypeJsonForm) {
-//        JSONObject jsonObject;
-//        try {
-//            JSONParser jsonParser = new JSONParser();
-//            jsonObject = (JSONObject) jsonParser.parse(selectValueToStringTypeJsonForm);
-//        } catch (ParseException e) {
-//            /*
-//              에러 메세지는 로그를 통해 남기는 방식을 채택 -> 로그 남기는 방법 알아봐야함.
-//              에러가 터져서 멈추는게 아닌, 에러가 터진 데이터를 제외한 통계를 반환시켜주어야함.
-//              new CustomException(ErrorCode.INVALID_FORM_DATA);
-//             */
-//            jsonObject = null;
-//        }
-//        return jsonObject;
-//    }
 
 
 }
