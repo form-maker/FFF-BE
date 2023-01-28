@@ -13,7 +13,7 @@ import java.util.StringJoiner;
 public class ReplyMethod {
 
     // 랭크 답변 처리 로직
-    public Reply replyToRank(ReplyRequest replyRequest, User user) {
+    public Reply replyToRank(ReplyRequest replyRequest, String loginId) {
         JSONObject jsonObject = new JSONObject();
 
         int rank = 1;
@@ -31,30 +31,30 @@ public class ReplyMethod {
 
         String selectValueJsonForm = jsonObject.toJSONString();
 
-        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValueJsonForm, replyRequest.getDescriptive(), user);
+        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValueJsonForm, replyRequest.getDescriptive(), loginId);
     }
 
     // 별점, 스코어, 슬라이드, 단수응답 답변 처리 로직
-    public Reply replyToSingleValue(ReplyRequest replyRequest, User user) {
+    public Reply replyToSingleValue(ReplyRequest replyRequest, String loginId) {
         String selectValue = replyRequest.getSelectValue().get(0).toString();
-        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValue, null, user);
+        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValue, null, loginId);
     }
 
 
     // 복수응답 답변 처리 로직
-    public Reply replyToMultipleValue(ReplyRequest replyRequest, User user) {
+    public Reply replyToMultipleValue(ReplyRequest replyRequest, String loginId) {
         List<Integer> selectValue = replyRequest.getSelectValue();
         List<String> strSelectValue = selectValue.stream().map(String::valueOf).toList();
         StringJoiner valueJoiner = new StringJoiner("|");
         for (String str : strSelectValue) {
             valueJoiner.add(str);
         }
-        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), valueJoiner.toString(), null, user);
+        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), valueJoiner.toString(), null, loginId);
     }
 
 
     // 단답형, 서술형 답변 처리 로직
-    public Reply replyToDescriptive(ReplyRequest replyRequest, User user) {
-        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), null, replyRequest.getDescriptive(), user);
+    public Reply replyToDescriptive(ReplyRequest replyRequest, String loginId) {
+        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), null, replyRequest.getDescriptive(), loginId);
     }
 }
