@@ -9,6 +9,7 @@ import com.formmaker.fff.common.type.AnswerTypeEnum;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.gift.dto.request.GiftCreateRequest;
+import com.formmaker.fff.gift.dto.response.GiftResponse;
 import com.formmaker.fff.gift.entity.Gift;
 import com.formmaker.fff.gift.giftRepository.GiftRepository;
 import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
@@ -158,7 +159,12 @@ public class SurveyService {
         for (Question question : survey.getQuestionList()) {
             questionResponses.add(question.getId());
         }
-
+        List<QuestionNavigationResponse> questionNavigationResponseList = survey.getQuestionList().stream()
+                .map(question -> new QuestionNavigationResponse(question.getId(), question.getTitle(), question.getQuestionNum(),question.getQuestionType()))
+                .toList();
+        List<GiftResponse> giftResponseList = survey.getGiftList().stream()
+                .map(gift -> new GiftResponse(gift.getGiftName(), gift.getGiftSummary(), gift.getGiftIcon(), gift.getGiftQuantity()))
+                .toList();
         return SurveyReadResponse.builder()
                 .surveyId(survey.getId())
                 .title(survey.getTitle())
@@ -169,16 +175,8 @@ public class SurveyService {
                 .achievement(survey.getAchievement())
                 .status(survey.getStatus())
                 .questionIdList(questionResponses)
-                .questionList(survey.getQuestionList()
-                        .stream()
-                        .map(question -> QuestionNavigationResponse.builder()
-                                .questionId(question.getId())
-                                .questionNum(question.getQuestionNum())
-                                .questionType(question.getQuestionType())
-                                .questionTitle(question.getTitle())
-                                .build())
-                        .collect(Collectors.toList()))
-                .giftList(survey.getGiftList())
+                .questionList(questionNavigationResponseList)
+                .giftList(giftResponseList)
                 .build();
     }
 
