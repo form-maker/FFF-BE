@@ -1,16 +1,19 @@
 package com.formmaker.fff.common.config;
 
+import com.formmaker.fff.common.exception.CustomAuthenticationEntryPoint;
 import com.formmaker.fff.common.jwt.JwtAuthFilter;
 import com.formmaker.fff.common.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -35,6 +38,7 @@ public class WebSecurityConfig {
         http.csrf().disable()
                 .cors().configurationSource(corsConfigurationSource());
 
+        http.httpBasic().authenticationEntryPoint(authenticationEntryPoint());
         /* 2. Session 비활성화 */
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -83,4 +87,12 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/api/**", configuration);
         return source;
     }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint(){
+        return new CustomAuthenticationEntryPoint();
+    }
+
+
+
 }
