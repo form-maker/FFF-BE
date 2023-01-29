@@ -13,6 +13,7 @@ import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.user.entity.User;
+import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class ReplyService {
     private final ReplyRepository replyRepository;
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
+    private final UserRepository userRepository;
     private final ReplyMethod replyMethod;
 
     private final ParticipantRepository participantRepository;
@@ -43,9 +45,13 @@ public class ReplyService {
         Survey survey = surveyRepository.findByIdAndStatus(surveyId, StatusTypeEnum.IN_PROCEED).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
+
         if(loginId == null){
-            loginId = UUID.randomUUID().toString().replace("-", "");
+            do{
+                loginId = UUID.randomUUID().toString().replace("-", "");
+            }while (userRepository.existsByLoginId(loginId));
         }
+
         participantRepository.findBySurveyAndLoginId(survey, loginId).ifPresent( check-> {
             throw new CustomException(ALREADY_ANSWERED);
         });
