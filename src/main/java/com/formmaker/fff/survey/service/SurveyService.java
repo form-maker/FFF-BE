@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.formmaker.fff.common.exception.ErrorCode.*;
@@ -114,19 +115,26 @@ public class SurveyService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Survey> surveyPage = surveyRepository.findAllByStatus(pageable , StatusTypeEnum.IN_PROCEED);
         return surveyPage.map(
-                survey -> SurveyMainResponse.builder()
-                .surveyId(survey.getId())
-                .title(survey.getTitle())
-                .summary(survey.getSummary())
-                .startedAt(survey.getStartedAt())
-                .endedAt(survey.getEndedAt())
-                .giftName(survey.getGiftName(survey.getGiftList()))
-                .totalGiftQuantity(survey.getTotalQuantity(survey.getGiftList()))
-                .totalQuestion(survey.getQuestionList().size())
-                .totalTime((int) Math.ceil(survey.getQuestionList().size() * 20 / 60f))
-                .dDay(survey.getDDay())
-                .participant(survey.getParticipant())
-                .createdAt(survey.getCreatedAt().toLocalDate()).build()
+                survey -> {
+                    Gift gift = new Gift();
+                    if(!survey.getGiftList().isEmpty()){
+                        gift = survey.getGiftList().get(new Random().nextInt(survey.getGiftList().size()));
+                    }
+
+                    return SurveyMainResponse.builder()
+                            .surveyId(survey.getId())
+                            .title(survey.getTitle())
+                            .summary(survey.getSummary())
+                            .startedAt(survey.getStartedAt())
+                            .endedAt(survey.getEndedAt())
+                            .giftName(gift.getGiftName())
+                            .totalGiftQuantity(gift.getGiftQuantity())
+                            .totalQuestion(survey.getQuestionList().size())
+                            .totalTime((int) Math.ceil(survey.getQuestionList().size() * 20 / 60f))
+                            .dDay(survey.getDDay())
+                            .participant(survey.getParticipant())
+                            .createdAt(survey.getCreatedAt().toLocalDate()).build();
+                }
         );
     }
 

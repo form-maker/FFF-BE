@@ -91,15 +91,4 @@ public class Survey extends TimeStamped {
         this.status = status;
     }
 
-    public String getGiftName(List<Gift> giftList) {
-        String giftName = giftList.get(0).getGiftName();
-        if (giftList.size() == 1 ) {
-            return giftName;
-        }
-        return giftName+"+";
-    }
-
-    public Integer getTotalQuantity(List<Gift> giftList) {
-        return giftList.stream().mapToInt(Gift::getGiftQuantity).sum();
-    }
 }
