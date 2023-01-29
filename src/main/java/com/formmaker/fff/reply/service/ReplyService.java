@@ -52,9 +52,9 @@ public class ReplyService {
             }while (userRepository.existsByLoginId(loginId));
         }
 
-        participantRepository.findBySurveyAndLoginId(survey, loginId).ifPresent( check-> {
-            throw new CustomException(ALREADY_ANSWERED);
-        });
+//        participantRepository.findBySurveyAndLoginId(survey, loginId).ifPresent( check-> {
+//            throw new CustomException(ALREADY_ANSWERED);
+//        });
 
         List<Reply> replyList = new ArrayList<>();
         for (ReplyRequest replyRequest : replyRequestList) {
@@ -87,15 +87,15 @@ public class ReplyService {
 
 
         if(participant.isPresent()){
-            throw new CustomException(ALREADY_ANSWERED);
+//            throw new CustomException(ALREADY_ANSWERED);
             /*이후 설문 응답 수정 허용시 주석해제*/
-//            Reply replyRequest;
-//            List<Reply> dbReplyList =  replyRepository.findAllByParticipant(participant.get());
-//            for(int i = 0; i < dbReplyList.size(); i++){
-//                replyRequest = replyList.get(i);
-//                dbReplyList.get(i).updateReply(replyRequest.getSelectValue(), replyRequest.getDescriptive());
-//            }
-//            return Map.of("userId", loginId);
+            Reply replyRequest;
+            List<Reply> dbReplyList =  replyRepository.findAllByParticipant(participant.get());
+            for(int i = 0; i < dbReplyList.size(); i++){
+                replyRequest = replyList.get(i);
+                dbReplyList.get(i).updateReply(replyRequest.getSelectValue(), replyRequest.getDescriptive());
+            }
+            return Map.of("userId", loginId);
         }
         replyRepository.saveAll(replyList);
         Participant saveParticipant = participantRepository.save(new Participant(loginId, survey));
