@@ -2,6 +2,7 @@ package com.formmaker.fff.survey.entity;
 
 import com.formmaker.fff.common.TimeStamped;
 import com.formmaker.fff.common.type.StatusTypeEnum;
+import com.formmaker.fff.gift.entity.Gift;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.question.entity.Question;
 import lombok.Builder;
@@ -11,7 +12,6 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,17 +59,20 @@ public class Survey extends TimeStamped {
     @OneToMany(mappedBy = "survey")
     private List<Participant> participantList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "survey")
+    private List<Gift> giftList = new ArrayList<>();
+
     @Builder
     public Survey(String title, String summary, LocalDate startedAt, LocalDate endedAt, Integer achievement, Long userId) {
         this.title = title;
         this.summary = summary;
         this.startedAt = startedAt;
         this.endedAt = endedAt;
-        this.status = startedAt.isAfter(LocalDate.now()) ? StatusTypeEnum.NOT_START : endedAt.isBefore(LocalDate.now())?StatusTypeEnum.DONE:StatusTypeEnum.IN_PROCEED;
+        this.status = startedAt.isAfter(LocalDate.now()) ? StatusTypeEnum.NOT_START : endedAt.isBefore(LocalDate.now()) ? StatusTypeEnum.DONE : StatusTypeEnum.IN_PROCEED;
         this.participant = 0;
         this.achievement = achievement;
         this.userId = userId;
-        this.dDay = (int)ChronoUnit.DAYS.between(LocalDate.now(), endedAt);
+        this.dDay = (int) ChronoUnit.DAYS.between(LocalDate.now(), endedAt);
     }
 
     public void addQuestionList(Question question){
@@ -78,6 +81,7 @@ public class Survey extends TimeStamped {
     public void addParticipant(Participant participant){
         this.participantList.add(participant);
     }
+    public void addGiftList(Gift gift) { this.giftList.add(gift); }
 
     public void IncreaseParticipant(){
         this.participant++;
@@ -85,5 +89,17 @@ public class Survey extends TimeStamped {
 
     public void updateStatus(StatusTypeEnum status) {
         this.status = status;
+    }
+
+    public String getGiftName(List<Gift> giftList) {
+        String giftName = giftList.get(0).getGiftName();
+        if (giftList.size() == 1 ) {
+            return giftName;
+        }
+        return giftName+"+";
+    }
+
+    public Integer getTotalQuantity(List<Gift> giftList) {
+        return giftList.stream().mapToInt(Gift::getGiftQuantity).sum();
     }
 }

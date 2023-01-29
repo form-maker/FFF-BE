@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -22,4 +21,6 @@ public class SurveyMainResponse {
     private Integer dDay;
     private Integer participant;
     private LocalDate createdAt;
+    private String giftName;
+    private Integer totalGiftQuantity;
 }
