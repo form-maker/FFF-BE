@@ -37,7 +37,7 @@ public class SurveyController {
 
     @GetMapping("/main")
     public ResponseEntity<ResponseMessage> getMainSurveyList(SortTypeEnum sortBy, int page, int size) {
-        Page<SurveyMainResponse> surveyResponseList = surveyService.getSurveyList(sortBy, page - 1, size);
+        Page<SurveyMainResponse> surveyResponseList = surveyService.getMainSurveyList(sortBy, page - 1, size);
         DataPageResponse<SurveyMainResponse> response = new DataPageResponse<>(surveyResponseList);
         ResponseMessage<DataPageResponse> responseMessage = new ResponseMessage<>("조회 성공", 200, response);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));

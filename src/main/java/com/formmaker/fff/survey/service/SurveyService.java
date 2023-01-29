@@ -6,12 +6,14 @@ import com.formmaker.fff.answer.repositoy.AnswerRepository;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.AnswerTypeEnum;
-import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
+import com.formmaker.fff.gift.dto.request.GiftCreateRequest;
+import com.formmaker.fff.gift.dto.response.GiftResponse;
+import com.formmaker.fff.gift.entity.Gift;
+import com.formmaker.fff.gift.giftRepository.GiftRepository;
 import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
 import com.formmaker.fff.question.dto.response.QuestionNavigationResponse;
-import com.formmaker.fff.question.dto.response.QuestionResponse;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
@@ -31,11 +33,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.formmaker.fff.common.exception.ErrorCode.EMPTY_ANSWER;
-import static com.formmaker.fff.common.exception.ErrorCode.EXPIRED_SURVEY;
-import static com.formmaker.fff.common.exception.ErrorCode.NOT_FOUND_SURVEY;
+import static com.formmaker.fff.common.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,7 @@ public class SurveyService {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final GiftRepository giftRepository;
 
     @Transactional
     public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
@@ -56,6 +58,7 @@ public class SurveyService {
                 .build();
         List<Question> questionList = new ArrayList<>();
         List<Answer> answerList = new ArrayList<>();
+        List<Gift> giftList = new ArrayList<>();
 
         int questionNum = 1;
         int answerNum;
@@ -83,29 +86,64 @@ public class SurveyService {
             survey.addQuestionList(question);
         }
 
+        for (GiftCreateRequest giftDto : requestDto.getGiftList()) {
+            Gift gift = Gift.builder()
+                    .survey(survey)
+                    .giftName(giftDto.getGiftName())
+                    .giftQuantity(giftDto.getGiftQuantity())
+                    .giftIcon(giftDto.getGiftIcon())
+                    .giftSummary(giftDto.getGiftSummary())
+                    .build();
+            giftList.add(gift);
+            survey.addGiftList(gift);
+        }
+
+        if(!giftList.isEmpty()){
+            giftRepository.saveAll(giftList);
+        }
+
         /*이후 쿼리 변환 필요*/
         surveyRepository.save(survey);
+        giftRepository.saveAll(giftList);
         questionRepository.saveAll(questionList);
         answerRepository.saveAll(answerList);
     }
 
     @Transactional(readOnly = true)
-    public Page<SurveyMainResponse> getSurveyList(@RequestParam SortTypeEnum sortBy, int page, int size) {
+    public Page<SurveyMainResponse> getMainSurveyList(@RequestParam SortTypeEnum sortBy, int page, int size) {
 
         Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Survey> surveyPage = surveyRepository.findAllByStatus(pageable , StatusTypeEnum.IN_PROCEED);
-        return surveyPage.map(survey -> SurveyMainResponse.builder()
-                        .surveyId(survey.getId())
-                        .title(survey.getTitle())
-                        .summary(survey.getSummary())
-                        .startedAt(survey.getStartedAt())
-                        .endedAt(survey.getEndedAt())
-                        .totalQuestion(survey.getQuestionList().size())
-                        .totalTime((int)Math.ceil(survey.getQuestionList().size()*20/60f))
-                        .dDay(survey.getDDay())
-                        .participant(survey.getParticipant())
-                        .createdAt(survey.getCreatedAt().toLocalDate()).build());
+        return surveyPage.map(
+                survey -> {
+                    List<Gift> giftList = survey.getGiftList();
+                    String giftName = null;
+                    Integer giftQuantity = null;
+                    if(giftList.size() > 0){
+                        Gift gift = giftList.get(new Random().nextInt(giftList.size()));
+                        giftName = gift.getGiftName();
+                        giftQuantity = gift.getGiftQuantity();
+                        if(giftList.size() > 1){
+                            giftName += "+";
+                        }
+                    }
+
+                    return SurveyMainResponse.builder()
+                            .surveyId(survey.getId())
+                            .title(survey.getTitle())
+                            .summary(survey.getSummary())
+                            .startedAt(survey.getStartedAt())
+                            .endedAt(survey.getEndedAt())
+                            .giftName(giftName)
+                            .totalGiftQuantity(giftQuantity)
+                            .totalQuestion(survey.getQuestionList().size())
+                            .totalTime((int) Math.ceil(survey.getQuestionList().size() * 20 / 60f))
+                            .dDay(survey.getDDay())
+                            .participant(survey.getParticipant())
+                            .createdAt(survey.getCreatedAt().toLocalDate()).build();
+                }
+        );
     }
 
     @Transactional(readOnly = true)
@@ -121,7 +159,12 @@ public class SurveyService {
         for (Question question : survey.getQuestionList()) {
             questionResponses.add(question.getId());
         }
-
+        List<QuestionNavigationResponse> questionNavigationResponseList = survey.getQuestionList().stream()
+                .map(question -> new QuestionNavigationResponse(question.getId(), question.getTitle(), question.getQuestionNum(),question.getQuestionType()))
+                .toList();
+        List<GiftResponse> giftResponseList = survey.getGiftList().stream()
+                .map(gift -> new GiftResponse(gift.getGiftName(), gift.getGiftSummary(), gift.getGiftIcon(), gift.getGiftQuantity()))
+                .toList();
         return SurveyReadResponse.builder()
                 .surveyId(survey.getId())
                 .title(survey.getTitle())
@@ -132,15 +175,8 @@ public class SurveyService {
                 .achievement(survey.getAchievement())
                 .status(survey.getStatus())
                 .questionIdList(questionResponses)
-                .questionList(survey.getQuestionList()
-                        .stream()
-                        .map(question -> QuestionNavigationResponse.builder()
-                                .questionId(question.getId())
-                                .questionNum(question.getQuestionNum())
-                                .questionType(question.getQuestionType())
-                                .questionTitle(question.getTitle())
-                                .build())
-                        .collect(Collectors.toList()))
+                .questionList(questionNavigationResponseList)
+                .giftList(giftResponseList)
                 .build();
     }
 
