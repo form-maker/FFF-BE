@@ -1,16 +1,15 @@
 package com.formmaker.fff.user.controller;
 
 
-import com.formmaker.fff.common.jwt.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.formmaker.fff.common.jwt.JwtUtil;
 import com.formmaker.fff.common.jwt.TokenDto;
 import com.formmaker.fff.common.response.ResponseMessage;
-import com.formmaker.fff.user.entity.User;
-import com.formmaker.fff.user.service.GoogleService;
-import com.formmaker.fff.user.service.UserService;
 import com.formmaker.fff.user.dto.request.UserLoginRequest;
 import com.formmaker.fff.user.dto.request.UserSignupRequest;
+import com.formmaker.fff.user.service.GoogleService;
 import com.formmaker.fff.user.service.KakaoService;
+import com.formmaker.fff.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
