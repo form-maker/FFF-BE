@@ -116,9 +116,16 @@ public class SurveyService {
         Page<Survey> surveyPage = surveyRepository.findAllByStatus(pageable , StatusTypeEnum.IN_PROCEED);
         return surveyPage.map(
                 survey -> {
-                    Gift gift = new Gift();
-                    if(!survey.getGiftList().isEmpty()){
-                        gift = survey.getGiftList().get(new Random().nextInt(survey.getGiftList().size()));
+                    List<Gift> giftList = survey.getGiftList();
+                    String giftName = null;
+                    Integer giftQuantity = null;
+                    if(giftList.size() > 0){
+                        Gift gift = giftList.get(new Random().nextInt(giftList.size()));
+                        giftName = gift.getGiftName();
+                        giftQuantity = gift.getGiftQuantity();
+                        if(giftList.size() > 1){
+                            giftName += "+";
+                        }
                     }
 
                     return SurveyMainResponse.builder()
@@ -127,8 +134,8 @@ public class SurveyService {
                             .summary(survey.getSummary())
                             .startedAt(survey.getStartedAt())
                             .endedAt(survey.getEndedAt())
-                            .giftName(gift.getGiftName())
-                            .totalGiftQuantity(gift.getGiftQuantity())
+                            .giftName(giftName)
+                            .totalGiftQuantity(giftQuantity)
                             .totalQuestion(survey.getQuestionList().size())
                             .totalTime((int) Math.ceil(survey.getQuestionList().size() * 20 / 60f))
                             .dDay(survey.getDDay())
