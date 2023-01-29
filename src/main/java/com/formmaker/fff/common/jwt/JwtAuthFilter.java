@@ -2,6 +2,7 @@ package com.formmaker.fff.common.jwt;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.user.controller.RefreshController;
 import com.formmaker.fff.user.entity.User;
@@ -37,9 +38,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
         if(token != null) {
-            if(!jwtUtil.validateToken(token)){
+            try{
+                if(!jwtUtil.validateToken(token)){
 //                jwtExceptionHandler(response, "로그인 상태를 확인해주세요.", 403);
-                return;
+                    return;
+                }
+            }catch (CustomException e){
+                jwtExceptionHandler(response, "로그인 상태를 확인해주세요.", 403);
             }
             Claims info = jwtUtil.getUserInfo(token);
             setAuthentication(info.getSubject());
