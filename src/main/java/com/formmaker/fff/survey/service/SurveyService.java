@@ -96,6 +96,10 @@ public class SurveyService {
             survey.addGiftList(gift);
         }
 
+        if(!giftList.isEmpty()){
+            giftRepository.saveAll(giftList);
+        }
+
         /*이후 쿼리 변환 필요*/
         surveyRepository.save(survey);
         giftRepository.saveAll(giftList);
@@ -104,7 +108,7 @@ public class SurveyService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SurveyMainResponse> getSurveyList(@RequestParam SortTypeEnum sortBy, int page, int size) {
+    public Page<SurveyMainResponse> getMainSurveyList(@RequestParam SortTypeEnum sortBy, int page, int size) {
 
         Sort sort = Sort.by(sortBy.getDirection(), sortBy.getColumn());
         Pageable pageable = PageRequest.of(page, size, sort);
