@@ -3,6 +3,7 @@ package com.formmaker.fff.stats.service;
 
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.entity.Question;
@@ -43,7 +44,7 @@ public class StatsService {
 
     @Transactional
     public StatsResponse getStats(Long surveyId, String start, String end) {
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+        Survey survey = surveyRepository.findByIdAndStatusNot(surveyId, StatusTypeEnum.DELETE).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
 

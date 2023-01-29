@@ -2,6 +2,7 @@ package com.formmaker.fff.reply.service;
 
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.entity.Question;
@@ -39,7 +40,7 @@ public class ReplyService {
 
     @Transactional
     public Map<String, String> postReply(Long surveyId, List<ReplyRequest> replyRequestList, String loginId) {
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+        Survey survey = surveyRepository.findByIdAndStatus(surveyId, StatusTypeEnum.IN_PROCEED).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
         if(loginId == null){
