@@ -16,6 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -23,26 +24,16 @@ import java.util.List;
 @RequestMapping("/api/survey")
 public class ReplyController {
     private final ReplyService replyService;
+
     @PostMapping("/{surveyId}/reply")
-    public ResponseEntity<ResponseMessage> postReply(@PathVariable Long  surveyId, @RequestBody List<ReplyRequest> replyRequestList, @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletRequest request, HttpServletResponse response) {
-        String loginId = userDetails.getUsername();
+    public ResponseEntity<ResponseMessage> postReply(@PathVariable Long surveyId, @RequestBody List<ReplyRequest> replyRequestList, @AuthenticationPrincipal UserDetailsImpl userDetails, @CookieValue(required = false) String userId, HttpServletResponse response) {
+        String id = userDetails == null?userId:userDetails.getLoginId();
+        Map<String, String> cookie = replyService.postReply(surveyId, replyRequestList, id);
 
-        if(userDetails == null){ //회원이 아닐 때
-            String headerCookie = String.valueOf(request.getHeader("loginId")); //쿠키가 있으면 postReply 로넘겨버리고 ~
-            System.out.println(headerCookie);
-            if(headerCookie == null){ // 없으면 만들어줘서 넘겨버리고 ~
-                Cookie setCookie = new Cookie("loginId","value");
-                setCookie.setMaxAge(60*60*24);//일단 하루
-                response.addCookie(setCookie);
-                String createCookie = String.valueOf(setCookie);
-                System.out.println(createCookie);
-                replyService.postReply(surveyId, replyRequestList , createCookie);
-            }
-            replyService.postReply(surveyId , replyRequestList , headerCookie);
+        Cookie setCookie = new Cookie("userId", cookie.get("userId"));
+        setCookie.setMaxAge(60*60*24*31);
+        response.addCookie(setCookie);
 
-            }
-
-        replyService.postReply(surveyId, replyRequestList, loginId);
         ResponseMessage responseMessage = new ResponseMessage("설문 응답 성공", 200, null);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }

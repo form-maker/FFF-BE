@@ -1,6 +1,7 @@
 package com.formmaker.fff.reply.service;
 
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.entity.Question;
@@ -12,6 +13,7 @@ import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -20,10 +22,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Null;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import javax.xml.bind.DatatypeConverter;
+import java.util.*;
 
 import static com.formmaker.fff.common.exception.ErrorCode.*;
 
@@ -38,12 +38,14 @@ public class ReplyService {
     private final ParticipantRepository participantRepository;
 
     @Transactional
-    public void postReply(Long surveyId, List<ReplyRequest> replyRequestList, String loginId) {
-
+    public Map<String, String> postReply(Long surveyId, List<ReplyRequest> replyRequestList, String loginId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
-        participantRepository.findBySurveyAndLoginId(survey, loginId).ifPresent( a-> {
+        if(loginId == null){
+            loginId = UUID.randomUUID().toString().replace("-", "");
+        }
+        participantRepository.findBySurveyAndLoginId(survey, loginId).ifPresent( check-> {
             throw new CustomException(ALREADY_ANSWERED);
         });
 
@@ -55,8 +57,7 @@ public class ReplyService {
             );
 
 
-            boolean equalType = replyRequest.getQuestionType() == question.getQuestionType();
-            if (!equalType) {
+            if (!(replyRequest.getQuestionType() == question.getQuestionType())) {
                 throw new CustomException(INVALID_QUESTION_TYPE);
             }
 
@@ -77,20 +78,26 @@ public class ReplyService {
         }
         Optional<Participant> participant = participantRepository.findBySurveyAndLoginId(survey, loginId);
 
+
         if(participant.isPresent()){
-            Reply replyRequest;
-            List<Reply> dbReplyList =  replyRepository.findAllByParticipant(participant.get());
-            for(int i = 0; i < dbReplyList.size(); i++){
-                replyRequest = replyList.get(i);
-                dbReplyList.get(i).updateReply(replyRequest.getSelectValue(), replyRequest.getDescriptive());
-            }
-            return;
+            throw new CustomException(ALREADY_ANSWERED);
+            /*이후 설문 응답 수정 허용시 주석해제*/
+//            Reply replyRequest;
+//            List<Reply> dbReplyList =  replyRepository.findAllByParticipant(participant.get());
+//            for(int i = 0; i < dbReplyList.size(); i++){
+//                replyRequest = replyList.get(i);
+//                dbReplyList.get(i).updateReply(replyRequest.getSelectValue(), replyRequest.getDescriptive());
+//            }
+//            return Map.of("userId", loginId);
         }
         replyRepository.saveAll(replyList);
         Participant saveParticipant = participantRepository.save(new Participant(loginId, survey));
         saveParticipant.updateReplyList(replyList);
         survey.addParticipant(saveParticipant);
         survey.IncreaseParticipant();
+
+        return Map.of("userId", loginId);
+
     }
 
 }

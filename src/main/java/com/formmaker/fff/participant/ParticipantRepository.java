@@ -12,4 +12,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     List<Participant> findAllBySurvey(Survey survey);
 
     Optional<Participant> findBySurveyAndLoginId(Survey survey, String loginId);
+
+    Optional<Participant> findByLoginId(String loginId);
 }
