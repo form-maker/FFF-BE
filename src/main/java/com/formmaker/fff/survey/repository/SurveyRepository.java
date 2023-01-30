@@ -45,4 +45,5 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     List<Survey> findAllByEndedAt(LocalDate today);
 
      Page<Survey> findAllByStatus(Pageable pageable, StatusTypeEnum inProceed);
+    Optional<Survey> findByIdAndUserId(Long surveyId, Long userId);
 }
