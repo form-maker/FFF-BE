@@ -21,11 +21,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+    private static final List<String> EXCLUDE_URL =
+            List.of("api/user", "api/survey/main", "/reply");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
@@ -73,9 +78,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
     }
 
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        String uri = request.getServletPath();
-//        return uri.contains("/api/user/") || uri.contains("api/survey") || uri.contains("api/question");
-//    }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return EXCLUDE_URL.stream().anyMatch(request.getServletPath()::contains);
+    }
 }
