@@ -131,6 +131,7 @@ public class StatsService {
         return Float.parseFloat(floatFormat);
     }
     @Transactional(readOnly = true)
+
     public Pair<String, byte[]> getStatsCsvFile(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 ()-> new CustomException(NOT_FOUND_SURVEY)
