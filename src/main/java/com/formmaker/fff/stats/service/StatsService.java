@@ -23,6 +23,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,61 +130,49 @@ public class StatsService {
         String floatFormat = String.format("%.1f", achievementRate);
         return Float.parseFloat(floatFormat);
     }
+    @Transactional(readOnly = true)
+    public Pair<String, byte[]> getStatsCsvFile(Long surveyId, Long userId) {
+        Survey survey = surveyRepository.findByIdAndUserId(surveyId, userId).orElseThrow(
+                ()-> new CustomException(NOT_FOUND_SURVEY)
+        );
 
-//    @Transactional(readOnly = true)
-//    public byte[] getStatsCsvFile(Long surveyId) {
-//        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
-//                ()-> new CustomException(NOT_FOUND_SURVEY)
-//        );
-//
-//        List<Question> questionList = survey.getQuestionList();
-//
-//        byte[] csvFile;
-//
-//        CSVPrinter csvPrinter;
-//        StringWriter sw = new StringWriter();
-//
-//        String[] headers = Stream.concat(Arrays.stream(new String[]{"유저아이디"}), Arrays.stream(questionList.stream().map(Question::getTitle).toArray(String[]::new))).toArray(String[]::new);
-//        Map<User, List<Reply>> userReply = new HashMap<>();
-//        for(Question question : questionList){
-//            for(Reply reply : question.getReplyList()){
-//                List<Reply> replyList = userReply.get(reply.getUser());
-//                if(replyList == null){
-//                    userReply.put(reply.getUser(), new ArrayList<>(List.of(reply)));
-//                }else{
-//                    userReply.get(reply.getUser()).add(reply);
-//                }
-//
-//            }
-//        }
-//
-//        try{
-//            csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(headers));
-//            int checkValue;
-//            for(User user : userReply.keySet()){
-//                List<Reply> replyList = userReply.get(user).stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
-//                List<String> userData = new ArrayList<>();
-//                String loginId = user.getLoginId();
-//                userData.add(loginId.substring(0, loginId.length()-3)+"***");
-//                checkValue = 1;
-//                for(Reply reply : replyList){
-//                    System.out.println(checkValue + " " + reply.getQuestionNum() + " " + reply.getSelectValue());
-//                    while (reply.getQuestionNum() > checkValue++){
-//                        userData.add("");
-//                    }
-//                    userData.add(replyToValue(reply));
-//                }
-//                csvPrinter.printRecord(userData);
-//            }
-//            sw.flush();
-//            csvFile = sw.toString().getBytes("MS949");
-//        }catch (IOException e){
-//            csvFile = null;
-//        }
-//
-//        return csvFile;
-//    }
+        List<Question> questionList = survey.getQuestionList();
 
+        byte[] csvFile;
+
+        CSVPrinter csvPrinter;
+        StringWriter sw = new StringWriter();
+
+        String[] headers = Stream.concat(Arrays.stream(new String[]{"유저아이디", "유저이메일"}), Arrays.stream(questionList.stream().map(Question::getTitle).toArray(String[]::new))).toArray(String[]::new);
+        try{
+            csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(headers));
+            int checkValue;
+            for(Participant participant : survey.getParticipantList()){
+                User user = userRepository.findByLoginId(participant.getLoginId()).orElse(new User(null, "비회원", "비회원"));
+
+                List<Reply> replyList = participant.getReplyList().stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
+                List<String> userData = new ArrayList<>();
+                String loginId = user.getLoginId();
+                userData.add(ShadeToLoginId(user));
+                userData.add(user.getEmail());
+                checkValue = 1;
+                for(Reply reply : replyList){
+                    while (reply.getQuestionNum() > checkValue++){
+                        userData.add("");
+                    }
+                    userData.add(replyToValue(reply));
+                }
+                csvPrinter.printRecord(userData);
+            }
+            sw.flush();
+            csvFile = sw.toString().getBytes("MS949");
+        }catch (IOException e){
+            csvFile = null;
+        }
+
+
+        return Pair.of(survey.getTitle(), csvFile);
+    }
     public String replyToValue(Reply reply){
         QuestionTypeEnum type = reply.getQuestionType();
         switch (type){
@@ -188,7 +181,52 @@ public class StatsService {
             case RANK -> {return reply.getSelectValue().substring(1, reply.getSelectValue().length()-1).replace("\"", "");}
         }
         return reply.getSelectValue();
+    }
 
+    @Transactional
+    public XSSFWorkbook getStatsXlsxFile(Long surveyId, Long userId){
+        XSSFWorkbook wd = new XSSFWorkbook();
+        Survey survey = surveyRepository.findByIdAndUserId(surveyId, userId).orElseThrow(
+                ()->new CustomException(NOT_FOUND_SURVEY)
+        );
+        XSSFSheet sheet = wd.createSheet(survey.getTitle());
+        Row row = null;
+        Cell cell = null;
 
+        List<Question> questionList = survey.getQuestionList();
+
+        row = sheet.createRow(0);
+        row.createCell(0).setCellValue("유저 아이디");
+        row.createCell(1).setCellValue("유저 이메일");
+
+        int cellIndex = 2;
+        for(Question question : questionList){
+            row.createCell(cellIndex++).setCellValue(question.getTitle());
+        }
+        int rowIndex = 1;
+        int checkValue;
+        for(Participant participant : survey.getParticipantList()){
+            cellIndex = 0;
+            row = sheet.createRow(rowIndex);
+            User user = userRepository.findByLoginId(participant.getLoginId()).orElse(new User(null, "비회원", "비회원"));
+            row.createCell(cellIndex++).setCellValue(ShadeToLoginId(user));
+            row.createCell(cellIndex++).setCellValue(user.getEmail());
+            checkValue = 1;
+            for(Reply reply : participant.getReplyList()){
+                while (reply.getQuestionNum() > checkValue++){
+                    row.createCell(cellIndex++).setCellValue("");
+                }
+                row.createCell(cellIndex++).setCellValue(replyToValue(reply));
+
+            }
+            rowIndex++;
+
+        }
+        return wd;
+    }
+
+    private String ShadeToLoginId(User user){
+        String loginId = user.getLoginId();
+        return loginId==null?"비회원":(loginId.substring(0, loginId.length()-3)+"***");
     }
 }

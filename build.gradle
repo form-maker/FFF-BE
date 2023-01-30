@@ -37,6 +37,8 @@ dependencies {
 	// 스프링 시큐리티
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
+	implementation 'org.apache.poi:poi-ooxml:5.2.2'
+
 	// goole JSON
 	implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 	implementation 'com.google.code.gson:gson:2.9.0'

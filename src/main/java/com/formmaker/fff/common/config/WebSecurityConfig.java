@@ -48,7 +48,6 @@ public class WebSecurityConfig {
                 .antMatchers(HttpMethod.GET, "/api/survey").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/question").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/survey/**/reply").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/survey/stats/download").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/survey/main").permitAll()
                 /*swagger*/
                 .antMatchers("/v2/**").permitAll()
@@ -56,9 +55,7 @@ public class WebSecurityConfig {
                 .antMatchers("/swagger**").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
                 /* sse */
-                .antMatchers("/api/sse/**").permitAll()
-                /* oauth */
-                .antMatchers("/login/oauth2/**").permitAll()
+//                .antMatchers("/api/sse/**").permitAll()
                 /* certbot */
                 .antMatchers("/.well-known/acme-challenge/83uJnLcbeDXcIbvL3Tv8WrLtVqvz4kr5A12i5E2IsPU").permitAll()
                 .antMatchers("/.well-known/acme-challenge/KlMCBPNioLlCM0x08hj7nkV8nJ53ibdKXY2lEYQMu1A").permitAll()
