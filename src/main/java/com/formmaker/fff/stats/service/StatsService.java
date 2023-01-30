@@ -47,7 +47,7 @@ public class StatsService {
     private final ReplyRepository replyRepository;
 
     @Transactional
-    public StatsResponse getStats(Long surveyId, String start, String end) {
+    public StatsResponse getStats(Long surveyId, String start, String end, Long userId) {
         Survey survey = surveyRepository.findByIdAndStatusNot(surveyId, StatusTypeEnum.DELETE).orElseThrow(
 
                 () -> new CustomException(NOT_FOUND_SURVEY)
