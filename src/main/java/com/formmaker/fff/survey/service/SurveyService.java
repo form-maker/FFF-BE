@@ -138,7 +138,7 @@ public class SurveyService {
                             .giftName(giftName)
                             .totalGiftQuantity(giftQuantity)
                             .totalQuestion(survey.getQuestionList().size())
-                            .totalTime((int) Math.ceil(survey.getQuestionList().size() * 20 / 60f))
+                            .totalTime((int) Math.ceil(survey.getQuestionList().size() * 25 / 60f))
                             .dDay(survey.getDDay())
                             .participant(survey.getParticipant())
                             .createdAt(survey.getCreatedAt().toLocalDate()).build();
@@ -174,6 +174,7 @@ public class SurveyService {
                 .createAt(survey.getCreatedAt())
                 .achievement(survey.getAchievement())
                 .status(survey.getStatus())
+                .totalTime((int) Math.ceil(survey.getQuestionList().size() * 25 / 60f))
                 .questionIdList(questionResponses)
                 .questionList(questionNavigationResponseList)
                 .giftList(giftResponseList)
