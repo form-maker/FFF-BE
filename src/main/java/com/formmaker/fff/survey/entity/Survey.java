@@ -49,9 +49,6 @@ public class Survey extends TimeStamped {
     @Column(nullable = false)
     private Long userId;
 
-    @Column(nullable = false)
-    private Integer dDay;
-
     @OneToMany
     @JoinColumn(name = "surveyId")
     private List<Question> questionList = new ArrayList<>();
@@ -72,7 +69,6 @@ public class Survey extends TimeStamped {
         this.participant = 0;
         this.achievement = achievement;
         this.userId = userId;
-        this.dDay = (int) ChronoUnit.DAYS.between(LocalDate.now(), endedAt);
     }
 
     public void addQuestionList(Question question){
@@ -91,4 +87,7 @@ public class Survey extends TimeStamped {
         this.status = status;
     }
 
+    public Integer getDDay() {
+        return (int) ChronoUnit.DAYS.between(LocalDate.now(), this.endedAt);
+    }
 }
