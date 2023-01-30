@@ -111,6 +111,14 @@ public class JwtUtil {
         }
         return false;
     }
+    public boolean checkToken(String token){
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+    }
 
 
     public String recreationAccessToken(String loginId){

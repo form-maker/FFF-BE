@@ -55,7 +55,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ResponseMessage> checkLogin(HttpServletRequest request){
         String token = jwtUtil.resolveToken(request, "Authorization");
-        return new ResponseEntity<>(new ResponseMessage("로그인 정보 반환", 200, jwtUtil.validateToken(token)), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseMessage("로그인 정보 반환", 200, jwtUtil.checkToken(token)), HttpStatus.OK);
     }
 
 
