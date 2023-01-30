@@ -4,6 +4,7 @@ package com.formmaker.fff.stats;
 import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.reply.entity.Reply;
+import com.formmaker.fff.stats.dto.DescriptiveList;
 import com.formmaker.fff.stats.dto.DescriptiveResponse;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
@@ -134,6 +135,12 @@ public class StatsMethod {
         List<DescriptiveResponse> descriptiveList = new ArrayList<>();
         int randomValue;
 
+        List<String> descriptiveDataList = new ArrayList<>();
+
+        for (Reply reply : replyList) {
+            descriptiveDataList.add(reply.getDescriptive());
+        }
+
         for(int i = 0; i < 3; i++){
             if(replyList.isEmpty()){
                 break;
@@ -147,7 +154,7 @@ public class StatsMethod {
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .descriptiveList(descriptiveList)
+                .descriptiveList(new DescriptiveList(descriptiveList,descriptiveDataList))
                 .build();
     }
 
@@ -165,13 +172,20 @@ public class StatsMethod {
         for (String key : map.keySet()) {
             descriptiveList.add(new DescriptiveResponse(key, map.get(key)));
         }
+        descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList());
+
+        List<String> descriptiveDataList = new ArrayList<>();
+
+        for (Reply reply : replyList) {
+            descriptiveDataList.add(reply.getDescriptive());
+        }
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .descriptiveList(descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList()))
+                .descriptiveList(new DescriptiveList(descriptiveList,descriptiveDataList))
                 .build();
     }
 
