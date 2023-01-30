@@ -23,6 +23,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,7 +153,7 @@ public class StatsService {
                 List<Reply> replyList = participant.getReplyList().stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
                 List<String> userData = new ArrayList<>();
                 String loginId = user.getLoginId();
-                userData.add(loginId==null?"비회원":loginId.substring(0, loginId.length()-3)+"***");
+                userData.add(ShadeToLoginId(user));
                 userData.add(user.getEmail());
                 checkValue = 1;
                 for(Reply reply : replyList){
@@ -177,7 +181,52 @@ public class StatsService {
             case RANK -> {return reply.getSelectValue().substring(1, reply.getSelectValue().length()-1).replace("\"", "");}
         }
         return reply.getSelectValue();
+    }
 
+    @Transactional
+    public XSSFWorkbook getStatsXlsxFile(Long surveyId){
+        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+                ()->new CustomException(NOT_FOUND_SURVEY)
+        );
+        XSSFWorkbook wd = new XSSFWorkbook();
+        XSSFSheet sheet = wd.createSheet(survey.getTitle());
+        Row row = null;
+        Cell cell = null;
 
+        List<Question> questionList = survey.getQuestionList();
+
+        row = sheet.createRow(0);
+        row.createCell(0).setCellValue("유저 아이디");
+        row.createCell(1).setCellValue("유저 이메일");
+
+        int cellIndex = 2;
+        for(Question question : questionList){
+            row.createCell(cellIndex++).setCellValue(question.getTitle());
+        }
+        int rowIndex = 1;
+        int checkValue;
+        for(Participant participant : survey.getParticipantList()){
+            cellIndex = 0;
+            row = sheet.createRow(rowIndex);
+            User user = userRepository.findByLoginId(participant.getLoginId()).orElse(new User(null, "비회원", "비회원"));
+            row.createCell(cellIndex++).setCellValue(ShadeToLoginId(user));
+            row.createCell(cellIndex++).setCellValue(user.getEmail());
+            checkValue = 1;
+            for(Reply reply : participant.getReplyList()){
+                while (reply.getQuestionNum() > checkValue++){
+                    row.createCell(cellIndex++).setCellValue("");
+                }
+                row.createCell(cellIndex++).setCellValue(replyToValue(reply));
+
+            }
+            rowIndex++;
+
+        }
+        return wd;
+    }
+
+    private String ShadeToLoginId(User user){
+        String loginId = user.getLoginId();
+        return loginId==null?"비회원":(loginId.substring(0, loginId.length()-3)+"***");
     }
 }
