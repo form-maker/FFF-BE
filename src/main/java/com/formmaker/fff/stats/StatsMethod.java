@@ -4,14 +4,12 @@ package com.formmaker.fff.stats;
 import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.reply.entity.Reply;
+import com.formmaker.fff.stats.dto.DescriptiveList;
 import com.formmaker.fff.stats.dto.DescriptiveResponse;
 import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -134,6 +132,12 @@ public class StatsMethod {
         List<DescriptiveResponse> descriptiveList = new ArrayList<>();
         int randomValue;
 
+        List<String> descriptiveDataList = new ArrayList<>();
+
+        for (Reply reply : replyList) {
+            descriptiveDataList.add(reply.getDescriptive());
+        }
+
         for(int i = 0; i < 3; i++){
             if(replyList.isEmpty()){
                 break;
@@ -147,7 +151,7 @@ public class StatsMethod {
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .descriptiveList(descriptiveList)
+                .descriptiveList(new DescriptiveList(descriptiveList, descriptiveDataList))
                 .build();
     }
 
@@ -171,7 +175,7 @@ public class StatsMethod {
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .descriptiveList(descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList()))
+//                .descriptiveList(descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList()))
                 .build();
     }
 
