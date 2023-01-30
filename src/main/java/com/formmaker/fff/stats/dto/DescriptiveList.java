@@ -11,3 +11,4 @@ public class DescriptiveList {
     private List<DescriptiveResponse> statsList;
     private List<String> descriptiveDataList;
 }
+

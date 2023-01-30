@@ -152,6 +152,7 @@ public class StatsMethod {
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
                 .descriptiveList(new DescriptiveList(descriptiveList, descriptiveDataList))
+
                 .build();
     }
 
@@ -169,13 +170,21 @@ public class StatsMethod {
         for (String key : map.keySet()) {
             descriptiveList.add(new DescriptiveResponse(key, map.get(key)));
         }
+        descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList());
+
+        List<String> descriptiveDataList = new ArrayList<>();
+
+        for (Reply reply : replyList) {
+            descriptiveDataList.add(reply.getDescriptive());
+        }
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-//                .descriptiveList(descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList()))
+                .descriptiveList(new DescriptiveList(descriptiveList,descriptiveDataList))
+
                 .build();
     }
 
