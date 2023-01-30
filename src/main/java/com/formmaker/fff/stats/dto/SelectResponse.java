@@ -38,6 +38,11 @@ public class SelectResponse {
         this.rankList = rankList;
     }
 
+    public SelectResponse(String answer, Float value) {
+        this.answer = answer;
+        this.value = value;
+    }
+
     public void increaseValue() {
         this.value++;
     }

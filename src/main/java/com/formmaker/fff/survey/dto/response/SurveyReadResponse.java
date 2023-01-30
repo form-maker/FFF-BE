@@ -1,6 +1,9 @@
 package com.formmaker.fff.survey.dto.response;
 
 import com.formmaker.fff.common.type.StatusTypeEnum;
+import com.formmaker.fff.gift.dto.response.GiftResponse;
+import com.formmaker.fff.gift.entity.Gift;
+import com.formmaker.fff.question.dto.response.QuestionNavigationResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,5 +25,8 @@ public class SurveyReadResponse {
     private LocalDateTime createAt;
     private Integer achievement;
     private StatusTypeEnum status;
+    private Integer totalTime;
     private List<Long> questionIdList = new ArrayList<>();
+    private List<QuestionNavigationResponse> questionList;
+    private List<GiftResponse> giftList;
 }
