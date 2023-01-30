@@ -148,12 +148,9 @@ public class SurveyService {
 
     @Transactional(readOnly = true)
     public SurveyReadResponse getSurvey(Long surveyId) {
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+        Survey survey = surveyRepository.findByIdAndStatusNot(surveyId, StatusTypeEnum.DELETE).orElseThrow(
                         () -> new CustomException(NOT_FOUND_SURVEY)
         );
-        if(survey.getStatus()==StatusTypeEnum.DELETE){
-            throw new CustomException(EXPIRED_SURVEY);
-        }
 
         List<Long> questionResponses = new ArrayList<>();
         for (Question question : survey.getQuestionList()) {
@@ -213,5 +210,6 @@ public class SurveyService {
                         .status(survey.getStatus())
                         .createdAt(survey.getCreatedAt().toLocalDate())
                         .build());
+
     }
 }

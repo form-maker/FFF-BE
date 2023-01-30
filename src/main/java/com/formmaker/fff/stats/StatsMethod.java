@@ -10,9 +10,6 @@ import com.formmaker.fff.stats.dto.QuestionStats;
 import com.formmaker.fff.stats.dto.SelectResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -154,7 +151,8 @@ public class StatsMethod {
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
-                .descriptiveList(new DescriptiveList(descriptiveList,descriptiveDataList))
+                .descriptiveList(new DescriptiveList(descriptiveList, descriptiveDataList))
+
                 .build();
     }
 
@@ -186,6 +184,7 @@ public class StatsMethod {
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
                 .descriptiveList(new DescriptiveList(descriptiveList,descriptiveDataList))
+
                 .build();
     }
 

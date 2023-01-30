@@ -1,5 +1,6 @@
 package com.formmaker.fff.common.config;
 
+import com.formmaker.fff.common.exception.CustomAuthenticationEntryPoint;
 import com.formmaker.fff.common.jwt.JwtAuthFilter;
 import com.formmaker.fff.common.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -35,6 +37,7 @@ public class WebSecurityConfig {
         http.csrf().disable()
                 .cors().configurationSource(corsConfigurationSource());
 
+        http.httpBasic().authenticationEntryPoint(authenticationEntryPoint());
         /* 2. Session 비활성화 */
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -70,7 +73,8 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://formformform.s3-website.ap-northeast-2.amazonaws.com/");
+        configuration.addAllowedOrigin("https://www.foamfoamform.com/");
+        configuration.addAllowedOrigin("https://foamfoamform.com/");
         configuration.addAllowedOrigin("http://localhost:3000/");
 //        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*"); // 허용할 Http Method
@@ -83,4 +87,12 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/api/**", configuration);
         return source;
     }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint(){
+        return new CustomAuthenticationEntryPoint();
+    }
+
+
+
 }
