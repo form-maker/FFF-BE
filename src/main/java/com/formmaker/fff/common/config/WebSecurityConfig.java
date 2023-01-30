@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -74,7 +73,8 @@ public class WebSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://formformform.s3-website.ap-northeast-2.amazonaws.com/");
+        configuration.addAllowedOrigin("https://www.foamfoamform.com/");
+        configuration.addAllowedOrigin("https://foamfoamform.com/");
         configuration.addAllowedOrigin("http://localhost:3000/");
 //        configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*"); // 허용할 Http Method
