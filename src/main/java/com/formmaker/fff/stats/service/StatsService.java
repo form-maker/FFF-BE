@@ -131,7 +131,7 @@ public class StatsService {
         return Float.parseFloat(floatFormat);
     }
     @Transactional(readOnly = true)
-    public Pair<String, byte[]> getStatsCsvFile(Long surveyId) {
+    public Pair<String, byte[]> getStatsCsvFile(Long surveyId, String LoginId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 ()-> new CustomException(NOT_FOUND_SURVEY)
         );
@@ -184,11 +184,11 @@ public class StatsService {
     }
 
     @Transactional
-    public XSSFWorkbook getStatsXlsxFile(Long surveyId){
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+    public XSSFWorkbook getStatsXlsxFile(Long surveyId, Long userId){
+        XSSFWorkbook wd = new XSSFWorkbook();
+        Survey survey = surveyRepository.findByIdAndUserId(surveyId, userId).orElseThrow(
                 ()->new CustomException(NOT_FOUND_SURVEY)
         );
-        XSSFWorkbook wd = new XSSFWorkbook();
         XSSFSheet sheet = wd.createSheet(survey.getTitle());
         Row row = null;
         Cell cell = null;

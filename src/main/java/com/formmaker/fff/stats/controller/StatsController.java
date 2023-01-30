@@ -40,8 +40,8 @@ public class StatsController {
 
 
     @GetMapping("/download/csv")
-    public ResponseEntity<byte[]> downloadCSV(@RequestParam Long surveyId) throws IOException{
-        Pair<String, byte[]> csvFile = statsService.getStatsCsvFile(surveyId);
+    public ResponseEntity<byte[]> downloadCSV(@RequestParam Long surveyId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException{
+        Pair<String, byte[]> csvFile = statsService.getStatsCsvFile(surveyId, userDetails.getLoginId());
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.valueOf("plain/text"));
         header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+ URLEncoder.encode(csvFile.getFirst(), "utf-8") +".csv");
@@ -50,9 +50,8 @@ public class StatsController {
     }
 
     @GetMapping("/download/xlsx")
-    public void downloadXLSX(@RequestParam Long surveyId, HttpServletResponse response) throws IOException {
-        XSSFWorkbook xssfWorkbook = statsService.getStatsXlsxFile(surveyId);
-        HttpHeaders header = new HttpHeaders();
+    public void downloadXLSX(@RequestParam Long surveyId, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        XSSFWorkbook xssfWorkbook = statsService.getStatsXlsxFile(surveyId, userDetails.getUserId());
         response.setContentType("ms-vnd/excel");
         String fileName = xssfWorkbook.getSheetName(0);
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "utf-8")+".xlsx");
