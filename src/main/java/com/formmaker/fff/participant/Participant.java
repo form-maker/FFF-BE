@@ -18,8 +18,7 @@ public class Participant extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private User user;
+    private String loginId;
 
     @ManyToOne
     private Survey survey;
@@ -27,8 +26,8 @@ public class Participant extends TimeStamped {
     @OneToMany(mappedBy = "participant")
     private List<Reply> replyList;
 
-    public Participant(User user, Survey survey) {
-        this.user = user;
+    public Participant(String loginId, Survey survey) {
+        this.loginId = loginId;
         this.survey = survey;
     }
 

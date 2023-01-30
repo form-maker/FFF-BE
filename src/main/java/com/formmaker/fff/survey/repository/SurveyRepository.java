@@ -12,9 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
     Page<Survey> findByUserId(Long userId, Pageable pageable);
+
+    Optional<Survey> findByIdAndStatusNot(Long id, StatusTypeEnum status);
+
+    Optional<Survey> findByIdAndStatus(Long id, StatusTypeEnum status);
+
+
 
     Page<Survey> findByUserIdAndStatus(Long userId, StatusTypeEnum status, Pageable pageable);
 

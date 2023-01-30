@@ -32,22 +32,20 @@ public class Reply extends TimeStamped {
 
     private String descriptive;
 
-    @ManyToOne
-    @JoinColumn(name = "usersId")
-    private User user;
+     private String loginId;
 
     @ManyToOne
     private Participant participant;
 
 
 
-    public Reply(Long questionId, Integer questionNum, QuestionTypeEnum questionType, String selectValue, String descriptive, User user) {
+    public Reply(Long questionId, Integer questionNum, QuestionTypeEnum questionType, String selectValue, String descriptive, String loginId) {
         this.questionId = questionId;
         this.questionNum = questionNum;
         this.questionType = questionType;
         this.selectValue = selectValue;
         this.descriptive = descriptive;
-        this.user = user;
+        this.loginId = loginId;
     }
 
     public void updateParticipant(Participant participant){

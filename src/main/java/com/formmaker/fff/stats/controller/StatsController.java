@@ -35,14 +35,14 @@ public class StatsController {
     }
 
 
-    @GetMapping("/download")
-    public ResponseEntity<byte[]> downloadCSV(@RequestParam Long surveyId){
-        byte[] csvFile = statsService.getStatsCsvFile(surveyId);
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.valueOf("plain/text"));
-        header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+"test"+".csv");
-        header.setContentLength(csvFile.length);
-        return new ResponseEntity<>(csvFile, header, HttpStatus.OK);
-    }
+//    @GetMapping("/download")
+//    public ResponseEntity<byte[]> downloadCSV(@RequestParam Long surveyId){
+//        byte[] csvFile = statsService.getStatsCsvFile(surveyId);
+//        HttpHeaders header = new HttpHeaders();
+//        header.setContentType(MediaType.valueOf("plain/text"));
+//        header.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+"test"+".csv");
+//        header.setContentLength(csvFile.length);
+//        return new ResponseEntity<>(csvFile, header, HttpStatus.OK);
+//    }
 
 }

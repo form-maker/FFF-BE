@@ -2,6 +2,7 @@ package com.formmaker.fff.common.jwt;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.user.controller.RefreshController;
 import com.formmaker.fff.user.entity.User;
@@ -9,6 +10,7 @@ import com.formmaker.fff.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +26,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
         String token = jwtUtil.resolveToken(request, JwtUtil.AUTHORIZATION_HEADER);
@@ -35,9 +38,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
         if(token != null) {
-            if(!jwtUtil.validateToken(token)){
+            try{
+                if(!jwtUtil.validateToken(token)){
+//                jwtExceptionHandler(response, "로그인 상태를 확인해주세요.", 403);
+                    return;
+                }
+            }catch (CustomException e){
                 jwtExceptionHandler(response, "로그인 상태를 확인해주세요.", 403);
-                return;
             }
             Claims info = jwtUtil.getUserInfo(token);
             setAuthentication(info.getSubject());
@@ -66,5 +73,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
     }
 
-
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        String uri = request.getServletPath();
+//        return uri.contains("/api/user/") || uri.contains("api/survey") || uri.contains("api/question");
+//    }
 }

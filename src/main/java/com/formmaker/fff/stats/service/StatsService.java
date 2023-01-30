@@ -4,6 +4,7 @@ package com.formmaker.fff.stats.service;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.entity.Question;
@@ -47,7 +48,8 @@ public class StatsService {
 
     @Transactional
     public StatsResponse getStats(Long surveyId, String start, String end, Long userId) {
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+        Survey survey = surveyRepository.findByIdAndStatusNot(surveyId, StatusTypeEnum.DELETE).orElseThrow(
+
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
 
@@ -124,59 +126,59 @@ public class StatsService {
         return Float.parseFloat(floatFormat);
     }
 
-    @Transactional(readOnly = true)
-    public byte[] getStatsCsvFile(Long surveyId) {
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
-                ()-> new CustomException(NOT_FOUND_SURVEY)
-        );
-
-        List<Question> questionList = survey.getQuestionList();
-
-        byte[] csvFile;
-
-        CSVPrinter csvPrinter;
-        StringWriter sw = new StringWriter();
-
-        String[] headers = Stream.concat(Arrays.stream(new String[]{"유저아이디"}), Arrays.stream(questionList.stream().map(Question::getTitle).toArray(String[]::new))).toArray(String[]::new);
-        Map<User, List<Reply>> userReply = new HashMap<>();
-        for(Question question : questionList){
-            for(Reply reply : question.getReplyList()){
-                List<Reply> replyList = userReply.get(reply.getUser());
-                if(replyList == null){
-                    userReply.put(reply.getUser(), new ArrayList<>(List.of(reply)));
-                }else{
-                    userReply.get(reply.getUser()).add(reply);
-                }
-
-            }
-        }
-
-        try{
-            csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(headers));
-            int checkValue;
-            for(User user : userReply.keySet()){
-                List<Reply> replyList = userReply.get(user).stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
-                List<String> userData = new ArrayList<>();
-                String loginId = user.getLoginId();
-                userData.add(loginId.substring(0, loginId.length()-3)+"***");
-                checkValue = 1;
-                for(Reply reply : replyList){
-                    System.out.println(checkValue + " " + reply.getQuestionNum() + " " + reply.getSelectValue());
-                    while (reply.getQuestionNum() > checkValue++){
-                        userData.add("");
-                    }
-                    userData.add(replyToValue(reply));
-                }
-                csvPrinter.printRecord(userData);
-            }
-            sw.flush();
-            csvFile = sw.toString().getBytes("MS949");
-        }catch (IOException e){
-            csvFile = null;
-        }
-
-        return csvFile;
-    }
+//    @Transactional(readOnly = true)
+//    public byte[] getStatsCsvFile(Long surveyId) {
+//        Survey survey = surveyRepository.findById(surveyId).orElseThrow(
+//                ()-> new CustomException(NOT_FOUND_SURVEY)
+//        );
+//
+//        List<Question> questionList = survey.getQuestionList();
+//
+//        byte[] csvFile;
+//
+//        CSVPrinter csvPrinter;
+//        StringWriter sw = new StringWriter();
+//
+//        String[] headers = Stream.concat(Arrays.stream(new String[]{"유저아이디"}), Arrays.stream(questionList.stream().map(Question::getTitle).toArray(String[]::new))).toArray(String[]::new);
+//        Map<User, List<Reply>> userReply = new HashMap<>();
+//        for(Question question : questionList){
+//            for(Reply reply : question.getReplyList()){
+//                List<Reply> replyList = userReply.get(reply.getUser());
+//                if(replyList == null){
+//                    userReply.put(reply.getUser(), new ArrayList<>(List.of(reply)));
+//                }else{
+//                    userReply.get(reply.getUser()).add(reply);
+//                }
+//
+//            }
+//        }
+//
+//        try{
+//            csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(headers));
+//            int checkValue;
+//            for(User user : userReply.keySet()){
+//                List<Reply> replyList = userReply.get(user).stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
+//                List<String> userData = new ArrayList<>();
+//                String loginId = user.getLoginId();
+//                userData.add(loginId.substring(0, loginId.length()-3)+"***");
+//                checkValue = 1;
+//                for(Reply reply : replyList){
+//                    System.out.println(checkValue + " " + reply.getQuestionNum() + " " + reply.getSelectValue());
+//                    while (reply.getQuestionNum() > checkValue++){
+//                        userData.add("");
+//                    }
+//                    userData.add(replyToValue(reply));
+//                }
+//                csvPrinter.printRecord(userData);
+//            }
+//            sw.flush();
+//            csvFile = sw.toString().getBytes("MS949");
+//        }catch (IOException e){
+//            csvFile = null;
+//        }
+//
+//        return csvFile;
+//    }
 
     public String replyToValue(Reply reply){
         QuestionTypeEnum type = reply.getQuestionType();
