@@ -25,10 +25,11 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
 
     Page<Survey> findByUserIdAndStatus(Long userId, StatusTypeEnum status, Pageable pageable);
 
-    @Modifying
-    @Transactional
-    @Query("update Survey s set s.dDay = s.dDay-1 where s.status = :status")
-    void updateDDay(StatusTypeEnum status);
+    // 삭제
+//    @Modifying
+//    @Transactional
+//    @Query("update Survey s set s.dDay = s.dDay-1 where s.status = :status")
+//    void updateDDay(StatusTypeEnum status);
 
     @Modifying
     @Transactional
