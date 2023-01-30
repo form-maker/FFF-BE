@@ -25,6 +25,7 @@ public class SurveyReadResponse {
     private LocalDateTime createAt;
     private Integer achievement;
     private StatusTypeEnum status;
+    private Integer totalTime;
     private List<Long> questionIdList = new ArrayList<>();
     private List<QuestionNavigationResponse> questionList;
     private List<GiftResponse> giftList;
