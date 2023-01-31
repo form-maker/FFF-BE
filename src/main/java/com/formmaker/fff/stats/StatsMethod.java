@@ -222,14 +222,13 @@ public class StatsMethod {
 
     public QuestionStats statsConsent(List<Reply> replyList, Question question) {
         int size = replyList.size();
-        List<String> consentList = replyList.stream().map(Reply::getDescriptive).toList();
 
-        int disagreeCount =Collections.frequency(consentList, "false");
-        int agreeCount = size - disagreeCount;
+        long disagreeCount =replyList.stream().map(Reply::getDescriptive).filter(s -> s.equals("비동의")).count();
+        long agreeCount = size - disagreeCount;
 
 
-        SelectResponse disagree = new SelectResponse("비동의", size==0?0:Math.round((float)disagreeCount / size * 1000f)/10f);
-        SelectResponse agree = new SelectResponse("동의", size==0?0:Math.round((float)agreeCount / size * 1000f)/10f);
+        SelectResponse disagree = new SelectResponse("비동의", size==0?0:Math.round(((float)disagreeCount / size) * 1000f)/10f);
+        SelectResponse agree = new SelectResponse("동의", size==0?0:Math.round(((float)agreeCount / size) * 1000f)/10f);
 
         List<SelectResponse> selectResponseList = Arrays.asList(disagree, agree);
 
