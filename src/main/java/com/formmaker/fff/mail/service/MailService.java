@@ -152,7 +152,7 @@ public class MailService {
         msgg += "<h1>안녕하세요. Form-Maker 입니다.</h1>";
         msgg += "<br/>";
         msgg += "<p>회원님이 등록해주신 설문이 마감되었습니다.</p>";
-        msgg += "<p>사이트에 방문해 등록하신 설문의 결과를 확인해주세요!</p>";
+        msgg += "<p>사이트에 방문하여 등록하신 설문의 결과를 확인해주세요!</p>";
         msgg += "<br/>";
         msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
         msgg += "<h3><a href='"+ SITE +"'> 사이트 바로가기 </a></h3>";
