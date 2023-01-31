@@ -35,7 +35,7 @@ public enum ErrorCode {
     EMPTY_QUESTION("비어있는 값이 존재합니다.", 400),
     SERVER_ERROR("서버에러입니다. 서버관리자에게 문의주세요", 500),
     EXPIRED_SURVEY("삭제된 설문입니다.",400),
-
+    NOT_FOUND_USER_INFO("설문 제작자의 정보가 존재하지 않습니다.", 400),
 
 
     /*응답 에러*/
@@ -48,7 +48,6 @@ public enum ErrorCode {
     FAILED_TO_SEND_MAIL("메일 발송에 실패하였습니다.", 400),
     CODE_DOSE_NOT_MATCH("인증 코드가 일치하지 않습니다.", 400),
     MAIL_AUTHENTICATION_NOT_COMPLETED("메일 인증이 완료되지 않았습니다.", 400);
-
 
     private final String msg;
     private final int statusCode;

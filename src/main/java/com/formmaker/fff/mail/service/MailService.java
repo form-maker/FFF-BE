@@ -3,6 +3,9 @@ package com.formmaker.fff.mail.service;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.redis.RedisUtil;
+import com.formmaker.fff.survey.entity.Survey;
+import com.formmaker.fff.survey.repository.SurveyRepository;
+import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +18,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
 
 import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_EMAIL;
@@ -24,10 +29,12 @@ import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_EMAIL;
 public class MailService {
     private final JavaMailSender javaMailSender;
     private final UserRepository userRepository;
+    private final SurveyRepository surveyRepository;
     private final RedisUtil redisUtil;
     private String authNum;
     @Value("${admin.mail.id}")
     private String id;
+    private final String SITE = "https://www.foamfoamform.com/mypage";
 
     @Transactional
     public void sendSimpleMessage(String email) throws MessagingException, UnsupportedEncodingException {
@@ -58,14 +65,6 @@ public class MailService {
         }
 
         redisUtil.setDataExpire(email, authNum, 5 * 60 * 1000L);
-
-//        emailAuth = EmailAuth.builder()
-//                .email(email)
-//                .code(authNum)
-//                .status(false)
-//                .build();
-//
-//        emailAuthRepository.save(emailAuth);
     }
 
     public MimeMessage createMessage(String email) throws MessagingException, UnsupportedEncodingException {
@@ -76,7 +75,7 @@ public class MailService {
 
         String msgg = "";
         msgg += "<div style='margin:100px;'>";
-        msgg += "<h1>안녕하세요.</h1>";
+        msgg += "<h1>안녕하세요. Form-Maker 입니다.</h1>";
         msgg += "<br>";
         msgg += "<p>아래 코드를 회원가입 창에 입력해주세요<p>";
         msgg += "<br>";
@@ -94,7 +93,7 @@ public class MailService {
 
     public String createCode() {
         Random random = new Random();
-        StringBuffer key = new StringBuffer();
+        StringBuilder key = new StringBuilder();
 
         for (int i = 0; i < 8; i++) {
             int index = random.nextInt(3);
@@ -114,5 +113,56 @@ public class MailService {
         if (!authCode.equals(code)) {
             throw new CustomException(ErrorCode.CODE_DOSE_NOT_MATCH);
         }
+    }
+
+    @Transactional
+    public String sendFinishMessage() throws MessagingException, UnsupportedEncodingException {
+        List<Survey> allByEndedSurvey = surveyRepository.findAllByEndedAt(LocalDate.now().minusDays(1));
+        if (allByEndedSurvey.isEmpty()) {
+            return LocalDate.now().minusDays(1) + " 에 마감된 설문이 없습니다.";
+        }
+
+        for (Survey survey : allByEndedSurvey) {
+            User user = userRepository.findById(survey.getUserId()).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
+            );
+            String email = user.getEmail();
+            MimeMessage message = createFinishMessage(email);
+
+            try {
+                javaMailSender.send(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new CustomException(ErrorCode.FAILED_TO_SEND_MAIL);
+            }
+        }
+
+        return "마감 메일 발송이 완료되었습니다.";
+    }
+
+    public MimeMessage createFinishMessage(String email) throws MessagingException, UnsupportedEncodingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        //todo
+        message.addRecipients(Message.RecipientType.TO, email);
+        message.setSubject("Foam Foam Form 설문 마감 안내");
+
+        String msgg = "";
+        msgg += "<div style='margin:100px;'>";
+        msgg += "<h1>안녕하세요. Form-Maker 입니다.</h1>";
+        msgg += "<br/>";
+        msgg += "<p>회원님이 등록해주신 설문이 마감되었습니다.</p>";
+        msgg += "<p>사이트에 방문해 등록하신 설문의 결과를 확인해주세요!</p>";
+        msgg += "<br/>";
+        msgg += "<div align='center' style='border:1px solid black; font-family:verdana';>";
+        msgg += "<h3><a href='"+ SITE +"'> 사이트 바로가기 </a></h3>";
+        msgg += "<p>로그인 -> 마이페이지 -> 진행 완료된 폼 -> 결과보기</p>";
+        msgg += "</div>";
+        msgg += "</div>";
+
+        message.setText(msgg, "utf-8", "html");
+        message.setFrom(new InternetAddress(id, "Foam Foam Form"));
+
+        return message;
     }
 }
