@@ -3,8 +3,6 @@ package com.formmaker.fff.user.service;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.jwt.JwtUtil;
 
-import com.formmaker.fff.common.jwt.RefreshToken;
-import com.formmaker.fff.common.jwt.RefreshTokenRepository;
 import com.formmaker.fff.common.jwt.TokenDto;
 
 
@@ -36,8 +34,6 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
-
     /* 회원가입 */
     @Transactional
     public void signup(UserSignupRequest userSignupRequest) {
@@ -89,8 +85,7 @@ public class UserService {
         if(!passwordEncoder.matches(password, user.getPassword())){
             throw new CustomException(NOT_FOUND_ID);
         }
-        RefreshToken refreshToken = RefreshToken.builder().keyLoginId(tokenDto.getKey()).refreshToken(tokenDto.getRefreshToken()).build();
-        String tokenLoginId = refreshToken.getKeyLoginId();
+        String tokenLoginId = tokenDto.getKey();
 
         redisUtil.deleteData(tokenLoginId); // redis안에 중복되는 키가 있으면 삭제하고 아래서 생성
         TokenDto token = jwtUtil.createRefreshToken(user.getLoginId());

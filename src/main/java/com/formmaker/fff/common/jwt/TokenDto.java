@@ -1,6 +1,6 @@
 package com.formmaker.fff.common.jwt;
 
-import com.formmaker.fff.common.jwt.RefreshToken;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
