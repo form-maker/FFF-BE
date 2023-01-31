@@ -95,7 +95,7 @@ public class StatsMethod {
         }
 
         List<SelectResponse> selectResponseList = new ArrayList<>();
-        List<Float> rankList = new ArrayList<>();
+        List<Float> rankList;
         int answerNum = 0;
         for (List<Integer> valuesOfAnswer : answerValueList) {
             List<Integer> selectCountList = new ArrayList<>();
@@ -107,17 +107,9 @@ public class StatsMethod {
             SelectResponse selectResponse = new SelectResponse(answerList.get(answerNum++).getAnswerValue(), rankList);
             selectResponseList.add(selectResponse);
         }
-        selectResponseList.sort((r1, r2) -> {
-            int size = Math.min(3, question.getAnswerList().size());
-            for(int i = 0; i < size; i++){
-                if(Objects.equals(r2.getRankList().get(i), r1.getRankList().get(i))){
-                    continue;
-                }
-                return r2.getRankList().get(i).compareTo(r1.getRankList().get(i));
-            }
-            return r2.getRankList().get(size-1).compareTo(r1.getRankList().get(size-1));
-
-        });
+        for(SelectResponse selectResponse : selectResponseList){
+        }
+        selectResponseList.sort((r1, r2) -> calculationToRank(r2.getRankList()).compareTo(calculationToRank(r1.getRankList())));
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
@@ -126,6 +118,15 @@ public class StatsMethod {
                 .questionSummary(question.getSummary())
                 .selectList(selectResponseList)
                 .build();
+    }
+
+    private Float calculationToRank(List<Float> rank){
+        float sum = 0.0f;
+        int size = rank.size()-1;
+        for(int i = 0; i < rank.size(); i++){
+            sum += rank.get(i) * (size-i);
+        }
+        return sum;
     }
 
     public QuestionStats statsLongDescriptive(List<Reply> replyList, Question question) {
@@ -170,7 +171,7 @@ public class StatsMethod {
         for (String key : map.keySet()) {
             descriptiveList.add(new DescriptiveResponse(key, map.get(key)));
         }
-        descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList());
+        descriptiveList.sort((s1, s2) -> s2.getValue().compareTo(s1.getValue()));
 
         List<String> descriptiveDataList = new ArrayList<>();
 
