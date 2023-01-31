@@ -95,7 +95,7 @@ public class StatsMethod {
         }
 
         List<SelectResponse> selectResponseList = new ArrayList<>();
-        List<Float> rankList = new ArrayList<>();
+        List<Float> rankList;
         int answerNum = 0;
         for (List<Integer> valuesOfAnswer : answerValueList) {
             List<Integer> selectCountList = new ArrayList<>();
@@ -170,7 +170,7 @@ public class StatsMethod {
         for (String key : map.keySet()) {
             descriptiveList.add(new DescriptiveResponse(key, map.get(key)));
         }
-        descriptiveList.stream().sorted((s1, s2) -> s2.getValue().compareTo(s1.getValue())).collect(Collectors.toList());
+        descriptiveList.sort((s1, s2) -> s2.getValue().compareTo(s1.getValue()));
 
         List<String> descriptiveDataList = new ArrayList<>();
 
