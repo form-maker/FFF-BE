@@ -1,7 +1,6 @@
 package com.formmaker.fff.reply.service;
 
 import com.formmaker.fff.common.exception.CustomException;
-import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.participant.ParticipantRepository;
@@ -12,19 +11,11 @@ import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
-import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CookieValue;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Null;
-import javax.xml.bind.DatatypeConverter;
 import java.util.*;
 
 import static com.formmaker.fff.common.exception.ErrorCode.*;
@@ -67,7 +58,6 @@ public class ReplyService {
             if (!(replyRequest.getQuestionType() == question.getQuestionType())) {
                 throw new CustomException(INVALID_QUESTION_TYPE);
             }
-
             switch (replyRequest.getQuestionType()) {
                 case STAR, SCORE, SLIDE, SINGLE_CHOICE -> {
                     replyList.add(replyMethod.replyToSingleValue(replyRequest, loginId));
@@ -78,7 +68,7 @@ public class ReplyService {
                 case RANK -> {
                     replyList.add(replyMethod.replyToRank(replyRequest, loginId));
                 }
-                case SHORT_DESCRIPTIVE, LONG_DESCRIPTIVE -> {
+                case SHORT_DESCRIPTIVE, LONG_DESCRIPTIVE, CONSENT -> {
                     replyList.add(replyMethod.replyToDescriptive(replyRequest, loginId));
                 }
             }
@@ -87,8 +77,6 @@ public class ReplyService {
 
 
         if(participant.isPresent()){
-//            throw new CustomException(ALREADY_ANSWERED);
-            /*이후 설문 응답 수정 허용시 주석해제*/
             Reply replyRequest;
             List<Reply> dbReplyList =  replyRepository.findAllByParticipant(participant.get());
             for(int i = 0; i < dbReplyList.size(); i++){

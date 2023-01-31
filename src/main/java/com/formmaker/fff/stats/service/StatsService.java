@@ -79,7 +79,9 @@ public class StatsService {
 
         for (Question question : questionList) {
             replyList = replyRepository.findAllByQuestionIdAndCreatedAtAfterAndCreatedAtBefore(question.getId(), startedAT.atStartOfDay(), endedAT.atStartOfDay());
-
+            if(question.getQuestionType() == QuestionTypeEnum.CONSENT){
+                continue;
+            }
             questionStatsList.add(question.getQuestionType().getStatsFn().apply(replyList, question));
         }
         return StatsResponse.builder()
@@ -191,7 +193,7 @@ public class StatsService {
                 ()->new CustomException(NOT_FOUND_SURVEY)
         );
         XSSFSheet sheet = wd.createSheet(survey.getTitle().replaceAll("[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]", ""));
-        Row row = null;
+        Row row;
         Cell cell = null;
 
         List<Question> questionList = survey.getQuestionList();

@@ -22,7 +22,8 @@ public enum QuestionTypeEnum {
     SHORT_DESCRIPTIVE(statsMethod::statsShortDescriptive, false),
     LONG_DESCRIPTIVE(statsMethod::statsLongDescriptive, false),
     STAR(statsMethod::statsOfPositiveValue, false),
-    SCORE(statsMethod::statsOfPositiveValue, false);
+    SCORE(statsMethod::statsOfPositiveValue, false),
+    CONSENT(statsMethod::statsConsent, false);
 
     private BiFunction<List<Reply>, Question, QuestionStats> statsFn;
     private Boolean hasAnswer;
