@@ -3,17 +3,17 @@ package com.formmaker.fff.mail.controller;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.mail.service.MailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class MailController {
@@ -29,5 +29,11 @@ public class MailController {
     public ResponseEntity<ResponseMessage> verityCode(@RequestParam String email, @RequestParam String code) {
         mailService.verifyCode (email, code);
         return new ResponseEntity<>(new ResponseMessage<>("인증이 완료되었습니다.", 200, null), HttpStatus.OK);
+    }
+
+    @Scheduled(cron = "0 30 8 * * *")
+    public void surveyFinishNotice() throws MessagingException, UnsupportedEncodingException {
+        String msg = mailService.sendFinishMessage();
+        log.info(msg);
     }
 }

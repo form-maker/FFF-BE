@@ -22,7 +22,6 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     Optional<Survey> findByIdAndStatus(Long id, StatusTypeEnum status);
 
 
-
     Page<Survey> findByUserIdAndStatus(Long userId, StatusTypeEnum status, Pageable pageable);
 
     // 삭제
@@ -41,9 +40,9 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     @Query("update Survey s set s.status = :done where s.endedAt = :today")
     void updateEndSurvey(StatusTypeEnum done, LocalDate today);
 
+    Page<Survey> findAllByStatus(Pageable pageable, StatusTypeEnum inProceed);
 
-    List<Survey> findAllByEndedAt(LocalDate today);
-
-     Page<Survey> findAllByStatus(Pageable pageable, StatusTypeEnum inProceed);
     Optional<Survey> findByIdAndUserId(Long surveyId, Long userId);
+
+    List<Survey> findAllByEndedAtAndStatusNot(LocalDate minusDays, StatusTypeEnum delete);
 }
