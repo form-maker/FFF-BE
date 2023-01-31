@@ -32,7 +32,6 @@ public class MailController {
     }
 
     @Scheduled(cron = "0 30 8 * * *")
-    @GetMapping("/finish")
     public void surveyFinishNotice() throws MessagingException, UnsupportedEncodingException {
         String msg = mailService.sendFinishMessage();
         log.info(msg);

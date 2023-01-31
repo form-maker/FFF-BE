@@ -3,20 +3,22 @@ package com.formmaker.fff.mail.service;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.redis.RedisUtil;
+import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Random;
 import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_EMAIL;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MailService {
     private final JavaMailSender javaMailSender;
@@ -60,8 +63,8 @@ public class MailService {
         try {
             javaMailSender.send(message);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException(ErrorCode.FAILED_TO_SEND_MAIL);
+            log.error(e.getMessage());
+            log.error(ErrorCode.FAILED_TO_SEND_MAIL.getMsg());
         }
 
         redisUtil.setDataExpire(email, authNum, 5 * 60 * 1000L);
@@ -107,7 +110,7 @@ public class MailService {
         return authNum = key.toString();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public void verifyCode(String email, String code) {
         String authCode = redisUtil.getData(email);
         if (!authCode.equals(code)) {
@@ -115,9 +118,9 @@ public class MailService {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public String sendFinishMessage() throws MessagingException, UnsupportedEncodingException {
-        List<Survey> allByEndedSurvey = surveyRepository.findAllByEndedAt(LocalDate.now().minusDays(1));
+        List<Survey> allByEndedSurvey = surveyRepository.findAllByEndedAtAndStatusNot(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
         if (allByEndedSurvey.isEmpty()) {
             return LocalDate.now().minusDays(1) + " 에 마감된 설문이 없습니다.";
         }
@@ -132,8 +135,8 @@ public class MailService {
             try {
                 javaMailSender.send(message);
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new CustomException(ErrorCode.FAILED_TO_SEND_MAIL);
+                log.error(e.getMessage());
+                log.error(ErrorCode.FAILED_TO_SEND_MAIL.getMsg());
             }
         }
 
