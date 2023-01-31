@@ -190,7 +190,7 @@ public class StatsService {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 ()->new CustomException(NOT_FOUND_SURVEY)
         );
-        XSSFSheet sheet = wd.createSheet(survey.getTitle());
+        XSSFSheet sheet = wd.createSheet(survey.getTitle().replaceAll("[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]", ""));
         Row row = null;
         Cell cell = null;
 
