@@ -68,9 +68,9 @@ public class UserService {
         boolean check = Pattern.matches( "^[a-z0-9]{4,16}$",loginId);
         if(!check){
            throw new CustomException(PATTERN);
-        }else{
-            checkLoginId(loginId);
         }
+            checkLoginId(loginId);
+        
 
     }
 
