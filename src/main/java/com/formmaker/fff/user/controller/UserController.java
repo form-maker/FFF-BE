@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 
 @RestController
 @RequestMapping("/api/user")
@@ -36,7 +37,7 @@ public class UserController {
     }
     @GetMapping("/signup/loginid")
     public ResponseEntity<ResponseMessage> duplicateId(@RequestParam String loginId ){
-        userService.checkLoginId(loginId);
+        userService.isLoginId(loginId);
         return new ResponseEntity<>(new ResponseMessage<>("사용가능한 아이디입니다.",200,null), HttpStatus.OK);
     }
 
