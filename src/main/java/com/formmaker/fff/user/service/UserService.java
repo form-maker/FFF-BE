@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 
 import static com.formmaker.fff.common.exception.ErrorCode.*;
@@ -62,6 +63,15 @@ public class UserService {
         if (userRepository.findByLoginId(loginId).isPresent()) {
             throw new CustomException(DUPLICATE_ID);
         }
+    }
+    public void isLoginId(String loginId){
+        boolean check = Pattern.matches( "^[a-z0-9]{4,16}$",loginId);
+        if(!check){
+           throw new CustomException(PATTERN);
+        }else{
+            checkLoginId(loginId);
+        }
+
     }
 
     public void checkUsername(String username){
