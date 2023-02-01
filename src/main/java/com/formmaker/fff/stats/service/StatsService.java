@@ -180,7 +180,7 @@ public class StatsService {
         QuestionTypeEnum type = reply.getQuestionType();
         switch (type){
             case MULTIPLE_CHOICE -> {return reply.getSelectValue().replace('|', ',');}
-            case SHORT_DESCRIPTIVE, LONG_DESCRIPTIVE -> {return reply.getDescriptive();}
+            case SHORT_DESCRIPTIVE, LONG_DESCRIPTIVE, CONSENT -> {return reply.getDescriptive();}
             case RANK -> {return reply.getSelectValue().substring(1, reply.getSelectValue().length()-1).replace("\"", "");}
         }
         return reply.getSelectValue();

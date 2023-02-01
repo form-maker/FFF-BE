@@ -28,6 +28,7 @@ public class Question {
     @Enumerated(value = EnumType.STRING)
     private QuestionTypeEnum questionType;
 
+    @Column(length = 500)
     private String summary;
 
     @Column(nullable = false)
