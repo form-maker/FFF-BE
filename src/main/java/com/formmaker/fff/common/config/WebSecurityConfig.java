@@ -57,7 +57,7 @@ public class WebSecurityConfig {
                 .antMatchers("/swagger**").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
                 /* sse */
-//                .antMatchers("/api/sse/**").permitAll()
+                .antMatchers("/api/sse/**").permitAll()
                 /* certbot */
                 .antMatchers("/.well-known/acme-challenge/83uJnLcbeDXcIbvL3Tv8WrLtVqvz4kr5A12i5E2IsPU").permitAll()
                 .antMatchers("/.well-known/acme-challenge/KlMCBPNioLlCM0x08hj7nkV8nJ53ibdKXY2lEYQMu1A").permitAll()
