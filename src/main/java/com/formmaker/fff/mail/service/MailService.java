@@ -23,6 +23,8 @@ import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_EMAIL;
 
@@ -41,6 +43,16 @@ public class MailService {
 
     @Transactional
     public void sendSimpleMessage(String email) throws MessagingException, UnsupportedEncodingException {
+        /*
+            이메일 형식 체크
+         */
+        String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(email);
+        if (!matcher.matches()) {
+            throw new CustomException(ErrorCode.EMAIL);
+        }
+
         /*
             이메일 중복 체크
          */
