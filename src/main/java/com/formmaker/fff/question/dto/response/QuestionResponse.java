@@ -18,5 +18,6 @@ public class QuestionResponse {
     private Integer volume;
     private Integer totalQuestion;
     private String questionTitle;
+    private boolean isRequired;
     private List<AnswerResponse> answerList = new ArrayList<>();
 }

@@ -39,6 +39,8 @@ public class Question {
 
     private Integer volume;
 
+    private boolean isRequired;
+
     private Long surveyId;
 
     @OneToMany
@@ -50,7 +52,7 @@ public class Question {
     private List<Answer> answerList = new ArrayList<>();
 
     @Builder
-    public Question(Long surveyId, QuestionTypeEnum questionType, String summary, String title, Integer questionNum, Integer volume) {
+    public Question(Long surveyId, QuestionTypeEnum questionType, String summary, String title, Integer questionNum, boolean isRequired ,  Integer volume) {
         this.surveyId = surveyId;
         this.questionType = questionType;
         this.summary = summary;
@@ -63,8 +65,8 @@ public class Question {
             if(volume == 0 || volume > 5){
                 throw  new CustomException(ErrorCode.INVALID_FORM_DATA);
             }
-
         }
+        this.isRequired = isRequired;
         this.volume = volume;
     }
 

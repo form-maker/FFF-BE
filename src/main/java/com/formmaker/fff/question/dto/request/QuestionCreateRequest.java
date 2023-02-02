@@ -12,5 +12,6 @@ public class QuestionCreateRequest {
     private String questionSummary;
     private Integer volume;
     private String questionTitle;
+    private Boolean isRequired = false;
     private List<String> answerList = new ArrayList<>();
 }

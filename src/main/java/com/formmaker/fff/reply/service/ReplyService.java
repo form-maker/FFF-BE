@@ -60,15 +60,24 @@ public class ReplyService {
             }
             switch (replyRequest.getQuestionType()) {
                 case STAR, SCORE, SLIDE, SINGLE_CHOICE -> {
-                    replyList.add(replyMethod.replyToSingleValue(replyRequest, loginId));
+                    if(question.isRequired()&&replyRequest.getSelectValue()==null) {
+                        throw new CustomException(CHECK_ANSWER);
+                    }
+                    replyList.add(replyMethod.replyToSingleValue(replyRequest, loginId ));
                 }
                 case MULTIPLE_CHOICE -> {
+                    if(question.isRequired()&&replyRequest.getSelectValue()==null) {
+                        throw new CustomException(CHECK_ANSWER);
+                    }
                     replyList.add(replyMethod.replyToMultipleValue(replyRequest, loginId));
                 }
                 case RANK -> {
                     replyList.add(replyMethod.replyToRank(replyRequest, loginId));
                 }
                 case SHORT_DESCRIPTIVE, LONG_DESCRIPTIVE, CONSENT -> {
+                    if(question.isRequired()&&replyRequest.getDescriptive()==null) {
+                        throw new CustomException(CHECK_ANSWER);
+                    }
                     replyList.add(replyMethod.replyToDescriptive(replyRequest, loginId));
                 }
             }
