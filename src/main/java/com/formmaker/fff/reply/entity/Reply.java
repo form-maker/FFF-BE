@@ -30,6 +30,7 @@ public class Reply extends TimeStamped {
 
     private String selectValue;
 
+    @Column(length = 500)
     private String descriptive;
 
      private String loginId;
