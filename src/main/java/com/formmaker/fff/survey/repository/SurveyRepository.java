@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,21 +25,11 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
 
     Page<Survey> findByUserIdAndStatus(Long userId, StatusTypeEnum status, Pageable pageable);
 
-    // 삭제
-//    @Modifying
-//    @Transactional
-//    @Query("update Survey s set s.dDay = s.dDay-1 where s.status = :status")
-//    void updateDDay(StatusTypeEnum status);
 
     @Modifying
     @Transactional
-    @Query("update Survey s set s.status = :start where s.startedAt = :today")
-    void updateStartSurvey(StatusTypeEnum start, LocalDate today);
-
-    @Modifying
-    @Transactional
-    @Query("update Survey s set s.status = :done where s.endedAt = :today")
-    void updateEndSurvey(StatusTypeEnum done, LocalDate today);
+    @Query("update Survey s set s.status = :done where s.endedAt = :today and s.status <> :delete")
+    void updateSurvey(@Param("done") StatusTypeEnum done, @Param("today") LocalDate today, @Param("delete") StatusTypeEnum delete);
 
     Page<Survey> findAllByStatus(Pageable pageable, StatusTypeEnum inProceed);
 
