@@ -39,7 +39,6 @@ public class Reply extends TimeStamped {
     private Participant participant;
 
 
-
     public Reply(Long questionId, Integer questionNum, QuestionTypeEnum questionType, String selectValue, String descriptive, String loginId) {
         this.questionId = questionId;
         this.questionNum = questionNum;

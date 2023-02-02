@@ -70,6 +70,7 @@ public class SurveyService {
                     .summary(questionDto.getQuestionSummary())
                     .questionType(questionDto.getQuestionType())
                     .volume(questionDto.getVolume())
+                    .isRequired(questionDto.getIsRequired())
                     .build();
             if(question.getQuestionType().getHasAnswer() && questionDto.getAnswerList().size() == 0){
                 throw new CustomException(EMPTY_ANSWER);

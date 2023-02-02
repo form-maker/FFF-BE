@@ -40,7 +40,7 @@ public class QuestionService {
         Survey survey = surveyRepository.findById(question.getSurveyId()).orElseThrow(
                 ()-> new CustomException(NOT_FOUND_SURVEY));
 
-        return new QuestionResponse(question.getId(), question.getQuestionType(), question.getSummary(), question.getQuestionNum(), question.getVolume(),survey.getQuestionList().size(),question.getTitle(), answerResponses);
+        return new QuestionResponse(question.getId(), question.getQuestionType(), question.getSummary(), question.getQuestionNum(), question.getVolume(),survey.getQuestionList().size(),question.getTitle(), question.isRequired() ,answerResponses);
     }
 
 }
