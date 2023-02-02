@@ -37,7 +37,7 @@ public class ReplyMethod {
     // 별점, 스코어, 슬라이드, 단수응답 답변 처리 로직
     public Reply replyToSingleValue(ReplyRequest replyRequest, String loginId) {
         String selectValue = replyRequest.getSelectValue().get(0).toString();
-        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValue,null, loginId);
+        return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValue, null, loginId);
     }
 
 
