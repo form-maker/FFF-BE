@@ -43,6 +43,7 @@ public enum ErrorCode {
     INVALID_QUESTION_NUM("질문 번호와 일치하지 않는 응답입니다.", 400),
     INVALID_FORM_DATA("유효하지 않은 형식의 데이터입니다.", 400),
     ALREADY_ANSWERED("이미 응답한 설문입니다.",400),
+    CHECK_ANSWER("필수 응답 질문입니다.",400),
 
     /*인증 메일 발송 에러*/
     FAILED_TO_SEND_MAIL("메일 발송에 실패하였습니다.", 400),
