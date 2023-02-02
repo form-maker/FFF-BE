@@ -26,6 +26,7 @@ public class SurveyReadResponse {
     private Integer achievement;
     private StatusTypeEnum status;
     private Integer totalTime;
+    private Integer participant;
     private List<Long> questionIdList = new ArrayList<>();
     private List<QuestionNavigationResponse> questionList;
     private List<GiftResponse> giftList;

@@ -173,6 +173,7 @@ public class SurveyService {
                 .achievement(survey.getAchievement())
                 .status(survey.getStatus())
                 .totalTime((int) Math.ceil(survey.getQuestionList().size() * 25 / 60f))
+                .participant(survey.getParticipant())
                 .questionIdList(questionResponses)
                 .questionList(questionNavigationResponseList)
                 .giftList(giftResponseList)
