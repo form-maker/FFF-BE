@@ -16,7 +16,7 @@ public class SurveyScheduler {
 
     private final SurveyRepository surveyRepository;
 
-    @Scheduled(cron = "0 0 14 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void scheduleTaskUsingCronExpression() {
         LocalDate today = LocalDate.now();
         LocalDate yesterday = LocalDate.now().minusDays(1);
