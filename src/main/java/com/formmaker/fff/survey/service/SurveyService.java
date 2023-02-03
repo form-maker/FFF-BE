@@ -4,8 +4,10 @@ package com.formmaker.fff.survey.service;
 import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.answer.repositoy.AnswerRepository;
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.CustomValidException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.AnswerTypeEnum;
+import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.gift.dto.request.GiftCreateRequest;
@@ -60,21 +62,29 @@ public class SurveyService {
         List<Answer> answerList = new ArrayList<>();
         List<Gift> giftList = new ArrayList<>();
 
-        int questionNum = 1;
+        int questionNum = 0;
         int answerNum;
         for(QuestionCreateRequest questionDto : requestDto.getQuestionList()){
             answerNum = 1;
             Question question = Question.builder()
                     .title(questionDto.getQuestionTitle())
-                    .questionNum(questionNum++)
+                    .questionNum(++questionNum)
                     .summary(questionDto.getQuestionSummary())
                     .questionType(questionDto.getQuestionType())
                     .volume(questionDto.getVolume())
                     .isRequired(questionDto.getIsRequired())
                     .build();
-            if(question.getQuestionType().getHasAnswer() && questionDto.getAnswerList().size() == 0){
-                throw new CustomException(EMPTY_ANSWER);
+
+            if(questionDto.getQuestionTitle().isBlank()){
+                throw new CustomValidException(questionNum,"제목(이)");
             }
+            if(question.getQuestionType().getHasAnswer() && questionDto.getAnswerList().size() == 0){
+                throw new CustomValidException(questionNum,"항목(이)");
+            }
+            if(question.getQuestionType()==QuestionTypeEnum.SLIDE&&questionDto.getVolume()==0){
+                throw new CustomValidException(questionNum,"범위");
+            }
+
             for(String answerStr : questionDto.getAnswerList()){
                 Answer answer = Answer.builder()
                         .answerType(AnswerTypeEnum.TEXT)

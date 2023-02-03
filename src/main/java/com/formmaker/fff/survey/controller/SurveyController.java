@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/survey")
@@ -27,7 +28,7 @@ public class SurveyController {
 
 
     @PostMapping
-    public ResponseEntity<ResponseMessage> createSurvey(@RequestBody SurveyCreateRequest requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseMessage> createSurvey(@Valid @RequestBody SurveyCreateRequest requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails.getUserId();
         surveyService.createSurvey(requestDto, userId);
         ResponseMessage responseMessage = new ResponseMessage<>("설문 생성 성공", 200);
