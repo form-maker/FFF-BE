@@ -47,13 +47,9 @@ public class Survey extends TimeStamped {
     @Enumerated(value = EnumType.STRING)
     private StatusTypeEnum status;
 
-//    @Column(nullable = false)
-//    private Long userId;
-
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
-
 
     @OneToMany
     @JoinColumn(name = "surveyId")
