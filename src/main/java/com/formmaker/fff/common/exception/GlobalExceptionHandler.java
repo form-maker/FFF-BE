@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({CustomValidException.class})
     protected ResponseEntity handleCustomValidException(CustomValidException ex){
-        return new ResponseEntity(new ResponseMessage(ex.getNumber()+"번 문제의 "+ex.getFieldName()+"가 비었습니다.",400),HttpStatus.OK);
+        return new ResponseEntity(new ResponseMessage(ex.getNumber()+"번 문제의 "+ex.getFieldName()+" 비었습니다.",400),HttpStatus.OK);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
