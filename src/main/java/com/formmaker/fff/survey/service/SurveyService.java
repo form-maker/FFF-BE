@@ -49,10 +49,7 @@ public class SurveyService {
     private final GiftRepository giftRepository;
 
     @Transactional
-    public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomException(NOT_FOUND_USER_INFO)
-        );
+    public void createSurvey(SurveyCreateRequest requestDto, Long userId, User user) {
         Survey survey = Survey.builder()
                 .title(requestDto.getTitle())
                 .summary(requestDto.getSummary())
