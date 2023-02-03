@@ -2,7 +2,6 @@ package com.formmaker.fff.question.dto.request;
 
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 

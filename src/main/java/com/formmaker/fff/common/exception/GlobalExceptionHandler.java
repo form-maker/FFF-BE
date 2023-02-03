@@ -23,11 +23,11 @@ public class GlobalExceptionHandler {
                 , HttpStatus.OK);
     }
 
-//    @ExceptionHandler({Exception.class})
-//    protected ResponseEntity handleServerException(Exception ex) {
-//        return new ResponseEntity(new ResponseMessage(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), "error")
-//                , HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler({CustomValidException.class})
+    protected ResponseEntity handleCustomValidException(CustomValidException ex){
+        return new ResponseEntity(new ResponseMessage(ex.getNumber()+"번 문제의 "+ex.getFieldName()+" 비었습니다.",400),HttpStatus.OK);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidMessageResponse> methodValidException (MethodArgumentNotValidException e, HttpServletRequest request){
         ValidMessageResponse errorResponse = ValidMessageResponse.makeErrorResponse(e.getBindingResult());
