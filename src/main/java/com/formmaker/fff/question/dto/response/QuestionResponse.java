@@ -19,5 +19,6 @@ public class QuestionResponse {
     private Integer totalQuestion;
     private String questionTitle;
     private boolean isRequired;
+    private Integer participant;
     private List<AnswerResponse> answerList = new ArrayList<>();
 }
