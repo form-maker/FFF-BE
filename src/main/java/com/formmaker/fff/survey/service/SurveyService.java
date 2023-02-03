@@ -22,6 +22,8 @@ import com.formmaker.fff.survey.dto.response.SurveyMyResponse;
 import com.formmaker.fff.survey.dto.response.SurveyReadResponse;
 import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
+import com.formmaker.fff.user.entity.User;
+import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static com.formmaker.fff.common.exception.ErrorCode.*;
 
@@ -42,19 +43,23 @@ import static com.formmaker.fff.common.exception.ErrorCode.*;
 @RequiredArgsConstructor
 public class SurveyService {
     private final SurveyRepository surveyRepository;
+    private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final GiftRepository giftRepository;
 
     @Transactional
     public void createSurvey(SurveyCreateRequest requestDto, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(NOT_FOUND_USER_INFO)
+        );
         Survey survey = Survey.builder()
                 .title(requestDto.getTitle())
                 .summary(requestDto.getSummary())
                 .startedAt(requestDto.getStartedAt())
                 .endedAt(requestDto.getEndedAt())
                 .achievement(requestDto.getAchievement())
-                .userId(userId)
+                .user(user)
                 .build();
         List<Question> questionList = new ArrayList<>();
         List<Answer> answerList = new ArrayList<>();
@@ -186,7 +191,7 @@ public class SurveyService {
                         () -> new CustomException(NOT_FOUND_SURVEY)
         );
 
-        if (!survey.getUserId().equals(loginId)) {
+        if (!survey.getUser().getId().equals(loginId)) {
             throw new CustomException((ErrorCode.NOT_MATCH_USER));
         }
         survey.updateStatus(StatusTypeEnum.DELETE);

@@ -2,13 +2,11 @@ package com.formmaker.fff.stats.service;
 
 
 import com.formmaker.fff.common.exception.CustomException;
-import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.entity.Question;
-import com.formmaker.fff.question.repository.QuestionRepository;
 import com.formmaker.fff.reply.entity.Reply;
 import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.stats.dto.DailyParticipant;
@@ -18,7 +16,6 @@ import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
 import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
-import com.formmaker.fff.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
@@ -35,7 +32,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -58,7 +54,7 @@ public class StatsService {
                 () -> new CustomException(NOT_FOUND_SURVEY)
         );
 
-        if(!survey.getUserId().equals(userId)){
+        if(!survey.getUser().getId().equals(userId)){
             throw new CustomException(NOT_MATCH_USER);
         }
 

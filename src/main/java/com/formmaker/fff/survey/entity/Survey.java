@@ -5,6 +5,7 @@ import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.gift.entity.Gift;
 import com.formmaker.fff.participant.Participant;
 import com.formmaker.fff.question.entity.Question;
+import com.formmaker.fff.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,8 +47,13 @@ public class Survey extends TimeStamped {
     @Enumerated(value = EnumType.STRING)
     private StatusTypeEnum status;
 
-    @Column(nullable = false)
-    private Long userId;
+//    @Column(nullable = false)
+//    private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
 
     @OneToMany
     @JoinColumn(name = "surveyId")
@@ -60,7 +66,7 @@ public class Survey extends TimeStamped {
     private List<Gift> giftList = new ArrayList<>();
 
     @Builder
-    public Survey(String title, String summary, LocalDate startedAt, LocalDate endedAt, Integer achievement, Long userId) {
+    public Survey(String title, String summary, LocalDate startedAt, LocalDate endedAt, Integer achievement, User user) {
         this.title = title;
         this.summary = summary;
         this.startedAt = startedAt;
@@ -68,7 +74,7 @@ public class Survey extends TimeStamped {
         this.status = startedAt.isAfter(LocalDate.now()) ? StatusTypeEnum.NOT_START : endedAt.isBefore(LocalDate.now()) ? StatusTypeEnum.DONE : StatusTypeEnum.IN_PROCEED;
         this.participant = 0;
         this.achievement = achievement;
-        this.userId = userId;
+        this.user = user;
     }
 
     public void addQuestionList(Question question){

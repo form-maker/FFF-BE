@@ -1,7 +1,6 @@
 package com.formmaker.fff.mail.service;
 
 import com.formmaker.fff.common.exception.CustomException;
-import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.redis.RedisUtil;
 import com.formmaker.fff.common.type.StatusTypeEnum;
 import com.formmaker.fff.survey.entity.Survey;
@@ -26,7 +25,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.formmaker.fff.common.exception.ErrorCode.DUPLICATE_EMAIL;
+import static com.formmaker.fff.common.exception.ErrorCode.*;
 
 @Service
 @Slf4j
@@ -50,7 +49,7 @@ public class MailService {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(email);
         if (!matcher.matches()) {
-            throw new CustomException(ErrorCode.EMAIL);
+            throw new CustomException(EMAIL);
         }
 
         /*
@@ -76,7 +75,7 @@ public class MailService {
             javaMailSender.send(message);
         } catch (Exception e) {
             log.error(e.getMessage());
-            log.error(ErrorCode.FAILED_TO_SEND_MAIL.getMsg());
+            log.error(FAILED_TO_SEND_MAIL.getMsg());
         }
 
         redisUtil.setDataExpire(email, authNum, 5 * 60 * 1000L);
@@ -126,7 +125,7 @@ public class MailService {
     public void verifyCode(String email, String code) {
         String authCode = redisUtil.getData(email);
         if (!authCode.equals(code)) {
-            throw new CustomException(ErrorCode.CODE_DOSE_NOT_MATCH);
+            throw new CustomException(CODE_DOSE_NOT_MATCH);
         }
     }
 
@@ -138,17 +137,18 @@ public class MailService {
         }
 
         for (Survey survey : allByEndedSurvey) {
-            User user = userRepository.findById(survey.getUserId()).orElseThrow(
-                    () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
+
+            User user = userRepository.findById(survey.getUser().getId()).orElseThrow(
+                    () -> new CustomException(NOT_FOUND_USER_INFO)
             );
             String email = user.getEmail();
-            MimeMessage message = createFinishMessage(email);
+            MimeMessage message = createMessage(email);
 
             try {
                 javaMailSender.send(message);
             } catch (Exception e) {
                 log.error(e.getMessage());
-                log.error(ErrorCode.FAILED_TO_SEND_MAIL.getMsg());
+                log.error(FAILED_TO_SEND_MAIL.getMsg());
             }
         }
 
