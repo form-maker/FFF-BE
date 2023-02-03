@@ -76,13 +76,13 @@ public class SurveyService {
                     .build();
 
             if(questionDto.getQuestionTitle().isBlank()){
-                throw new CustomValidException(questionNum,"제목(이)");
+                throw new CustomValidException(questionNum,"제목이");
             }
             if(question.getQuestionType().getHasAnswer() && questionDto.getAnswerList().size() == 0){
-                throw new CustomValidException(questionNum,"항목(이)");
+                throw new CustomValidException(questionNum,"항목이");
             }
             if(question.getQuestionType()==QuestionTypeEnum.SLIDE&&questionDto.getVolume()==0){
-                throw new CustomValidException(questionNum,"범위");
+                throw new CustomValidException(questionNum,"범위가");
             }
 
             for(String answerStr : questionDto.getAnswerList()){
