@@ -6,12 +6,13 @@ import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.common.response.security.UserDetailsImpl;
 import com.formmaker.fff.common.type.SortTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
-import com.formmaker.fff.survey.dto.response.MyPageResponse;
-import com.formmaker.fff.survey.service.SurveyService;
 import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
+import com.formmaker.fff.survey.dto.response.MyPageResponse;
 import com.formmaker.fff.survey.dto.response.SurveyMainResponse;
 import com.formmaker.fff.survey.dto.response.SurveyMyResponse;
 import com.formmaker.fff.survey.dto.response.SurveyReadResponse;
+import com.formmaker.fff.survey.service.SurveyService;
+import com.formmaker.fff.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,8 @@ public class SurveyController {
     @PostMapping
     public ResponseEntity<ResponseMessage> createSurvey(@RequestBody SurveyCreateRequest requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long userId = userDetails.getUserId();
-        surveyService.createSurvey(requestDto, userId);
+        User user = userDetails.getUser();
+        surveyService.createSurvey(requestDto, userId, user);
         ResponseMessage responseMessage = new ResponseMessage<>("설문 생성 성공", 200);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
 
