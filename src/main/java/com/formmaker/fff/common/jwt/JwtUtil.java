@@ -40,8 +40,8 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String REFRESH_HEADER = "REFRESH_Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIME = 3 * 24 * 60 * 60 * 1000L;
-    private static final long REFRESH_TOKEN_VALID_TIME = 3 * 24 * 60 * 60 * 1000L;
+    private static final long TOKEN_TIME = 24 * 60 * 60 * 1000L;
+    private static final long REFRESH_TOKEN_VALID_TIME = 28 * 24 * 60 * 60 * 1000L;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Value("${jwt.secret.key}")
@@ -74,7 +74,8 @@ public class JwtUtil {
     public TokenDto createRefreshToken(String loginId) {
         Claims claims = Jwts.claims().setSubject(loginId);
         Date date = new Date();
-        String refreshToken = Jwts.builder()
+        String refreshToken =
+                Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_VALID_TIME))
                 .setIssuedAt(date)
