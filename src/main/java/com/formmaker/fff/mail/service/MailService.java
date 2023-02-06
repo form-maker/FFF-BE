@@ -142,7 +142,7 @@ public class MailService {
                     () -> new CustomException(NOT_FOUND_USER_INFO)
             );
             String email = user.getEmail();
-            MimeMessage message = createMessage(email);
+            MimeMessage message = createFinishMessage(email);
 
             try {
                 javaMailSender.send(message);
