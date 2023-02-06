@@ -34,7 +34,7 @@ public class RefreshController {
         }
         if(map.get("status").equals("200")){
             response.addHeader(JwtUtil.AUTHORIZATION_HEADER,map.get("accessToken"));
-            response.addHeader(JwtUtil.REFRESH_HEADER,rToken);
+            response.addHeader(JwtUtil.REFRESH_HEADER,map.get("refreshToken"));
         }
         return new ResponseEntity<>(new ResponseMessage("RefreshToken이 유효합니다",200),HttpStatus.OK);
     }

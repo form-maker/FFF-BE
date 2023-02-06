@@ -145,6 +145,18 @@ public class JwtUtil {
         UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(memberName);     /* 이름을 통해 사용자 조회 */
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); //userDetail 및 권한 넣어 생성
     }
+
+    public String recreationRefreshToken(String loginId) {
+        Claims claims = Jwts.claims().setSubject(loginId);
+        Date date = new Date();
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_VALID_TIME))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
+        return refreshToken;
+    }
 }
 
 
