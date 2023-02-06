@@ -40,8 +40,9 @@ public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String REFRESH_HEADER = "REFRESH_Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    //
+
     private static final long TOKEN_TIME = 24 * 60 * 60 * 1000L;
+
     private static final long REFRESH_TOKEN_VALID_TIME = 28 * 24 * 60 * 60 * 1000L;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
 
