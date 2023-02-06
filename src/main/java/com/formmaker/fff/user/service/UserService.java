@@ -117,15 +117,15 @@ public class UserService {
     public Map<String, String> validateRefreshToken(String refreshToken){
 
         if(getRefreshToken(refreshToken).equals(refreshToken)){
-            return createRefreshJson(jwtUtil.recreationAccessToken(jwtUtil.getUserInfo(refreshToken)
-                    .getSubject()));
+            return createRefreshJson(jwtUtil.getUserInfo(refreshToken)
+                    .getSubject());
         }else {
             return createRefreshJson(null);
         }
     }
-    public Map<String,String> createRefreshJson(String createdAccessToken){
+    public Map<String,String> createRefreshJson(String loginId){
         Map<String,String> map = new HashMap<>();
-        if(createdAccessToken == null){
+        if(loginId == null){
             map.put("errortype","Forbidden");
             map.put("status","400");
             map.put("message","리프레쉬 토큰이 일치하지 않습니다. 로그인이 필요합니다.");
@@ -133,7 +133,8 @@ public class UserService {
         }
         map.put("status","200");
         map.put("message","리프레쉬토큰을 이용한 Access Token 생성이 완료되었습니다.");
-        map.put("accessToken",createdAccessToken);
+        map.put("accessToken",jwtUtil.recreationAccessToken(loginId));
+        map.put("refreshToken", jwtUtil.recreationRefreshToken(loginId));
         return map;
     }
 }
