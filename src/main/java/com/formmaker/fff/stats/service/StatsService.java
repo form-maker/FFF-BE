@@ -1,6 +1,7 @@
 package com.formmaker.fff.stats.service;
 
 
+import com.formmaker.fff.common.aop.timer.ExeTimer;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.type.QuestionTypeEnum;
 import com.formmaker.fff.common.type.StatusTypeEnum;
@@ -146,12 +147,15 @@ public class StatsService {
         try{
             csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(headers));
             int checkValue;
+            User user;
+            String loginId;
             for(Participant participant : survey.getParticipantList()){
-                User user = userRepository.findByLoginId(participant.getLoginId()).orElse(new User(null, "비회원", "비회원"));
-
+                loginId = participant.getLoginId();
+                user = new User(null, "비회원", "비회원");
+                user = loginId.length() < 17 ? userRepository.findByLoginId(loginId).orElse(user):user;
                 List<Reply> replyList = participant.getReplyList().stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
                 List<String> userData = new ArrayList<>();
-                String loginId = user.getLoginId();
+
                 userData.add(ShadeToLoginId(user));
                 userData.add(user.getEmail());
                 checkValue = 1;
@@ -182,6 +186,7 @@ public class StatsService {
         return reply.getSelectValue();
     }
 
+
     @Transactional
     public XSSFWorkbook getStatsXlsxFile(Long surveyId){
         XSSFWorkbook wd = new XSSFWorkbook();
@@ -204,10 +209,13 @@ public class StatsService {
         }
         int rowIndex = 1;
         int checkValue;
+        User user;
         for(Participant participant : survey.getParticipantList()){
+            String loginId = participant.getLoginId();
             cellIndex = 0;
             row = sheet.createRow(rowIndex);
-            User user = userRepository.findByLoginId(participant.getLoginId()).orElse(new User(null, "비회원", "비회원"));
+            user = new User(null, "비회원", "비회원");
+            user = loginId.length() < 17 ? userRepository.findByLoginId(loginId).orElse(user):user;
             row.createCell(cellIndex++).setCellValue(ShadeToLoginId(user));
             row.createCell(cellIndex++).setCellValue(user.getEmail());
             checkValue = 1;
@@ -223,6 +231,8 @@ public class StatsService {
         }
         return wd;
     }
+
+
 
     private String ShadeToLoginId(User user){
         String loginId = user.getLoginId();
