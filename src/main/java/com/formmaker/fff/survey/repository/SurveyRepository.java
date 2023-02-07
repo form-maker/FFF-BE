@@ -36,4 +36,10 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     Optional<Survey> findByIdAndUserId(Long surveyId, Long userId);
 
     List<Survey> findAllByEndedAtAndStatusNot(LocalDate minusDays, StatusTypeEnum delete);
+
+    @Query("select u.email from User u inner join Survey s " +
+            "on not s.status = :delete " +
+            "and s.endedAt = :minusDays " +
+            "and s.user.id = u.id")
+    List<String> findAllEndedSurveyUserEmail(LocalDate minusDays, StatusTypeEnum delete);
 }

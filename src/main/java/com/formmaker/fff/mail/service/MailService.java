@@ -3,9 +3,7 @@ package com.formmaker.fff.mail.service;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.redis.RedisUtil;
 import com.formmaker.fff.common.type.StatusTypeEnum;
-import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
-import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StopWatch;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -129,20 +128,42 @@ public class MailService {
         }
     }
 
+//    @Transactional(readOnly = true)
+//    public String sendFinishMessage() throws MessagingException, UnsupportedEncodingException {
+//        List<Survey> allByEndedSurvey = surveyRepository.findAllByEndedAtAndStatusNot(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
+//        if (allByEndedSurvey.isEmpty()) {
+//            return LocalDate.now().minusDays(1) + " 에 마감된 설문이 없습니다.";
+//        }
+//
+//        for (Survey survey : allByEndedSurvey) {
+//
+//            User user = userRepository.findById(survey.getUser().getId()).orElseThrow(
+//                    () -> new CustomException(NOT_FOUND_USER_INFO)
+//            );
+//            String email = user.getEmail();
+//            MimeMessage message = createFinishMessage(email);
+//
+//            try {
+//                javaMailSender.send(message);
+//            } catch (Exception e) {
+//                log.error(e.getMessage());
+//                log.error(FAILED_TO_SEND_MAIL.getMsg());
+//            }
+//        }
+//
+//        return "마감 메일 발송이 완료되었습니다.";
+//    }
+
     @Transactional(readOnly = true)
     public String sendFinishMessage() throws MessagingException, UnsupportedEncodingException {
-        List<Survey> allByEndedSurvey = surveyRepository.findAllByEndedAtAndStatusNot(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
-        if (allByEndedSurvey.isEmpty()) {
-            return LocalDate.now().minusDays(1) + " 에 마감된 설문이 없습니다.";
-        }
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
 
-        for (Survey survey : allByEndedSurvey) {
+        List<String> emailList = surveyRepository.findAllEndedSurveyUserEmail(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
 
-            User user = userRepository.findById(survey.getUser().getId()).orElseThrow(
-                    () -> new CustomException(NOT_FOUND_USER_INFO)
-            );
-            String email = user.getEmail();
-            MimeMessage message = createFinishMessage(email);
+        for (String email : emailList) {
+            String s = "hjun950917@naver.com";
+            MimeMessage message = createFinishMessage(s);
 
             try {
                 javaMailSender.send(message);
@@ -152,6 +173,8 @@ public class MailService {
             }
         }
 
+        stopWatch.stop();
+        log.info("수행시간 >> {}", stopWatch.getTotalTimeSeconds());
         return "마감 메일 발송이 완료되었습니다.";
     }
 

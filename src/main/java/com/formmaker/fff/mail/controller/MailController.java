@@ -34,7 +34,13 @@ public class MailController {
         return new ResponseEntity<>(new ResponseMessage<>("인증이 완료되었습니다.", 200, null), HttpStatus.OK);
     }
 
-    @Scheduled(cron = "0 30 8 * * *")
+//    @Scheduled(cron = "0 30 8 * * *")
+//    public void surveyFinishNotice() throws MessagingException, UnsupportedEncodingException {
+//        String msg = mailService.sendFinishMessage();
+//        log.info(msg);
+//    }
+
+    @Scheduled(cron = "0 0/2 * * * *")
     public void surveyFinishNotice() throws MessagingException, UnsupportedEncodingException {
         String msg = mailService.sendFinishMessage();
         log.info(msg);

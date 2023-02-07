@@ -92,6 +92,4 @@ public class WebSecurityConfig {
         return new CustomAuthenticationEntryPoint();
     }
 
-
-
 }

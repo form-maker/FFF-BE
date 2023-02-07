@@ -2,13 +2,11 @@ package com.formmaker.fff.user.entity;
 
 
 import com.formmaker.fff.common.type.SocialTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.formmaker.fff.survey.entity.Survey;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -33,6 +31,9 @@ public class User {
 
     @Enumerated(value = EnumType.STRING)
     private SocialTypeEnum socialType;
+
+    @OneToMany(mappedBy = "user")
+    private List<Survey> surveyList;
 
     public User(String loginId, String username, String password, String email) {
         this.loginId = loginId;
