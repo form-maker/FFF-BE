@@ -56,6 +56,7 @@ public class StatsMethod {
     public QuestionStats statsSlide(List<Reply> replyList, Question question) {
 
         int volume = question.getVolume();
+        List<Answer> answerList = question.getAnswerList();
 
         List<Integer> countList = new ArrayList<>(Collections.nCopies(volume*2+1, 0));
 
@@ -72,6 +73,8 @@ public class StatsMethod {
                 .questionType(question.getQuestionType())
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
+                .leftLabel(answerList.get(0).getAnswerValue())
+                .rightLabel(answerList.get(1).getAnswerValue())
                 .volume(question.getVolume())
                 .satisfactionList(averageList)
                 .build();
