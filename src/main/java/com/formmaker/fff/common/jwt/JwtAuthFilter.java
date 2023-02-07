@@ -80,7 +80,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        System.out.println(request.getRequestURI());
         return EXCLUDE_URL.stream().anyMatch(request.getServletPath()::contains);
     }
 }
