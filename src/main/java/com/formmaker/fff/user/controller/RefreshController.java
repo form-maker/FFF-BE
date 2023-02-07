@@ -25,7 +25,7 @@ public class RefreshController {
 
     private final UserService userService;
 
-    @PostMapping("/refresh")
+    @PostMapping("/api/refresh")
     public ResponseEntity<ResponseMessage> validateRefreshToken(@RequestHeader( value = "REFRESH_Authorization") String rToken, HttpServletResponse response){
         Map<String, String> map = userService.validateRefreshToken(rToken);
         if(map.get("status").equals("400")){

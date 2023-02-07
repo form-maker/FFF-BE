@@ -30,7 +30,7 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private static final List<String> EXCLUDE_URL =
-            List.of("api/user", "api/survey/main", "/reply");
+            List.of("/api/user", "/api/survey/main", "/reply", "/refresh");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
