@@ -137,6 +137,7 @@ public class StatsService {
         );
 
         List<Question> questionList = survey.getQuestionList();
+        Map<String, List<Reply>> participantList = getParticipant(surveyId);
 
         byte[] csvFile;
 
@@ -148,12 +149,11 @@ public class StatsService {
             csvPrinter = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(headers));
             int checkValue;
             User user;
-            String loginId;
-            for(Participant participant : survey.getParticipantList()){
-                loginId = participant.getLoginId();
+
+            for(String loginId : participantList.keySet()){
                 user = new User(null, "비회원", "비회원");
                 user = loginId.length() < 17 ? userRepository.findByLoginId(loginId).orElse(user):user;
-                List<Reply> replyList = participant.getReplyList().stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
+                List<Reply> replyList = participantList.get(loginId).stream().sorted(Comparator.comparing(Reply::getQuestionNum)).toList();
                 List<String> userData = new ArrayList<>();
 
                 userData.add(ShadeToLoginId(user));
@@ -187,17 +187,21 @@ public class StatsService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public XSSFWorkbook getStatsXlsxFile(Long surveyId){
         XSSFWorkbook wd = new XSSFWorkbook();
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
                 ()->new CustomException(NOT_FOUND_SURVEY)
         );
+
+
         XSSFSheet sheet = wd.createSheet(survey.getTitle().replaceAll("[^ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9]", ""));
         Row row;
         Cell cell = null;
+        Map<String, List<Reply>> participantList = getParticipant(surveyId);
 
         List<Question> questionList = survey.getQuestionList();
+
 
         row = sheet.createRow(0);
         row.createCell(0).setCellValue("유저 아이디");
@@ -210,8 +214,8 @@ public class StatsService {
         int rowIndex = 1;
         int checkValue;
         User user;
-        for(Participant participant : survey.getParticipantList()){
-            String loginId = participant.getLoginId();
+
+        for(String loginId : participantList.keySet()){
             cellIndex = 0;
             row = sheet.createRow(rowIndex);
             user = new User(null, "비회원", "비회원");
@@ -219,7 +223,7 @@ public class StatsService {
             row.createCell(cellIndex++).setCellValue(ShadeToLoginId(user));
             row.createCell(cellIndex++).setCellValue(user.getEmail());
             checkValue = 1;
-            for(Reply reply : participant.getReplyList()){
+            for(Reply reply : participantList.get(loginId)){
                 while (reply.getQuestionNum() > checkValue++){
                     row.createCell(cellIndex++).setCellValue("");
                 }
@@ -227,11 +231,25 @@ public class StatsService {
 
             }
             rowIndex++;
-
         }
+
         return wd;
     }
 
+    private Map<String, List<Reply>> getParticipant(Long surveyId){
+        List<Reply> replyList = replyRepository.findBySurveyId(surveyId);
+        Map<String, List<Reply>> participantList = new HashMap<>();
+        for(Reply reply : replyList){
+            if(!participantList.containsKey(reply.getLoginId())){
+                participantList.put(reply.getLoginId(), new ArrayList<>());
+            }
+            participantList.merge(reply.getLoginId(), Arrays.asList(reply), (v1, v2) ->{
+                v1.add(v2.get(0));
+                return v1;
+            });
+        }
+        return participantList;
+    }
 
 
     private String ShadeToLoginId(User user){
