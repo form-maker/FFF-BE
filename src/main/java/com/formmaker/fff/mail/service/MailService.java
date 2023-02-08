@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StopWatch;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -128,37 +127,8 @@ public class MailService {
         }
     }
 
-//    @Transactional(readOnly = true)
-//    public String sendFinishMessage() throws MessagingException, UnsupportedEncodingException {
-//        List<Survey> allByEndedSurvey = surveyRepository.findAllByEndedAtAndStatusNot(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
-//        if (allByEndedSurvey.isEmpty()) {
-//            return LocalDate.now().minusDays(1) + " 에 마감된 설문이 없습니다.";
-//        }
-//
-//        for (Survey survey : allByEndedSurvey) {
-//
-//            User user = userRepository.findById(survey.getUser().getId()).orElseThrow(
-//                    () -> new CustomException(NOT_FOUND_USER_INFO)
-//            );
-//            String email = user.getEmail();
-//            MimeMessage message = createFinishMessage(email);
-//
-//            try {
-//                javaMailSender.send(message);
-//            } catch (Exception e) {
-//                log.error(e.getMessage());
-//                log.error(FAILED_TO_SEND_MAIL.getMsg());
-//            }
-//        }
-//
-//        return "마감 메일 발송이 완료되었습니다.";
-//    }
-
     @Transactional(readOnly = true)
     public String sendFinishMessage() throws MessagingException, UnsupportedEncodingException {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-
         List<String> emailList = surveyRepository.findAllEndedSurveyUserEmail(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
 
         for (String email : emailList) {
@@ -173,8 +143,6 @@ public class MailService {
             }
         }
 
-        stopWatch.stop();
-        log.info("수행시간 >> {}", stopWatch.getTotalTimeSeconds());
         return "마감 메일 발송이 완료되었습니다.";
     }
 
