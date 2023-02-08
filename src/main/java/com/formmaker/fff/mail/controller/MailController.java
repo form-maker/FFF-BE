@@ -40,7 +40,7 @@ public class MailController {
 //        log.info(msg);
 //    }
 
-    @Scheduled(cron = "0 0/2 * * * *")
+    @Scheduled(cron = "0 30 8 * * *")
     public void surveyFinishNotice() throws MessagingException, UnsupportedEncodingException {
         String msg = mailService.sendFinishMessage();
         log.info(msg);
