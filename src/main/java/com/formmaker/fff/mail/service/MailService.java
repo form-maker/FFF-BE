@@ -132,8 +132,7 @@ public class MailService {
         List<String> emailList = surveyRepository.findAllEndedSurveyUserEmail(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
 
         for (String email : emailList) {
-            String s = "hjun950917@naver.com";
-            MimeMessage message = createFinishMessage(s);
+            MimeMessage message = createFinishMessage(email);
 
             try {
                 javaMailSender.send(message);
