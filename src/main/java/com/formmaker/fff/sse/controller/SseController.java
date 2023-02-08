@@ -22,18 +22,12 @@ public class SseController {
     private final NotificationService notificationService;
 
     @GetMapping(value = "/connect/{surveyId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> connect(@PathVariable Long surveyId, @RequestParam String sessionId) {
+    public ResponseEntity<SseEmitter> connect(@PathVariable Long surveyId) {
 
-        SseEmitter sseEmitter = notificationService.connect(surveyId, sessionId).getSseEmitter();
+        SseEmitter sseEmitter = notificationService.connect(surveyId).getSseEmitter();
         return ResponseEntity.ok(sseEmitter);
     }
 
-    @GetMapping(value = "/join/{surveyId}")
-    public ResponseEntity<ResponseMessage> joinSurvey(@PathVariable Long surveyId, @RequestParam String sessionId) {
-
-        notificationService.joinSurvey(surveyId, sessionId);
-        return ResponseEntity.ok(new ResponseMessage("연결 성공", 200));
-    }
 
 
 }

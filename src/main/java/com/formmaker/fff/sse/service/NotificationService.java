@@ -12,6 +12,7 @@ import springfox.documentation.spring.web.json.Json;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class NotificationService {
@@ -21,34 +22,21 @@ public class NotificationService {
 
     private final SetOperations<Long, String> setOperations;
 
+    private final AtomicLong id = new AtomicLong(0);
+
     public NotificationService(RedisTemplate<Long, String> redisTemplate, EmitterRepository emitterRepository) {
         this.emitterRepository = emitterRepository;
         setOperations = redisTemplate.opsForSet();
     }
 
 
-    public CustomEmitter connect(Long surveyId, String sessionId) {
-        CustomEmitter emitter;
-        CustomEmitter check = emitterRepository.findByUserId(sessionId);
-        if(check == null){
-            emitter = emitterRepository.save(new CustomEmitter(new SseEmitter(DEFAULT_TIMEOUT), sessionId));
-        }else{
-            if(check.getSseEmitter().getTimeout() <= 1000L){
-                check.getSseEmitter().complete();
-                emitter = emitterRepository.save(new CustomEmitter(new SseEmitter(DEFAULT_TIMEOUT), sessionId));
-            }else{
-                return check;
-            }
-
-        }
-
-        if(setOperations.isMember(surveyId, sessionId)){
-            emitterRepository.update(emitter, sessionId);
-            joinSurvey(surveyId, sessionId);
-        }
+    public CustomEmitter connect(Long surveyId) {
+        String emitterId = String.valueOf(id.incrementAndGet());
+        CustomEmitter emitter = new CustomEmitter(new SseEmitter(), emitterId);
+        emitterRepository.save(emitter);
 
         emitter.getSseEmitter().onCompletion(() -> {
-            emitterRepository.deleteById(sessionId);
+            emitterRepository.deleteById(emitterId);
         });
 
         emitter.getSseEmitter().onTimeout(() -> {
@@ -56,18 +44,12 @@ public class NotificationService {
         });
         JsonObject data = new JsonObject();
         data.addProperty("msg", "connect");
-        sendToClient(emitter, data.toString());
-        return emitter;
-    }
 
-    public void joinSurvey(Long surveyId, String sessionId) {
-        CustomEmitter check = emitterRepository.findByUserId(sessionId);
-        if(Boolean.FALSE.equals(setOperations.isMember(surveyId, sessionId)) || check == null){
-            connect(surveyId, sessionId);
-        }
-        setOperations.add(surveyId, sessionId);
+        setOperations.add(surveyId, emitterId);
         notificationAll(surveyId);
 
+        sendToClient(emitter, data.toString());
+        return emitter;
     }
 
     // 3
@@ -83,13 +65,14 @@ public class NotificationService {
 
     private void notificationAll(Long surveyId){
         refreshRedis(surveyId);
+
         Long size = setOperations.size(surveyId);
+
         if(size == null || size == 0){
             return;
         }
 
         Iterator<String> iter = setOperations.members(surveyId).iterator();
-
         CustomEmitter emitter;
 
         while(iter.hasNext()){
@@ -112,9 +95,11 @@ public class NotificationService {
             setOperations.remove(surveyId);
             return;
         }
+
         Iterator<String> iter = setOperations.members(surveyId).iterator();
 
         CustomEmitter emitter;
+
 
         while(iter.hasNext()){
             String id = iter.next();
