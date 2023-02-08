@@ -94,9 +94,10 @@ public class ReplyService {
             }
             return Map.of("userId", loginId);
         }
-        replyRepository.saveAll(replyList);
+
         Participant saveParticipant = participantRepository.save(new Participant(loginId, survey));
         saveParticipant.updateReplyList(replyList);
+        List<Reply> saveReplyList =  replyRepository.saveAll(replyList);
         survey.addParticipant(saveParticipant);
         survey.IncreaseParticipant();
 

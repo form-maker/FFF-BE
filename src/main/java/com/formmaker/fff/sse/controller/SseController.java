@@ -23,6 +23,7 @@ public class SseController {
     private final NotificationService notificationService;
 
     @GetMapping(value = "/connect/{surveyId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+
     public ResponseEntity<SseEmitter> connect(@PathVariable Long surveyId, HttpServletResponse response) {
 
         SseEmitter sseEmitter = notificationService.connect(surveyId).getSseEmitter();
@@ -30,6 +31,7 @@ public class SseController {
         response.addHeader("Content-Type", "text/event-stream");
         response.setHeader("Connection", "keep-alive");
         response.setHeader("Cache-Control", "no-cache");
+
         return ResponseEntity.ok(sseEmitter);
     }
 
