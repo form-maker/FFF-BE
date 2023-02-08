@@ -20,7 +20,7 @@ public class Participant extends TimeStamped {
 
     private String loginId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Survey survey;
 
     @OneToMany(mappedBy = "participant")
