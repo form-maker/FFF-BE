@@ -196,8 +196,6 @@ public class SurveyService {
                 .giftList(giftResponseList)
                 .build();
     }
-
-    @ExeTimer
     @Transactional
     public void deleteSurvey(Long surveyId, Long loginId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
@@ -207,14 +205,18 @@ public class SurveyService {
         if (!survey.getUser().getId().equals(loginId)) {
             throw new CustomException((ErrorCode.NOT_MATCH_USER));
         }
-        List<Question> questions = survey.getQuestionList();
-        for(Question q : questions) {
-            replyRepository.deleteAllByQuestionId(q.getId());
-            answerRepository.deleteAllByQuestionId(q.getId());
+        List<Long> questionIdList = new ArrayList<>();
 
+        for(Question q : survey.getQuestionList()){
+            questionIdList.add(q.getId());
+        }
+        if(!questionIdList.isEmpty()) {
+            answerRepository.deleteAllByQuestionIdIn(questionIdList);
+            replyRepository.deleteAllByQuestionIdIn(questionIdList);
         }
         questionRepository.deleteAllBySurveyId(surveyId);
-        participantRepository.deleteAllBySurveyId(surveyId);
+        giftRepository.deleteAllBySurveyId(survey);
+        participantRepository.deleteAllBySurveyId(survey);
         surveyRepository.deleteById(surveyId);
     }
 

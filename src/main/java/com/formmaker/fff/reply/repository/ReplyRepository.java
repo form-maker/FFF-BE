@@ -15,11 +15,8 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     List<Reply> findAllByQuestionIdAndCreatedAtAfterAndCreatedAtBefore(Long questionId, LocalDateTime start, LocalDateTime end);
 
     List<Reply> findAllByParticipant(Participant participant);
-//
-//    @Transactional
-//    @Modifying
-//    @Query("delete from Reply a where a.questionId in :ids")
-//    void deleteAllByQuestionIdIn(@Param("ids") List<Long> ids);
-
-    void deleteAllByQuestionId(Long id);
+    @Transactional
+    @Modifying
+    @Query("delete from Reply a where a.questionId in :ids")
+    void deleteAllByQuestionIdIn(@Param("ids") List<Long> ids);
 }
