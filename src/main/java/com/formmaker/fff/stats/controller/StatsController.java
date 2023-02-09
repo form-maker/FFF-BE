@@ -51,7 +51,7 @@ public class StatsController {
     }
 
     @GetMapping("/download/xlsx")
-    public void downloadXLSX(@RequestParam Long surveyId, HttpServletResponse response, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+    public void downloadXLSX(@RequestParam Long surveyId, HttpServletResponse response) throws IOException {
 
         XSSFWorkbook xssfWorkbook = statsService.getStatsXlsxFile(surveyId);
         response.setContentType("ms-vnd/excel");

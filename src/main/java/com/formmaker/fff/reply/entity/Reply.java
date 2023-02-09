@@ -35,7 +35,7 @@ public class Reply extends TimeStamped {
 
      private String loginId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Participant participant;
 
 
