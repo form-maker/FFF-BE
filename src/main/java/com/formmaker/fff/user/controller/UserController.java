@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 
 @RestController
 @RequestMapping("/api/user")
@@ -49,7 +48,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseMessage> login(@Valid @RequestBody UserLoginRequest userLoginRequest, HttpServletResponse response, TokenDto tokenDto) {
-        tokenDto = jwtUtil.createRefreshToken(userLoginRequest.getLoginId());
+        tokenDto = jwtUtil.createToken(userLoginRequest.getLoginId());
         userService.login(userLoginRequest, response, tokenDto);
         return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.",200,null),HttpStatus.OK);
     }
@@ -70,9 +69,7 @@ public class UserController {
 
     
     @GetMapping("/login/google")
-    public ResponseEntity<ResponseMessage> googleLogin(@RequestParam String code, HttpServletResponse response)
-            throws JsonProcessingException {
-
+    public ResponseEntity<ResponseMessage> googleLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return googleService.googleLogin(code, response);
     }
 

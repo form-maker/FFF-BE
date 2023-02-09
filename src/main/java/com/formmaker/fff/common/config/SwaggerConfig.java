@@ -30,7 +30,6 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.basePackage("com.formmaker.fff"))
                 .paths(PathSelectors.any())
                 .build()
-                // jwt 토큰 전역변수 설정
                 .securityContexts(Collections.singletonList(securityContext()))
                 .securitySchemes(Collections.singletonList(apiKey()));
     }

@@ -17,16 +17,8 @@ public class ReplyMethod {
         JSONObject jsonObject = new JSONObject();
 
         int rank = 1;
-
-        /**
-         * 프론트에서 넣어온 형태 [5, 3, 2, 1, 4]
-         * 각 요소는 AnswerNum 를 나타낸다..
-         * 배열의 index 값이 순위로 여겨진다.
-         */
-
         for (Integer value : replyRequest.getSelectValue()) {
             jsonObject.put(value, rank++);
-
         }
 
         String selectValueJsonForm = jsonObject.toJSONString();
@@ -34,14 +26,12 @@ public class ReplyMethod {
         return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValueJsonForm, replyRequest.getDescriptive(), loginId);
     }
 
-    // 별점, 스코어, 슬라이드, 단수응답 답변 처리 로직
     public Reply replyToSingleValue(ReplyRequest replyRequest, String loginId) {
         String selectValue = replyRequest.getSelectValue().get(0).toString();
         return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), selectValue, null, loginId);
     }
 
 
-    // 복수응답 답변 처리 로직
     public Reply replyToMultipleValue(ReplyRequest replyRequest, String loginId) {
         List<Integer> selectValue = replyRequest.getSelectValue();
         List<String> strSelectValue = selectValue.stream().map(String::valueOf).toList();
@@ -53,7 +43,6 @@ public class ReplyMethod {
     }
 
 
-    // 단답형, 서술형 답변 처리 로직
     public Reply replyToDescriptive(ReplyRequest replyRequest, String loginId) {
         return new Reply(replyRequest.getQuestionId(), replyRequest.getQuestionNum(), replyRequest.getQuestionType(), null, replyRequest.getDescriptive(), loginId);
     }

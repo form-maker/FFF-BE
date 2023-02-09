@@ -28,13 +28,4 @@ public class UserSignupRequest {
     private String email;
 
 
-    public User toUser() {
-        return new User(
-                this.getLoginId(),
-                this.getUsername(),
-                this.getPassword(),
-                this.getEmail()
-
-        );
-    }
 }

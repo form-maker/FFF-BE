@@ -22,6 +22,7 @@ public enum ErrorCode {
 
     /*토큰 에러*/
     EXPIRED_TOKEN("토큰이 만료되었습니다.",400),
+    EXPIRED_REFRESH_TOKEN("리프레쉬 토큰이 일치하지 않습니다. 로그인이 필요합니다.",400),
     INVALID_TOKEN("토큰이 유효하지 않습니다.",400),
     UNSUPPORTED_TOKEN("지원하지 않는 토큰입니다.",400),
     EMPTY_TOKEN("토큰이 비어있습니다.",400),

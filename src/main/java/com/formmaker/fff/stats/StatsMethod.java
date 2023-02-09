@@ -110,8 +110,7 @@ public class StatsMethod {
             SelectResponse selectResponse = new SelectResponse(answerList.get(answerNum++).getAnswerValue(), rankList);
             selectResponseList.add(selectResponse);
         }
-        for(SelectResponse selectResponse : selectResponseList){
-        }
+
         selectResponseList.sort((r1, r2) -> calculationToRank(r2.getRankList()).compareTo(calculationToRank(r1.getRankList())));
 
         return QuestionStats.builder()
@@ -136,11 +135,7 @@ public class StatsMethod {
         List<DescriptiveResponse> descriptiveList = new ArrayList<>();
         int randomValue;
 
-        List<String> descriptiveDataList = new ArrayList<>();
-
-        for (Reply reply : replyList) {
-            descriptiveDataList.add(reply.getDescriptive());
-        }
+        List<String> descriptiveDataList = replyList.stream().map(Reply::getDescriptive).collect(Collectors.toList());
 
         for(int i = 0; i < 3; i++){
             if(replyList.isEmpty()){
@@ -156,7 +151,6 @@ public class StatsMethod {
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
                 .descriptiveList(new DescriptiveList(descriptiveList, descriptiveDataList))
-
                 .build();
     }
 
@@ -176,11 +170,7 @@ public class StatsMethod {
         }
         descriptiveList.sort((s1, s2) -> s2.getValue().compareTo(s1.getValue()));
 
-        List<String> descriptiveDataList = new ArrayList<>();
-
-        for (Reply reply : replyList) {
-            descriptiveDataList.add(reply.getDescriptive());
-        }
+        List<String> descriptiveDataList = replyList.stream().map(Reply::getDescriptive).collect(Collectors.toList());
 
         return QuestionStats.builder()
                 .questionNum(question.getQuestionNum())
@@ -188,7 +178,6 @@ public class StatsMethod {
                 .questionTitle(question.getTitle())
                 .questionSummary(question.getSummary())
                 .descriptiveList(new DescriptiveList(descriptiveList,descriptiveDataList))
-
                 .build();
     }
 
@@ -205,7 +194,6 @@ public class StatsMethod {
         // 평균을 구하는 로직
         int participant = valueList.size();
         int sum = valueList.stream().mapToInt(Integer::intValue).sum();
-//        float avg = participant!=0?Math.round(sum / (participant)):0;
         float avg = participant!=0?(Math.round((float)sum / participant*10f)/10f):0;
         List<Float> selectRate = new ArrayList<>();
 
@@ -228,7 +216,6 @@ public class StatsMethod {
 
         long disagreeCount =replyList.stream().map(Reply::getDescriptive).filter(s -> s.equals("비동의")).count();
         long agreeCount = size - disagreeCount;
-
 
         SelectResponse disagree = new SelectResponse("비동의", size==0?0:Math.round(((float)disagreeCount / size) * 1000f)/10f);
         SelectResponse agree = new SelectResponse("동의", size==0?0:Math.round(((float)agreeCount / size) * 1000f)/10f);
