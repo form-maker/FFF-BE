@@ -3,11 +3,8 @@ package com.formmaker.fff.common.jwt;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.response.security.UserDetailsServiceImpl;
-import com.formmaker.fff.user.controller.RefreshController;
-import com.formmaker.fff.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,9 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -57,7 +51,7 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // header 토큰을 가져오기
+
     public String resolveToken(HttpServletRequest request, String authorization) {
         String bearerToken = request.getHeader(authorization);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
@@ -66,14 +60,8 @@ public class JwtUtil {
         return null;
     }
 
-    // 토큰 생성
-//    public String createToken(String loginId) {
-//
-//        Date date = new Date();
-//        return null;
-//    }
 
-    public TokenDto createRefreshToken(String loginId) {
+    public TokenDto createToken(String loginId) {
         Claims claims = Jwts.claims().setSubject(loginId);
         Date date = new Date();
         String refreshToken = Jwts.builder()
@@ -94,7 +82,7 @@ public class JwtUtil {
 
     }
 
-    /* Access 토큰 검증 */
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);

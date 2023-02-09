@@ -40,9 +40,7 @@ public class MailService {
 
     @Transactional
     public void sendSimpleMessage(String email) throws MessagingException, UnsupportedEncodingException {
-        /*
-            이메일 형식 체크
-         */
+
         String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(email);
@@ -50,16 +48,12 @@ public class MailService {
             throw new CustomException(EMAIL);
         }
 
-        /*
-            이메일 중복 체크
-         */
+
         if (userRepository.findByEmail(email).isPresent()) {
             throw new CustomException(DUPLICATE_EMAIL);
         }
 
-        /*
-            해당 메일로 인증 코드 발급 여부 확인
-         */
+
         String authCode = redisUtil.getData(email);
         if (authCode != null) {
             redisUtil.deleteData(email);
@@ -148,7 +142,6 @@ public class MailService {
     public MimeMessage createFinishMessage(String email) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = javaMailSender.createMimeMessage();
 
-        //todo
         message.addRecipients(Message.RecipientType.TO, email);
         message.setSubject("Foam Foam Form 설문 마감 안내");
 

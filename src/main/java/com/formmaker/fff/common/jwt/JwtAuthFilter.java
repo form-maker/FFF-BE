@@ -39,13 +39,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
-        /* Token 유효성 검사 및 인증 */
 
 
         if(token != null) {
             try{
                 if(!jwtUtil.validateToken(token)){
-//                jwtExceptionHandler(response, "로그인 상태를 확인해주세요.", 403);
                     return;
                 }
             }catch (CustomException e){
@@ -61,13 +59,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication authentication = jwtUtil.createAuthentication(loginId);
         context.setAuthentication(authentication);
-
         SecurityContextHolder.setContext(context);
     }
 
 
-    public void jwtExceptionHandler(HttpServletResponse response, String msg, int statusCode) throws IOException {
-        //클라이언트로 반환하는 부분.
+    public void jwtExceptionHandler(HttpServletResponse response, String msg, int statusCode){
         response.setStatus(statusCode);
         response.setContentType("application/json;charset=utf-8");
         try {
@@ -79,7 +75,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request){
         return EXCLUDE_URL.stream().anyMatch(request.getServletPath()::contains);
     }
 }

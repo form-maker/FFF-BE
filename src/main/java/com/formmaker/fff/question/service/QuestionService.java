@@ -29,16 +29,18 @@ public class QuestionService {
 
     @Transactional(readOnly = true)
     public QuestionResponse getQuestion(Long questionId) {
+
         Question question = questionRepository.findById(questionId).orElseThrow(
                 ()-> new CustomException(NOT_FOUND_QUESTION)
         );
+        Survey survey = surveyRepository.findById(question.getSurveyId()).orElseThrow(
+                ()-> new CustomException(NOT_FOUND_SURVEY));
+
         List<Answer> answerDtoList = question.getAnswerList();
         List<AnswerResponse> answerResponses = new ArrayList<>();
         for (Answer answer : answerDtoList) {
             answerResponses.add(new AnswerResponse(answer.getAnswerNum(), answer.getAnswerType(), answer.getAnswerValue()));
         }
-        Survey survey = surveyRepository.findById(question.getSurveyId()).orElseThrow(
-                ()-> new CustomException(NOT_FOUND_SURVEY));
 
         return new QuestionResponse(question.getId(), question.getQuestionType(), question.getSummary(), question.getQuestionNum(), question.getVolume(),survey.getQuestionList().size(),question.getTitle(), question.isRequired(),survey.getParticipant() ,answerResponses);
     }

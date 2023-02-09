@@ -14,24 +14,10 @@ import java.util.List;
 public class SelectResponse {
     private String answer;
     private Float value;
+
     @JsonIgnore
-    private Integer choiceValue;
-    @JsonIgnore
-    private Integer answerNum;
     private List<Float> rankList = new ArrayList<>();
 
-    public SelectResponse(Integer choiceValue) {
-        this.choiceValue = choiceValue;
-        value = Float.valueOf(0);
-        rankList = null;
-    }
-
-    public SelectResponse(String answerValue, Integer answerNum) {
-        this.answer = answerValue;
-        this.answerNum = answerNum;
-        value = Float.valueOf(0);
-        rankList = null;
-    }
 
     public SelectResponse(String answer, List<Float> rankList) {
         this.answer = answer;
@@ -43,12 +29,4 @@ public class SelectResponse {
         this.value = value;
     }
 
-    public void increaseValue() {
-        this.value++;
-    }
-
-    public void valueAvg(int total) {
-        value = (float) (Math.round(((value / total) * 100) * 10) / 10.0);
-        //소수점 1째자리까지
-    }
 }

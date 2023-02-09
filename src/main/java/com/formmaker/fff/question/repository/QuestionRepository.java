@@ -8,9 +8,4 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-
-    @Transactional
-    @Modifying
-    @Query("delete from Question q where q.surveyId in :ids")
-    void deleteAllBySurveyId(@Param ("ids")Long ids);
 }

@@ -32,7 +32,7 @@ public class NotificationService {
 
     public CustomEmitter connect(Long surveyId) {
         String emitterId = String.valueOf(id.incrementAndGet());
-        CustomEmitter emitter = new CustomEmitter(new SseEmitter(), emitterId);
+        CustomEmitter emitter = new CustomEmitter(new SseEmitter(DEFAULT_TIMEOUT), emitterId);
         emitterRepository.save(emitter);
 
         emitter.getSseEmitter().onCompletion(() -> {
@@ -52,7 +52,7 @@ public class NotificationService {
         return emitter;
     }
 
-    // 3
+
     private void sendToClient(CustomEmitter emitter, Object data) {
         try {
             emitter.getSseEmitter().send(SseEmitter.event()

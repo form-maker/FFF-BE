@@ -25,6 +25,9 @@ public class Reply extends TimeStamped {
     private Integer questionNum;
 
     @Column(nullable = false)
+    private String loginId;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private QuestionTypeEnum questionType;
 
@@ -33,7 +36,7 @@ public class Reply extends TimeStamped {
     @Column(length = 500)
     private String descriptive;
 
-     private String loginId;
+
 
     @ManyToOne
     private Participant participant;

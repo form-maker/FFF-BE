@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 
@@ -35,7 +34,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final PasswordEncoder passwordEncoder;
-    /* 회원가입 */
+
     @Transactional
     public void signup(UserSignupRequest userSignupRequest) {
         String loginId = userSignupRequest.getLoginId();
@@ -54,12 +53,13 @@ public class UserService {
         this.userRepository.save(new User(loginId , userName , password , email));
     }
 
-    /* 아이디,이메일,유저네임 중복확인 */
+
     public void checkLoginId(String loginId){
         if (userRepository.findByLoginId(loginId).isPresent()) {
             throw new CustomException(DUPLICATE_ID);
         }
     }
+
     public void isLoginId(String loginId){
         boolean check = Pattern.matches( "^[a-z0-9]{4,16}$",loginId);
         if(!check){
@@ -86,19 +86,19 @@ public class UserService {
     public void login(UserLoginRequest userLoginRequest, HttpServletResponse response, TokenDto tokenDto) {
         String loginId = userLoginRequest.getLoginId();
         String password = userLoginRequest.getPassword();
-        /* 일치하는 아이디가 없을 경우 예외 반환 */
+
         User user = userRepository.findByLoginId(loginId). orElseThrow(
                 () -> new CustomException(NOT_FOUND_ID)
         );
 
-        /* 비밀번호가 일치하지 않을 때 예외 반환 */
+
         if(!passwordEncoder.matches(password, user.getPassword())){
             throw new CustomException(NOT_FOUND_ID);
         }
         String tokenLoginId = tokenDto.getKey();
 
-        redisUtil.deleteData(tokenLoginId); // redis안에 중복되는 키가 있으면 삭제하고 아래서 생성
-        TokenDto token = jwtUtil.createRefreshToken(user.getLoginId());
+        redisUtil.deleteData(tokenLoginId);
+        TokenDto token = jwtUtil.createToken(user.getLoginId());
         redisUtil.setDataExpire(tokenLoginId, token.getRefreshToken() ,24*60*60*1000L);
 
 

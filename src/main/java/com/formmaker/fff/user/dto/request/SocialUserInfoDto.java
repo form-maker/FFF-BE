@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class SocialUserInfoDto {
     private String id;
     private String email;
-    private String nicknmae;
+    private String nickname;
 
 }

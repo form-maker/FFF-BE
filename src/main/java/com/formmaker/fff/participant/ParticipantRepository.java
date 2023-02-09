@@ -13,5 +13,4 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 
     Optional<Participant> findBySurveyAndLoginId(Survey survey, String loginId);
 
-    Optional<Participant> findByLoginId(String loginId);
 }

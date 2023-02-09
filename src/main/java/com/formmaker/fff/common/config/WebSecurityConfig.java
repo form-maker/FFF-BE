@@ -33,15 +33,14 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        /* 1. CSRF(Cross-site request forgery) 비활성화 및 CORS 설정 */
+
         http.csrf().disable()
                 .cors().configurationSource(corsConfigurationSource());
 
         http.httpBasic().authenticationEntryPoint(authenticationEntryPoint());
-        /* 2. Session 비활성화 */
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        /* 3. Request에 대한 인증/인가 */
         http.authorizeRequests()
                 .antMatchers("/api/user/**").permitAll()
                 .antMatchers("/api/refresh").permitAll()
@@ -49,7 +48,6 @@ public class WebSecurityConfig {
                 .antMatchers(HttpMethod.GET,"/api/question").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/survey/**/reply").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/survey/main").permitAll()
-
                 .antMatchers(HttpMethod.GET, "/api/survey/stats/download/**").permitAll()
                 /*swagger*/
                 .antMatchers("/v2/**").permitAll()
@@ -75,10 +73,9 @@ public class WebSecurityConfig {
         configuration.addAllowedOrigin("https://www.foamfoamform.com/");
         configuration.addAllowedOrigin("https://foamfoamform.com/");
         configuration.addAllowedOrigin("http://localhost:3000/");
-//        configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedMethod("*"); // 허용할 Http Method
+        configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true); // 내 서버가 응답할 때 json을 js에서 처리할 수 있게 설정
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         configuration.addExposedHeader(JwtUtil.AUTHORIZATION_HEADER);
         configuration.addExposedHeader(JwtUtil.REFRESH_HEADER);

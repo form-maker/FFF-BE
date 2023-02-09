@@ -1,6 +1,5 @@
 package com.formmaker.fff.user.service;
 
-import antlr.Token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,14 +47,12 @@ public class KakaoService {
             User loginUser = getKakaoUserInfo(token);
             User user = userRepository.findByEmail(loginUser.getEmail()).orElse(null);
 
-            //faulty337@naver.com
-
             if(user == null){
                 user = signupSocialUser(loginUser);
             }else{
                 user.socialUpdate(SocialTypeEnum.KAKAO);
             }
-            return jwtUtil.createRefreshToken(user.getLoginId());
+            return jwtUtil.createToken(user.getLoginId());
         }catch (JsonProcessingException e){
             throw new CustomException(ErrorCode.SERVER_ERROR);
         }

@@ -107,8 +107,6 @@ public class StatsService {
             if(dailyCount.containsKey(participant.getCreatedAt().toLocalDate())){
                 dailyCount.put(participant.getCreatedAt().toLocalDate(), dailyCount.get(participant.getCreatedAt().toLocalDate())+1);
             }
-
-
         }
 
         for(LocalDate day : dailyCount.keySet()){
