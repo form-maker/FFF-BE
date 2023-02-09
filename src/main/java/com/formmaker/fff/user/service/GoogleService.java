@@ -50,7 +50,7 @@ public class GoogleService {
         SocialUserInfoDto googleUserInfoDto = getGoogleUserInfo(accessToken);
         User googleUser = registerGoogleUserIfNeeded(googleUserInfoDto);
 
-        TokenDto createToken = jwtUtil.createRefreshToken(googleUser.getLoginId());
+        TokenDto createToken = jwtUtil.createToken(googleUser.getLoginId());
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken.getToken());
         response.addHeader(JwtUtil.REFRESH_HEADER, createToken.getRefreshToken());
         return new ResponseEntity<>(new ResponseMessage<>("로그인 되었습니다.", 200, null), HttpStatus.OK);
@@ -93,7 +93,6 @@ public class GoogleService {
         String id = jsonNode.get("id").asText();
         String nickname = jsonNode.get("name").asText();
         String email = jsonNode.get("email").asText();
-        System.out.println("id : " + id + ", nickname : " + nickname + ", email : " + email );
 
         return new SocialUserInfoDto(id, email, nickname);
     }
@@ -109,13 +108,13 @@ public class GoogleService {
 
             if(sameEmailUser != null){
                 googleUser = sameEmailUser;
-                googleUser = googleUser.socialUpdate(SocialTypeEnum.GOOGLE);
+                googleUser.socialUpdate(SocialTypeEnum.GOOGLE);
             }else{
                 String password = UUID.randomUUID().toString();
                 String encodedPassword = passwordEncoder.encode(password);
 
                 googleUser = User.builder()
-                        .username(googleUserInfoDto.getNicknmae())
+                        .username(googleUserInfoDto.getNickname())
                         .loginId(googleId)
                         .password(encodedPassword)
                         .email(googleEmail)

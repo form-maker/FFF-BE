@@ -30,9 +30,8 @@ public class SurveyController {
 
     @PostMapping
     public ResponseEntity<ResponseMessage> createSurvey(@Valid @RequestBody SurveyCreateRequest requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Long userId = userDetails.getUserId();
         User user = userDetails.getUser();
-        surveyService.createSurvey(requestDto, userId, user);
+        surveyService.createSurvey(requestDto, user);
         ResponseMessage responseMessage = new ResponseMessage<>("설문 생성 성공", 200);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
 
@@ -54,7 +53,7 @@ public class SurveyController {
     }
 
 
-    /*설문삭제*/
+
     @DeleteMapping("/{surveyId}")
     public ResponseEntity<ResponseMessage> deleteSurvey(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long surveyId) {
         Long loginId = userDetails.getUserId();
@@ -62,7 +61,7 @@ public class SurveyController {
         return new ResponseEntity<>(new ResponseMessage<>("설문삭제 성공", 200, null), HttpStatus.OK);
     }
 
-    /*마이페이지 설문 불러오기*/
+
     @GetMapping("/my-page")
     public ResponseEntity<ResponseMessage> getMySurveyList(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam SortTypeEnum sortBy, @RequestParam int page, @RequestParam int size, @RequestParam StatusTypeEnum status) {
         Long userId = userDetails.getUserId();

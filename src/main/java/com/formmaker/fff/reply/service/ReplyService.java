@@ -43,10 +43,6 @@ public class ReplyService {
             }while (userRepository.existsByLoginId(loginId));
         }
 
-//        participantRepository.findBySurveyAndLoginId(survey, loginId).ifPresent( check-> {
-//            throw new CustomException(ALREADY_ANSWERED);
-//        });
-
         List<Reply> replyList = new ArrayList<>();
         for (ReplyRequest replyRequest : replyRequestList) {
 
@@ -97,7 +93,7 @@ public class ReplyService {
 
         Participant saveParticipant = participantRepository.save(new Participant(loginId, survey));
         saveParticipant.updateReplyList(replyList);
-        List<Reply> saveReplyList =  replyRepository.saveAll(replyList);
+        replyRepository.saveAll(replyList);
         survey.addParticipant(saveParticipant);
         survey.IncreaseParticipant();
 

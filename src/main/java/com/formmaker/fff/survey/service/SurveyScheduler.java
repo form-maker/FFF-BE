@@ -20,14 +20,11 @@ public class SurveyScheduler {
     public void scheduleTaskUsingCronExpression() {
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
-        log.info(yesterday.toString());
 
         log.info(today+" 설문 상태 업데이트");
-
-        /* 설문 시작 */
         surveyRepository.updateSurvey(StatusTypeEnum.IN_PROCEED, today, StatusTypeEnum.DELETE);
 
-        /* 설문 종료 */
+
         surveyRepository.updateSurvey(StatusTypeEnum.DONE, yesterday, StatusTypeEnum.DELETE);
 
     }

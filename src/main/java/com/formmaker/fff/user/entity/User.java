@@ -46,17 +46,15 @@ public class User {
         this.username = username;
         this.email = email;
     }
-
-    public User socialUpdate(SocialTypeEnum type){
-        this.socialType = type;
-        return this;
-    }
-
     public User(String loginId, String username, String email, SocialTypeEnum socialType) {
         this.loginId = loginId;
         this.username = username;
         this.email = email;
         this.socialType = socialType;
+    }
+
+    public void socialUpdate(SocialTypeEnum type){
+        this.socialType = type;
     }
 
     public void setPassword(String password) {

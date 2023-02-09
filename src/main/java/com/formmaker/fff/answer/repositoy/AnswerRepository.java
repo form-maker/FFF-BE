@@ -11,8 +11,4 @@ import java.util.List;
 
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-    @Transactional
-    @Modifying
-    @Query("delete from Answer a where a.questionId in :ids")
-    void deleteAllByQuestionIdIn(@Param("ids") List<Long> ids);
 }

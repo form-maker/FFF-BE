@@ -47,7 +47,7 @@ public class Survey extends TimeStamped {
     @Enumerated(value = EnumType.STRING)
     private StatusTypeEnum status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
 

@@ -21,9 +21,6 @@ public class EmitterRepositoryImpl implements EmitterRepository {
         return seeEmitter;
     }
 
-
-
-
     @Override
     public void deleteById(String id) {
         emitters.remove(id);
@@ -33,13 +30,5 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     public CustomEmitter findByUserId(String userId) {
         return emitters.get(userId);
     }
-
-    @Override
-    public CustomEmitter update(CustomEmitter emitter, String userId) {
-        emitter.setId(userId);
-        emitters.put(userId, emitter);
-        return emitters.get(userId);
-    }
-
 
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
+
     @Transactional
     @Modifying
     @Query("delete from Question q where q.surveyId = :ids")

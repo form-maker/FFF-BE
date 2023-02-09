@@ -2,6 +2,7 @@ package com.formmaker.fff.user.controller;
 
 
 import com.formmaker.fff.common.jwt.JwtUtil;
+import com.formmaker.fff.common.jwt.TokenDto;
 import com.formmaker.fff.common.response.ResponseMessage;
 import com.formmaker.fff.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +28,10 @@ public class RefreshController {
 
     @PostMapping("/api/refresh")
     public ResponseEntity<ResponseMessage> validateRefreshToken(@RequestHeader( value = "REFRESH_Authorization") String rToken, HttpServletResponse response){
-        Map<String, String> map = userService.validateRefreshToken(rToken);
-        if(map.get("status").equals("400")){
-            ResponseMessage responseMessage = new ResponseMessage("RefreshToken이 만료",400);
-            return new ResponseEntity<ResponseMessage>(responseMessage,HttpStatus.UNAUTHORIZED);
-        }
-        if(map.get("status").equals("200")){
-            response.addHeader(JwtUtil.AUTHORIZATION_HEADER,map.get("accessToken"));
-            response.addHeader(JwtUtil.REFRESH_HEADER,map.get("refreshToken"));
-        }
+        TokenDto tokenDto= userService.validateRefreshToken(rToken);
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER,tokenDto.getToken());
+        response.addHeader(JwtUtil.REFRESH_HEADER,tokenDto.getRefreshToken());
         return new ResponseEntity<>(new ResponseMessage("RefreshToken이 유효합니다",200),HttpStatus.OK);
     }
 }

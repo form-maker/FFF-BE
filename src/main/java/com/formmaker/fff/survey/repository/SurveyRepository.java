@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
-    Page<Survey> findByUserId(Long userId, Pageable pageable);
 
     Optional<Survey> findByIdAndStatusNot(Long id, StatusTypeEnum status);
 
@@ -25,17 +24,12 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
 
     Page<Survey> findByUserIdAndStatus(Long userId, StatusTypeEnum status, Pageable pageable);
 
-
     @Modifying
     @Transactional
     @Query("update Survey s set s.status = :done where s.endedAt = :today and s.status <> :delete")
     void updateSurvey(@Param("done") StatusTypeEnum done, @Param("today") LocalDate today, @Param("delete") StatusTypeEnum delete);
 
     Page<Survey> findAllByStatus(Pageable pageable, StatusTypeEnum inProceed);
-
-    Optional<Survey> findByIdAndUserId(Long surveyId, Long userId);
-
-    List<Survey> findAllByEndedAtAndStatusNot(LocalDate minusDays, StatusTypeEnum delete);
 
     @Query("select u.email from User u inner join Survey s " +
             "on not s.status = :delete " +

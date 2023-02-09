@@ -1,6 +1,8 @@
 package com.formmaker.fff.user.service;
 
+import antlr.Token;
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.jwt.JwtUtil;
 
 import com.formmaker.fff.common.jwt.TokenDto;
@@ -22,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 
@@ -35,7 +36,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final PasswordEncoder passwordEncoder;
-    /* 회원가입 */
+
     @Transactional
     public void signup(UserSignupRequest userSignupRequest) {
         String loginId = userSignupRequest.getLoginId();
@@ -54,12 +55,13 @@ public class UserService {
         this.userRepository.save(new User(loginId , userName , password , email));
     }
 
-    /* 아이디,이메일,유저네임 중복확인 */
+
     public void checkLoginId(String loginId){
         if (userRepository.findByLoginId(loginId).isPresent()) {
             throw new CustomException(DUPLICATE_ID);
         }
     }
+
     public void isLoginId(String loginId){
         boolean check = Pattern.matches( "^[a-z0-9]{4,16}$",loginId);
         if(!check){
@@ -86,19 +88,19 @@ public class UserService {
     public void login(UserLoginRequest userLoginRequest, HttpServletResponse response, TokenDto tokenDto) {
         String loginId = userLoginRequest.getLoginId();
         String password = userLoginRequest.getPassword();
-        /* 일치하는 아이디가 없을 경우 예외 반환 */
+
         User user = userRepository.findByLoginId(loginId). orElseThrow(
                 () -> new CustomException(NOT_FOUND_ID)
         );
 
-        /* 비밀번호가 일치하지 않을 때 예외 반환 */
+
         if(!passwordEncoder.matches(password, user.getPassword())){
             throw new CustomException(NOT_FOUND_ID);
         }
         String tokenLoginId = tokenDto.getKey();
 
-        redisUtil.deleteData(tokenLoginId); // redis안에 중복되는 키가 있으면 삭제하고 아래서 생성
-        TokenDto token = jwtUtil.createRefreshToken(user.getLoginId());
+        redisUtil.deleteData(tokenLoginId);
+        TokenDto token = jwtUtil.createToken(user.getLoginId());
         redisUtil.setDataExpire(tokenLoginId, token.getRefreshToken() ,24*60*60*1000L);
 
 
@@ -109,13 +111,15 @@ public class UserService {
 
     }
     public String getRefreshToken(String refreshToken){
-    String key = jwtUtil.getUserInfo(refreshToken).getSubject();
+        String key = jwtUtil.getUserInfo(refreshToken).getSubject();
 
         return redisUtil.getValue(key);
 
     }
-    public Map<String, String> validateRefreshToken(String refreshToken){
-
+    public TokenDto validateRefreshToken(String refreshToken){
+        if(!jwtUtil.checkToken(refreshToken)){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
         if(getRefreshToken(refreshToken).equals(refreshToken)){
             return createRefreshJson(jwtUtil.getUserInfo(refreshToken)
                     .getSubject());
@@ -123,19 +127,13 @@ public class UserService {
             return createRefreshJson(null);
         }
     }
-    public Map<String,String> createRefreshJson(String loginId){
-        Map<String,String> map = new HashMap<>();
+    public TokenDto createRefreshJson(String loginId){
         if(loginId == null){
-            map.put("errortype","Forbidden");
-            map.put("status","400");
-            map.put("message","리프레쉬 토큰이 일치하지 않습니다. 로그인이 필요합니다.");
-            return map;
+            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
         }
-        map.put("status","200");
-        map.put("message","리프레쉬토큰을 이용한 Access Token 생성이 완료되었습니다.");
-        map.put("accessToken",jwtUtil.recreationAccessToken(loginId));
-        map.put("refreshToken", jwtUtil.recreationRefreshToken(loginId));
-        return map;
+        TokenDto token = new TokenDto(jwtUtil.recreationAccessToken(loginId), jwtUtil.recreationRefreshToken(loginId), loginId);
+
+        return token;
     }
 }
 

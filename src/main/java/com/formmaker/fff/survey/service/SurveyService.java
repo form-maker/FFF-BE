@@ -48,7 +48,6 @@ import static com.formmaker.fff.common.exception.ErrorCode.*;
 @RequiredArgsConstructor
 public class SurveyService {
     private final SurveyRepository surveyRepository;
-    private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final GiftRepository giftRepository;
@@ -56,7 +55,7 @@ public class SurveyService {
     private final ParticipantRepository participantRepository;
 
     @Transactional
-    public void createSurvey(SurveyCreateRequest requestDto, Long userId, User user) {
+    public void createSurvey(SurveyCreateRequest requestDto, User user) {
         Survey survey = Survey.builder()
                 .title(requestDto.getTitle())
                 .summary(requestDto.getSummary())
