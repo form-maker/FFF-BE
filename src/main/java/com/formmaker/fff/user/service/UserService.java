@@ -1,6 +1,8 @@
 package com.formmaker.fff.user.service;
 
+import antlr.Token;
 import com.formmaker.fff.common.exception.CustomException;
+import com.formmaker.fff.common.exception.ErrorCode;
 import com.formmaker.fff.common.jwt.JwtUtil;
 
 import com.formmaker.fff.common.jwt.TokenDto;
@@ -109,13 +111,15 @@ public class UserService {
 
     }
     public String getRefreshToken(String refreshToken){
-    String key = jwtUtil.getUserInfo(refreshToken).getSubject();
+        String key = jwtUtil.getUserInfo(refreshToken).getSubject();
 
         return redisUtil.getValue(key);
 
     }
-    public Map<String, String> validateRefreshToken(String refreshToken){
-
+    public TokenDto validateRefreshToken(String refreshToken){
+        if(!jwtUtil.checkToken(refreshToken)){
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
         if(getRefreshToken(refreshToken).equals(refreshToken)){
             return createRefreshJson(jwtUtil.getUserInfo(refreshToken)
                     .getSubject());
@@ -123,19 +127,13 @@ public class UserService {
             return createRefreshJson(null);
         }
     }
-    public Map<String,String> createRefreshJson(String loginId){
-        Map<String,String> map = new HashMap<>();
+    public TokenDto createRefreshJson(String loginId){
         if(loginId == null){
-            map.put("errortype","Forbidden");
-            map.put("status","400");
-            map.put("message","리프레쉬 토큰이 일치하지 않습니다. 로그인이 필요합니다.");
-            return map;
+            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
         }
-        map.put("status","200");
-        map.put("message","리프레쉬토큰을 이용한 Access Token 생성이 완료되었습니다.");
-        map.put("accessToken",jwtUtil.recreationAccessToken(loginId));
-        map.put("refreshToken", jwtUtil.recreationRefreshToken(loginId));
-        return map;
+        TokenDto token = new TokenDto(jwtUtil.recreationAccessToken(loginId), jwtUtil.recreationRefreshToken(loginId), loginId);
+
+        return token;
     }
 }
 
