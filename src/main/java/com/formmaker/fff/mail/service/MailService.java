@@ -3,9 +3,7 @@ package com.formmaker.fff.mail.service;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.redis.RedisUtil;
 import com.formmaker.fff.common.type.StatusTypeEnum;
-import com.formmaker.fff.survey.entity.Survey;
 import com.formmaker.fff.survey.repository.SurveyRepository;
-import com.formmaker.fff.user.entity.User;
 import com.formmaker.fff.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -131,17 +129,9 @@ public class MailService {
 
     @Transactional(readOnly = true)
     public String sendFinishMessage() throws MessagingException, UnsupportedEncodingException {
-        List<Survey> allByEndedSurvey = surveyRepository.findAllByEndedAtAndStatusNot(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
-        if (allByEndedSurvey.isEmpty()) {
-            return LocalDate.now().minusDays(1) + " 에 마감된 설문이 없습니다.";
-        }
+        List<String> emailList = surveyRepository.findAllEndedSurveyUserEmail(LocalDate.now().minusDays(1), StatusTypeEnum.DELETE);
 
-        for (Survey survey : allByEndedSurvey) {
-
-            User user = userRepository.findById(survey.getUser().getId()).orElseThrow(
-                    () -> new CustomException(NOT_FOUND_USER_INFO)
-            );
-            String email = user.getEmail();
+        for (String email : emailList) {
             MimeMessage message = createFinishMessage(email);
 
             try {
