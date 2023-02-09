@@ -29,11 +29,10 @@ public class ReplyController {
     public ResponseEntity<ResponseMessage> postReply(@PathVariable Long surveyId, @RequestBody List<ReplyRequest> replyRequestList, @AuthenticationPrincipal UserDetailsImpl userDetails, @CookieValue(required = false) String userId, HttpServletResponse response) {
         String id = userDetails == null?userId:userDetails.getLoginId();
         Map<String, String> cookie = replyService.postReply(surveyId, replyRequestList, id);
-
-        Cookie setCookie = new Cookie("userId", cookie.get("userId"));
-        setCookie.setMaxAge(60*60*24*31);
-        response.addCookie(setCookie);
-
+//
+//        Cookie setCookie = new Cookie("userId", cookie.get("userId"));
+//        setCookie.setMaxAge(60*60*24*31);
+//        response.addCookie(setCookie);
         ResponseMessage responseMessage = new ResponseMessage("설문 응답 성공", 200, null);
         return new ResponseEntity<>(responseMessage, HttpStatus.valueOf(responseMessage.getStatusCode()));
     }

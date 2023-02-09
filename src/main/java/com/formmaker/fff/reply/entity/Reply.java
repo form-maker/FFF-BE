@@ -18,7 +18,7 @@ public class Reply extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Long questionId;
 
     @Column(nullable = false)

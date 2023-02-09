@@ -3,6 +3,7 @@ package com.formmaker.fff.survey.service;
 
 import com.formmaker.fff.answer.entity.Answer;
 import com.formmaker.fff.answer.repositoy.AnswerRepository;
+import com.formmaker.fff.common.aop.timer.ExeTimer;
 import com.formmaker.fff.common.exception.CustomException;
 import com.formmaker.fff.common.exception.CustomValidException;
 import com.formmaker.fff.common.exception.ErrorCode;
@@ -14,10 +15,12 @@ import com.formmaker.fff.gift.dto.request.GiftCreateRequest;
 import com.formmaker.fff.gift.dto.response.GiftResponse;
 import com.formmaker.fff.gift.entity.Gift;
 import com.formmaker.fff.gift.giftRepository.GiftRepository;
+import com.formmaker.fff.participant.ParticipantRepository;
 import com.formmaker.fff.question.dto.request.QuestionCreateRequest;
 import com.formmaker.fff.question.dto.response.QuestionNavigationResponse;
 import com.formmaker.fff.question.entity.Question;
 import com.formmaker.fff.question.repository.QuestionRepository;
+import com.formmaker.fff.reply.repository.ReplyRepository;
 import com.formmaker.fff.survey.dto.request.SurveyCreateRequest;
 import com.formmaker.fff.survey.dto.response.SurveyMainResponse;
 import com.formmaker.fff.survey.dto.response.SurveyMyResponse;
@@ -49,6 +52,8 @@ public class SurveyService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final GiftRepository giftRepository;
+    private final ReplyRepository replyRepository;
+    private final ParticipantRepository participantRepository;
 
     @Transactional
     public void createSurvey(SurveyCreateRequest requestDto, Long userId, User user) {
@@ -192,6 +197,7 @@ public class SurveyService {
                 .build();
     }
 
+    @ExeTimer
     @Transactional
     public void deleteSurvey(Long surveyId, Long loginId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(
@@ -201,7 +207,15 @@ public class SurveyService {
         if (!survey.getUser().getId().equals(loginId)) {
             throw new CustomException((ErrorCode.NOT_MATCH_USER));
         }
-        survey.updateStatus(StatusTypeEnum.DELETE);
+        List<Question> questions = survey.getQuestionList();
+        for(Question q : questions) {
+            replyRepository.deleteAllByQuestionId(q.getId());
+            answerRepository.deleteAllByQuestionId(q.getId());
+
+        }
+        questionRepository.deleteAllBySurveyId(surveyId);
+        participantRepository.deleteAllBySurveyId(surveyId);
+        surveyRepository.deleteById(surveyId);
     }
 
     @Transactional(readOnly = true)
